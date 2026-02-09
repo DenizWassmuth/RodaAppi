@@ -1,7 +1,7 @@
 package org.example.backend.services;
 
 import org.example.backend.models.CapoEvent;
-import org.example.backend.repositoris.CapoEventRepository;
+import org.example.backend.repositories.CapoEventRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

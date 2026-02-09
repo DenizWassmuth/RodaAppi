@@ -19,11 +19,13 @@ public class SecurityConfig {
                 // vorerst abschalten damit keine Konflikte mit POST/PUT entstehen
                 .csrf(AbstractHttpConfigurer::disable)// Thema csrf ist wichtig, TODO: nachschauen
                 .authorizeHttpRequests(a -> a
-                        .requestMatchers(HttpMethod.GET, "/api/capoeevent").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/capoeevent/*").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/capoeevent").authenticated()
-                        .requestMatchers(HttpMethod.PUT, "/api/capoevent/*").authenticated()
-                        .requestMatchers(HttpMethod.DELETE,"/api/capoeevent/*").authenticated()
+                        //.requestMatchers("/api/auth").permitAll()
+                        .requestMatchers("/api/capoevent").permitAll()
+//                        .requestMatchers(HttpMethod.GET, "/api/capoevent").permitAll()
+//                        .requestMatchers(HttpMethod.GET, "/api/capoevent/*").permitAll()
+//                        .requestMatchers(HttpMethod.POST, "/api/capoevent").authenticated()
+//                        .requestMatchers(HttpMethod.PUT, "/api/capoevent/*").authenticated()
+//                        .requestMatchers(HttpMethod.DELETE,"/api/capoevent/*").authenticated()
                         //.requestMatchers(HttpMethod.GET, "/api/users").hasAuthority("ADMIN")
                         .anyRequest().permitAll()) // am Ende alles auf permitAll stellen, da es Hintergrundprozesse gibt die sonst blockiert werden
                 .oauth2Login(o  -> o

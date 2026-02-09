@@ -3,11 +3,13 @@ package org.example.backend.models;
 import lombok.With;
 import org.example.backend.enums.CapoEventType;
 import org.example.backend.enums.RepetitionRhythm;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 
 import java.time.LocalDateTime;
 
 @With
+@Document(collection = "capoevent")
 public record CapoEvent(
         String eventId,
         String creatorId,

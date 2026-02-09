@@ -1,4 +1,4 @@
-package org.example.backend.repositoris;
+package org.example.backend.repositories;
 
 import org.example.backend.models.CapoEvent;
 import org.springframework.data.mongodb.repository.MongoRepository;

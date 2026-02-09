@@ -3,7 +3,7 @@ package org.example.backend.services;
 import org.example.backend.enums.CapoEventType;
 import org.example.backend.enums.RepetitionRhythm;
 import org.example.backend.models.CapoEvent;
-import org.example.backend.repositoris.CapoEventRepository;
+import org.example.backend.repositories.CapoEventRepository;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
