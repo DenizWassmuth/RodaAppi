@@ -30,6 +30,7 @@
         <java.version>25</java.version>
         <sonar.organization>zinedw</sonar.organization>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
     <dependencies>
         <dependency>
@@ -125,7 +126,7 @@
             </plugin>
             <plugin>
                 <artifactId>maven-resources-plugin</artifactId>
-                <version>3.1.0</version>
+                <version>3.4.0</version>
                 <configuration>
                     <encoding>UTF-8</encoding>
                 </configuration>
