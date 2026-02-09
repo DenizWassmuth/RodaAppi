@@ -4,7 +4,7 @@ import lombok.With;
 import org.example.backend.enums.CapoEventType;
 import org.example.backend.enums.RepetitionRhythm;
 
-import java.awt.*;
+
 import java.time.LocalDateTime;
 
 @With
