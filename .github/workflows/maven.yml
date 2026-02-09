@@ -17,4 +17,8 @@ jobs:
         distribution: 'temurin'
         cache: maven
     - name: Build with Maven
+      env:
+        MONGODB_URI: mongodb://localhost:27017/RodaAppi_test
+        GITHUB_ID: dummy
+        GITHUB_SECRET: dummy
       run: mvn -B package --file backend/pom.xml
