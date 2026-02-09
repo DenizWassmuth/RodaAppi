@@ -1,6 +1,7 @@
 package org.example.backend.enums;
 
 public enum RepetitionRhythm {
+    ONCE("once"),
     DAILY("daily"),
     WEEKLY("weekly"),
     MONTHLY("monthly"),

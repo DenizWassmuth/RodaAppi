@@ -14,7 +14,7 @@ public record CapoEvent(
         String creatorName,
         String eventTitle,
         String eventDescription,
-        Image thumbnail,
+        String thumbnail,
         String eventLocation,
         String street,
         LocalDateTime eventStart,
