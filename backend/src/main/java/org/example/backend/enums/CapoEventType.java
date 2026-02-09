@@ -10,11 +10,7 @@ public enum CapoEventType {
         this.literal = literal;
     }
 
-    public String literal() {
-        return literal;
-    }
-
-    public static CapoEventType fromLiteral(String raw) {
+    public static CapoEventType getFromLiteral(String raw) {
         if (raw == null) return null;
         String normalized = raw.trim().toLowerCase();
 

@@ -14,10 +14,6 @@ public enum RepetitionRhythm {
         this.literal = literal;
     }
 
-//    public String literal() {
-//        return literal;
-//    }
-
     public static RepetitionRhythm getFromLiteral(String raw) {
         if (raw == null) return null;
         String normalized = raw.trim().toLowerCase();
