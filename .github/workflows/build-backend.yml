@@ -33,8 +33,5 @@ jobs:
       - name: Build and analyze
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          MONGODB_URI: ${{ secrets.MONGODB_URI }}
-          GITHUB_ID: dummy
-          GITHUB_SECRET: dummy
         working-directory: backend
         run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=zinedw_RodaAppi_backend
