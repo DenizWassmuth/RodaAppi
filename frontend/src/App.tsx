@@ -1,27 +1,23 @@
 import './App.css'
-import axios from "axios";
-import {useEffect} from "react";
+import './index.css'
 
-function login(){
-    // schaue wo sind wir gerade und passe die Zieladresse entsprechend an
-    const host:string = window.location.host === "localhost:5173" ?
-        "http://localhost:8080" : window.location.origin
-    window.open(host + "/oauth2/authorization/github", "_self")
-}
-
-const loadUser = () => {
-    axios.get("/api/auth")
-        .then((response) => {console.log(response.data)})
-}
+import Navbar from "./components/NavBar.tsx";
+import {Route, Routes} from "react-router-dom";
+import LandingPage from "./components/LandingPage.tsx";
+import RodasPage from "./components/RodasPage.tsx";
+import WorkshopsPage from "./components/WorkshopsPage.tsx";
 
 function App() {
 
-    useEffect(() => {
-        loadUser();
-    }, []);
-
   return (
-      <button onClick={login}>Login</button>
+      <>
+          <header><Navbar/></header>
+          <Routes>
+              <Route path={"/"} element={<LandingPage/>}/>
+              <Route path={"/rodas"} element={<RodasPage/>}/>
+              <Route path={"/workshops"} element={<WorkshopsPage/>}/>
+          </Routes>
+      </>
   )
 }
 
