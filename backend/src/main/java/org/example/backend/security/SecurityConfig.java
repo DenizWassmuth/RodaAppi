@@ -13,21 +13,21 @@ import org.springframework.security.web.SecurityFilterChain;
 public class SecurityConfig {
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) {
         http
                 // vorerst abschalten damit keine Konflikte mit POST/PUT entstehen
-                .csrf(AbstractHttpConfigurer::disable)// Thema csrf ist wichtig, TODO: nachschauen
+                .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(a -> a
-                        //.requestMatchers("/api/auth").permitAll()
+                        .requestMatchers("/api/auth").permitAll()
                         .requestMatchers("/api/capoevent").permitAll()
 //                        .requestMatchers(HttpMethod.GET, "/api/capoevent").permitAll()
 //                        .requestMatchers(HttpMethod.GET, "/api/capoevent/*").permitAll()
 //                        .requestMatchers(HttpMethod.POST, "/api/capoevent").authenticated()
 //                        .requestMatchers(HttpMethod.PUT, "/api/capoevent/*").authenticated()
 //                        .requestMatchers(HttpMethod.DELETE,"/api/capoevent/*").authenticated()
-                        //.requestMatchers(HttpMethod.GET, "/api/users").hasAuthority("ADMIN")
+//                        .requestMatchers(HttpMethod.GET, "/api/users").hasAuthority("ADMIN")
                         .anyRequest().permitAll()) // am Ende alles auf permitAll stellen, da es Hintergrundprozesse gibt die sonst blockiert werden
-                .oauth2Login(o  -> o
+                .oauth2Login(o -> o
                         .defaultSuccessUrl("http://localhost:5173"));
         return http.build();
     }
