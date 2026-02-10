@@ -1,5 +1,3 @@
-
-import type {UserProps} from "../types/UserType.ts";
 import {Navigate, Outlet} from "react-router-dom";
 
 type ProtectedRouteProps = {

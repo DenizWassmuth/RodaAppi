@@ -18,12 +18,14 @@ export default function Navbar(props:Readonly<UserProps>) {
     return (
         <>
             <form onSubmit={handleOnClick}>
-            <button onClick={() => goTo("/")}>Home</button>
-            {" "}
-            <button onClick={() => goTo("/rodas")}>Rodas</button>
-            {" "}
-            <button onClick={() => goTo("/workshops")}>Workshops</button>
-            {" "}
+                <button onClick={() => goTo("/")}>Home</button>
+                {" "}
+                <button onClick={() => goTo("/rodas")}>Rodas</button>
+                {" "}
+                <button onClick={() => goTo("/workshops")}>Workshops</button>
+                {" "}
+                <button onClick={() => goTo("/loggedin")}>logged in</button>
+
             <Logging user={props.user} setUser={props.setUser} />
             </form>
         </>

@@ -27,6 +27,7 @@ public class SecurityConfig {
 //                        .requestMatchers(HttpMethod.DELETE,"/api/capoevent/*").authenticated()
 //                        .requestMatchers(HttpMethod.GET, "/api/users").hasAuthority("ADMIN")
                         .anyRequest().permitAll()) // am Ende alles auf permitAll stellen, da es Hintergrundprozesse gibt die sonst blockiert werden
+                .logout(l -> l.logoutSuccessUrl("http://localhost:5173"))
                 .oauth2Login(o -> o
                         .defaultSuccessUrl("http://localhost:5173"));
         return http.build();
