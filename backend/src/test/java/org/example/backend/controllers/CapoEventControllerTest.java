@@ -55,7 +55,7 @@ class CapoEventControllerTest {
         capoEventRepo.save(fakeEvent1);
 
         ResultMatcher jsonMatch = MockMvcResultMatchers.content().json(
-                """
+     """
      [
        {
          "eventId": "1",
