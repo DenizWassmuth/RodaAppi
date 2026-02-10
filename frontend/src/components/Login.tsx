@@ -1,10 +1,9 @@
 import '../index.css'
 import {useEffect, useState} from "react";
 import axios from "axios";
+import type {UserProps} from "../types/UserType.ts";
 
-export default function Login() {
-
-    const [user, setUser] = useState<string | undefined | null>(undefined);
+export default function Login(props:Readonly<UserProps>) {
 
     function login(){
         // schaue wo sind wir gerade und passe die Zieladresse entsprechend an
@@ -15,8 +14,8 @@ export default function Login() {
 
     const loadUser = () => {
         axios.get("/api/auth")
-            .then((response) => setUser(response.data))
-            .catch((error) => setUser(null));
+            .then((response) => props.setUser(response.data))
+            .catch((error) => props.setUser(null));
     }
 
     useEffect(() => {
