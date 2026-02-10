@@ -7,6 +7,8 @@ import LandingPage from "./components/LandingPage.tsx";
 import RodasPage from "./components/RodasPage.tsx";
 import WorkshopsPage from "./components/WorkshopsPage.tsx";
 import {useState} from "react";
+import LoggedInPage from "./components/LoggedInPage.tsx";
+import ProtectedRoute from "./components/ProtectedRoute.tsx";
 
 function App() {
 
@@ -19,6 +21,10 @@ function App() {
               <Route path={"/"} element={<LandingPage/>}/>
               <Route path={"/rodas"} element={<RodasPage/>}/>
               <Route path={"/workshops"} element={<WorkshopsPage/>}/>
+
+              <Route element={<ProtectedRoute user={user}/> }>
+                  <Route path={"/loggedin"} element={<LoggedInPage/>}/>
+              </Route>
           </Routes>
       </>
   )

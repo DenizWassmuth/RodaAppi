@@ -1,6 +1,6 @@
 import '../index.css'
 import {useNavigate} from "react-router-dom";
-import Login from "./Login.tsx";
+import Logging from "./Logging.tsx";
 import type {FormEvent} from "react";
 import type {UserProps} from "../types/UserType.ts";
 
@@ -24,7 +24,7 @@ export default function Navbar(props:Readonly<UserProps>) {
             {" "}
             <button onClick={() => goTo("/workshops")}>Workshops</button>
             {" "}
-            <Login user={props.user} setUser={props.setUser} />
+            <Logging user={props.user} setUser={props.setUser} />
             </form>
         </>
     )
