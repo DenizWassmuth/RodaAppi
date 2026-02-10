@@ -10,22 +10,7 @@ public enum RepetitionRhythm {
     CUSTOM("custom");
 
     private final String literal;
-
     RepetitionRhythm(String literal) {
         this.literal = literal;
-    }
-
-    public static RepetitionRhythm getFromLiteral(String raw) {
-        if (raw == null) return null;
-        String normalized = raw.trim().toLowerCase();
-
-        for (RepetitionRhythm repRhythm : values()) {
-            String literalNormalized = repRhythm.literal.trim().toLowerCase();
-            if (literalNormalized.equals(normalized)) {
-                return repRhythm;
-            }
-        }
-
-        throw new IllegalArgumentException("Unknown RepetitionRhythm: " + raw);
     }
 }

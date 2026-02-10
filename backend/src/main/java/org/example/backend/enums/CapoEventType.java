@@ -9,18 +9,4 @@ public enum CapoEventType {
     CapoEventType(String literal) {
         this.literal = literal;
     }
-
-    public static CapoEventType getFromLiteral(String raw) {
-        if (raw == null) return null;
-        String normalized = raw.trim().toLowerCase();
-
-        for (CapoEventType eventType : values()) {
-            String literalNormalized = eventType.literal.trim().toLowerCase();
-            if (literalNormalized.equals(normalized)) {
-                return eventType;
-            }
-        }
-
-        throw new IllegalArgumentException("Unknown CapoEventType: " + raw);
-    }
 }
