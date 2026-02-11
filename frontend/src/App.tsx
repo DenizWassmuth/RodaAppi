@@ -12,22 +12,22 @@ import ProtectedRoute from "./components/ProtectedRoute.tsx";
 import axios from "axios";
 import type {AppUser} from "./types/UserType.ts";
 
+function login(){
+    // schaue wo sind wir gerade und passe die Zieladresse entsprechend an
+    const host:string = globalThis.location.host === "localhost:5173" ?
+        "http://localhost:8080" : window.location.origin
+    window.open(host + "/oauth2/authorization/github", "_self")
+}
+
+function logout(){
+    const host:string = globalThis.location.host === "localhost:5173" ?
+        "http://localhost:8080" : window.location.origin
+    window.open(host + "/logout", "_self")
+}
+
 function App() {
 
     const [user, setUser] = useState<AppUser>(undefined);
-
-    function login(){
-        // schaue wo sind wir gerade und passe die Zieladresse entsprechend an
-        const host:string = window.location.host === "localhost:5173" ?
-            "http://localhost:8080" : window.location.origin
-        window.open(host + "/oauth2/authorization/github", "_self")
-    }
-
-    function logout(){
-        const host:string = window.location.host === "localhost:5173" ?
-            "http://localhost:8080" : window.location.origin
-        window.open(host + "/logout", "_self")
-    }
 
     const loadUser = () => {
         axios.get("/api/auth")

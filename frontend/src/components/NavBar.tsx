@@ -4,6 +4,10 @@ import Logging from "./Logging.tsx";
 import type {FormEvent} from "react";
 import type {UserProps} from "../types/UserType.ts";
 
+function handleOnClick(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+}
+
 export default function Navbar(props:Readonly<UserProps>) {
 
     const nav = useNavigate();
@@ -11,12 +15,7 @@ export default function Navbar(props:Readonly<UserProps>) {
         nav(path);
     }
 
-    function handleOnClick(event: FormEvent<HTMLFormElement>) {
-        event.preventDefault();
-    }
-
     return (
-        <>
             <form onSubmit={handleOnClick}>
                 <button onClick={() => goTo("/")}>Home</button>
                 {" "}
@@ -25,9 +24,7 @@ export default function Navbar(props:Readonly<UserProps>) {
                 <button onClick={() => goTo("/workshops")}>Workshops</button>
                 {" "}
                 <button onClick={() => goTo("/loggedin")}>logged in</button>
-
             <Logging user={props.user} setUser={props.setUser} />
             </form>
-        </>
     )
 }

@@ -18,7 +18,6 @@ public class AuthController {
         this.appUserService = appUserService;
     }
 
-    // TODO: umbauen um AppUser zurückzugeben, hier und im Frontend
     @GetMapping
     public AppUser getMe(@AuthenticationPrincipal OAuth2User user){
 

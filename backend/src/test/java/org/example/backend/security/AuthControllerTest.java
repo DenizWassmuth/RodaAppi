@@ -50,4 +50,15 @@ class AuthControllerTest {
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().json(appUserJSON));
     }
+
+    @Test
+    void getMe_throwsException() throws Exception{
+
+        appUserRepository.save(testUser1);
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/auth")
+                        .with(oidcLogin().userInfoToken(token -> token
+                                .claim("id", null))))
+                .andExpect(MockMvcResultMatchers.status().isOk());
+    }
 }
