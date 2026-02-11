@@ -8,6 +8,8 @@ import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+
 @Service
 @RequiredArgsConstructor
 public class CustomOAuth2UserService extends DefaultOAuth2UserService {
@@ -25,6 +27,8 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         AppUser newUser = AppUser.builder()
                 .id(oAuth2User.getName()) // UserId von Github
                 .username(oAuth2User.getAttribute("login"))
+                .createdIds(new ArrayList<>())
+                .bookMarkedIds(new ArrayList<>())
                 // weitere Felder wenn nötig wie Bookmark Listen oder Created Listen initiieren
                 .build();
 

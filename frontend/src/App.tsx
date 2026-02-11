@@ -49,7 +49,7 @@ function App() {
               <Route path={"/workshops"} element={<WorkshopsPage/>}/>
 
               <Route element={<ProtectedRoute user={user}/> }>
-                  <Route path={"/loggedin"} element={<LoggedInPage/>}/>
+                  <Route path={"/loggedin"} element={<LoggedInPage userName={user}/>}/>
               </Route>
           </Routes>
       </>

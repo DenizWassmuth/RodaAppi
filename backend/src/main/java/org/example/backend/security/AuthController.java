@@ -10,9 +10,23 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/auth")
 public class AuthController {
 
+    private final AppUserService appUserService;
+
+    public AuthController(AppUserService appUserService) {
+        this.appUserService = appUserService;
+    }
+
     // TODO: umbauen um AppUser zurückzugeben, hier und im Frontend
     @GetMapping
     public String getMe(@AuthenticationPrincipal OAuth2User user){
-        return user.getAttribute("login").toString(); // in Github versteckt sich hinter "login" der account name
+
+        if(user == null){
+            throw new IllegalArgumentException("user is null");
+        }
+
+        AppUser userFound = appUserService.getMe(user.getName());
+
+        return userFound.username();
+        //return user.getAttribute("login").toString(); // in Github versteckt sich hinter "login" der account name
     }
 }

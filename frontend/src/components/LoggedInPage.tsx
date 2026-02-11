@@ -1,4 +1,8 @@
-export default function LoggedInPage() {
+type UserProps = {
+    userName:string | undefined | null;
+}
 
-    return <div>LoggedIn Page</div>
+export default function LoggedInPage(props:Readonly<UserProps>) {
+
+    return <div>logged in as <p>{props.userName}</p></div>
 }
