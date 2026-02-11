@@ -28,7 +28,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
                 .id(oAuth2User.getAttribute("id").toString()) // UserId von Github
                 .username(oAuth2User.getAttribute("login"))
                 .createdIds(new ArrayList<>())
-                .bookMarkedIds(new ArrayList<>())
+                .bookmarkedIds(new ArrayList<>())
                 .build();
        appUserRepository.save(newUser); // save ist nicht immer schnell genug
        return newUser;

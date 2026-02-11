@@ -10,10 +10,11 @@ import {useEffect, useState} from "react";
 import LoggedInPage from "./components/LoggedInPage.tsx";
 import ProtectedRoute from "./components/ProtectedRoute.tsx";
 import axios from "axios";
+import type {UserType} from "./types/UserType.ts";
 
 function App() {
 
-    const [user, setUser] = useState<string | undefined | null>(undefined);
+    const [user, setUser] = useState<UserType>(undefined);
 
     function login(){
         // schaue wo sind wir gerade und passe die Zieladresse entsprechend an
@@ -42,14 +43,14 @@ function App() {
       <>
           <header><Navbar user={user} setUser={setUser}/></header>
           {user === null && <button onClick={login}>Login</button>}
-          {typeof user === "string" && <button onClick={logout}>Logout</button>}
+          {user !== null && <button onClick={logout}>Logout</button>}
           <Routes>
               <Route path={"/"} element={<LandingPage/>}/>
               <Route path={"/rodas"} element={<RodasPage/>}/>
               <Route path={"/workshops"} element={<WorkshopsPage/>}/>
 
-              <Route element={<ProtectedRoute user={user}/> }>
-                  <Route path={"/loggedin"} element={<LoggedInPage userName={user}/>}/>
+              <Route element={<ProtectedRoute user={user?.username}/> }>
+                  <Route path={"/loggedin"} element={<LoggedInPage userName={user?.username}/>}/>
               </Route>
           </Routes>
       </>
