@@ -9,6 +9,7 @@ import org.mockito.Mockito;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -45,6 +46,7 @@ CapoEvent fakeEvent1 = new CapoEvent(
         assertNotNull(actualList);
         assertEquals( 0, actualList.size());
     }
+
     @Test
     void getAll_shouldReturnExpectedList() {
         // GIVEN
@@ -58,5 +60,46 @@ CapoEvent fakeEvent1 = new CapoEvent(
 
         assertNotNull(actualList);
         assertEquals(expectedList, actualList);
+    }
+
+    @Test
+    void getById_shouldReturnExpectedCapoEvent() {
+
+        Mockito.when(capoEventRepo.findById("1")).thenReturn(Optional.of(fakeEvent1));
+
+        CapoEvent actualCapoEvent = capoEventService.getById("1");
+
+        assertNotNull(actualCapoEvent);
+        assertEquals(fakeEvent1, actualCapoEvent);
+    }
+
+    @Test
+    void getById_shouldReturnNull_whenNoEventFound() {
+
+        Mockito.when(capoEventRepo.findById("1")).thenReturn(Optional.empty());
+
+        CapoEvent actualCapoEvent = capoEventService.getById("1");
+
+        assertNull(actualCapoEvent);
+    }
+
+    @Test
+    void deleteById_shouldReturnTrue_whenEventIsDeleted() {
+
+        Mockito.when(capoEventRepo.existsById("1")).thenReturn(true);
+
+        boolean expected = capoEventService.deleteById("1");
+
+        assertTrue(expected);
+    }
+
+    @Test
+    void deleteById_shouldReturnFalse_whenDoesNotExist() {
+
+        Mockito.when(capoEventRepo.existsById("1")).thenReturn(false);
+
+        boolean expected = capoEventService.deleteById("1");
+
+        assertFalse(expected);
     }
 }
