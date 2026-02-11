@@ -24,7 +24,7 @@ public class AuthController {
             throw new IllegalArgumentException("user is null");
         }
 
-        AppUser userFound = appUserService.getMe(user.getName());
+        AppUser userFound = appUserService.getMe(user.getAttribute("id").toString());
 
         return userFound.username();
         //return user.getAttribute("login").toString(); // in Github versteckt sich hinter "login" der account name

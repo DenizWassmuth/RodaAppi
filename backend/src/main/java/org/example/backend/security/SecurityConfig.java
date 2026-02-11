@@ -1,6 +1,7 @@
 package org.example.backend.security;
 
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -29,6 +30,7 @@ public class SecurityConfig {
                         .anyRequest().permitAll()) // am Ende alles auf permitAll stellen, da es Hintergrundprozesse gibt die sonst blockiert werden
                 .logout(l -> l.logoutSuccessUrl("http://localhost:5173"))
                 .oauth2Login(o -> o
+                        //.userInfoEndpoint(e -> e.userService(customOAuth2UserService))
                         .defaultSuccessUrl("http://localhost:5173"));
         return http.build();
     }
