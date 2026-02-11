@@ -29,10 +29,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
                 .username(oAuth2User.getAttribute("login"))
                 .createdIds(new ArrayList<>())
                 .bookMarkedIds(new ArrayList<>())
-                // weitere Felder wenn nötig wie Bookmark Listen oder Created Listen initiieren
                 .build();
-
-
        appUserRepository.save(newUser); // save ist nicht immer schnell genug
        return newUser;
     }

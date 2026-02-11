@@ -18,15 +18,12 @@ public class AuthController {
 
     // TODO: umbauen um AppUser zurückzugeben, hier und im Frontend
     @GetMapping
-    public String getMe(@AuthenticationPrincipal OAuth2User user){
+    public AppUser getMe(@AuthenticationPrincipal OAuth2User user){
 
         if(user == null){
             throw new IllegalArgumentException("user is null");
         }
 
-        AppUser userFound = appUserService.getMe(user.getAttribute("id").toString());
-
-        return userFound.username();
-        //return user.getAttribute("login").toString(); // in Github versteckt sich hinter "login" der account name
+        return appUserService.getMe(user.getAttribute("id").toString());
     }
 }
