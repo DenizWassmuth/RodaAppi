@@ -1,6 +1,8 @@
-package org.example.backend.security;
+package org.example.backend.services;
 
 import lombok.RequiredArgsConstructor;
+import org.example.backend.models.AppUser;
+import org.example.backend.repositories.AppUserRepository;
 import org.springframework.stereotype.Service;
 
 @Service

@@ -10,11 +10,11 @@ import {useEffect, useState} from "react";
 import LoggedInPage from "./components/LoggedInPage.tsx";
 import ProtectedRoute from "./components/ProtectedRoute.tsx";
 import axios from "axios";
-import type {UserType} from "./types/UserType.ts";
+import type {AppUser} from "./types/UserType.ts";
 
 function App() {
 
-    const [user, setUser] = useState<UserType>(undefined);
+    const [user, setUser] = useState<AppUser>(undefined);
 
     function login(){
         // schaue wo sind wir gerade und passe die Zieladresse entsprechend an
@@ -42,8 +42,8 @@ function App() {
   return (
       <>
           <header><Navbar user={user} setUser={setUser}/></header>
-          {user === null && <button onClick={login}>Login</button>}
-          {user !== null && <button onClick={logout}>Logout</button>}
+          {user === null  && <button onClick={login}>Login</button>}
+          {user !== null && user !== undefined && <button onClick={logout}>Logout</button>}
           <Routes>
               <Route path={"/"} element={<LandingPage/>}/>
               <Route path={"/rodas"} element={<RodasPage/>}/>

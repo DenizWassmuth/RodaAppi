@@ -1,4 +1,4 @@
-export type UserType = undefined | null | {
+export type AppUser = undefined | null | {
     id: string;
     username: string;
     createdIds: string[];
@@ -6,6 +6,6 @@ export type UserType = undefined | null | {
 }
 
 export type UserProps = {
-    user:UserType | undefined | null;
-    setUser: (user:UserType | undefined | null) => void;
+    user:AppUser | undefined | null;
+    setUser: (user:AppUser | undefined | null) => void;
 }

@@ -1,6 +1,7 @@
 package org.example.backend.security;
 
-import org.example.backend.repositories.CapoEventRepository;
+import org.example.backend.models.AppUser;
+import org.example.backend.repositories.AppUserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,5 +1,7 @@
 package org.example.backend.security;
 
+import org.example.backend.models.AppUser;
+import org.example.backend.services.AppUserService;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.web.bind.annotation.GetMapping;
