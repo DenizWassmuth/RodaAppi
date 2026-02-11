@@ -2,14 +2,18 @@ package org.example.backend.security;
 
 import org.example.backend.models.AppUser;
 import org.example.backend.repositories.AppUserRepository;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
+import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+import org.springframework.util.Assert;
 
 import java.util.List;
 
@@ -52,13 +56,39 @@ class AuthControllerTest {
     }
 
     @Test
-    void getMe_throwsException() throws Exception{
+    void getMe_respondsWithBadRequest_whenUserIsnull() throws Exception{
+
+        MvcResult result= mockMvc.perform(MockMvcRequestBuilders.get("/api/auth"))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andReturn();
+
+        Assertions.assertNotNull(result);
+
+    }
+
+    @Test
+    void getMe_respondsWithBadRequest_whenIdIsNull() throws Exception{
+
+        MvcResult result= mockMvc.perform(MockMvcRequestBuilders.get("/api/auth")
+                .with(oidcLogin().userInfoToken(token -> token
+                        .claim("id", null))))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andReturn();
+
+        Assertions.assertNotNull(result);
+    }
+
+    @Test
+    void getMe_respondsWithNotFound_whenUserWithGivenIdIsNotInRepo() throws Exception{
 
         appUserRepository.save(testUser1);
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/api/auth")
+        MvcResult result= mockMvc.perform(MockMvcRequestBuilders.get("/api/auth")
                         .with(oidcLogin().userInfoToken(token -> token
-                                .claim("id", null))))
-                .andExpect(MockMvcResultMatchers.status().isOk());
+                                .claim("id", "2"))))
+                .andExpect(MockMvcResultMatchers.status().isNotFound())
+                .andReturn();
+
+        Assertions.assertNotNull(result);
     }
 }
