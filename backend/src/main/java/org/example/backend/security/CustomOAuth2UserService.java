@@ -19,9 +19,10 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     private final AppUserRepository appUserRepository;
 
     // lädt oder kreiert AppUser, ist nicht dazu da, um mit den AppUsern zu hantieren -> dafür eigenen Service
+    @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
         OAuth2User oAuth2User = super.loadUser(userRequest);
-        AppUser appUser = appUserRepository.findById(oAuth2User.getName()).orElseGet(() -> createAppUser(oAuth2User));
+        appUserRepository.findById(oAuth2User.getName()).orElseGet(() -> createAppUser(oAuth2User));
         return oAuth2User;
     }
 
