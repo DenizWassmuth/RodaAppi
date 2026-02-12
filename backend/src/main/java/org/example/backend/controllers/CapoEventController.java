@@ -22,8 +22,14 @@ public class CapoEventController {
     }
 
     @GetMapping("/{id}")
-    public CapoEvent getById(@PathVariable String id) {
-        return capoEventService.getById(id);
+    public ResponseEntity<CapoEvent> getById(@PathVariable String id) {
+
+        CapoEvent foundEvent = capoEventService.getById(id);
+        if (foundEvent == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity.ok(foundEvent);
     }
 
     @DeleteMapping("/{id}")

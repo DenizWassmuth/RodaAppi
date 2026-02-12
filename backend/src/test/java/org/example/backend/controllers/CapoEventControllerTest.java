@@ -109,4 +109,17 @@ class CapoEventControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.eventType").value("RODA"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.repRhythm").value("ONCE"));
     }
+
+    @Test
+    @WithMockUser
+    void getById_shouldReturnStatusNotFound() throws Exception {
+
+        // GIVEN
+        capoEventRepo.save(fakeEvent1); // has id 1
+
+        //WHEN
+        mockMvc.perform(get("/api/capoevent/2"))
+                //THEN
+                .andExpect(status().isNotFound());
+    }
 }
