@@ -42,7 +42,6 @@ CapoEvent fakeEvent1 = new CapoEvent(
         List<CapoEvent> actualList = capoEventService.getAll();
 
         //THEN
-
         assertNotNull(actualList);
         assertEquals( 0, actualList.size());
     }
@@ -57,7 +56,6 @@ CapoEvent fakeEvent1 = new CapoEvent(
         List<CapoEvent> actualList = capoEventService.getAll();
 
         //THEN
-
         assertNotNull(actualList);
         assertEquals(expectedList, actualList);
     }
@@ -94,7 +92,7 @@ CapoEvent fakeEvent1 = new CapoEvent(
     }
 
     @Test
-    void deleteById_shouldReturnFalse_whenDoesNotExist() {
+    void deleteById_shouldReturnFalse_whenEventDoesNotExist() {
 
         Mockito.when(capoEventRepo.existsById("1")).thenReturn(false);
 

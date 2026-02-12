@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @With
 @Document(collection = "capoevent")
 public record CapoEvent(
-        String eventId,
+        String id,
         String creatorId,
         String creatorName,
         String eventTitle,

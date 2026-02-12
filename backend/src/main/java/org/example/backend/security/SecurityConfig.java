@@ -4,6 +4,7 @@ package org.example.backend.security;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -21,8 +22,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests(a -> a
                         .requestMatchers("/api/auth").permitAll()
                         .requestMatchers("/api/capoevent").permitAll()
-//                        .requestMatchers(HttpMethod.GET, "/api/capoevent").permitAll()
-//                        .requestMatchers(HttpMethod.GET, "/api/capoevent/*").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/capoevent").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/capoevent/*").permitAll()
 //                        .requestMatchers(HttpMethod.POST, "/api/capoevent").authenticated()
 //                        .requestMatchers(HttpMethod.PUT, "/api/capoevent/*").authenticated()
 //                        .requestMatchers(HttpMethod.DELETE,"/api/capoevent/*").authenticated()
