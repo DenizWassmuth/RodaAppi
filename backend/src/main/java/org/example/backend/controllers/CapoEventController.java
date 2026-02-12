@@ -2,9 +2,8 @@ package org.example.backend.controllers;
 
 import org.example.backend.models.CapoEvent;
 import org.example.backend.services.CapoEventService;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -20,6 +19,28 @@ public class CapoEventController {
     @GetMapping
     public List<CapoEvent> getAll() {
         return capoEventService.getAll();
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<CapoEvent> getById(@PathVariable String id) {
+
+        CapoEvent foundEvent = capoEventService.getById(id);
+        if (foundEvent == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity.ok(foundEvent);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Boolean> deleteById(@PathVariable String id) {
+
+        boolean deleted = capoEventService.deleteById(id);
+        if (deleted) {
+            return ResponseEntity.noContent().build();
+        }
+
+        return ResponseEntity.notFound().build();
     }
 
 }
