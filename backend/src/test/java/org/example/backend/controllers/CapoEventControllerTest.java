@@ -13,12 +13,11 @@ import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultMatcher;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.time.LocalDateTime;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -86,7 +85,7 @@ class CapoEventControllerTest {
 
     @Test
     @WithMockUser
-    void getById_shouldReturnGivenEvent() throws Exception {
+    void getById_shouldReturnStatusOk_andSavedEvent() throws Exception {
 
         // GIVEN
         capoEventRepo.save(fakeEvent1);
@@ -120,6 +119,23 @@ class CapoEventControllerTest {
         //WHEN
         mockMvc.perform(get("/api/capoevent/2"))
                 //THEN
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void deleteById_shouldReturnStatusNoContent() throws Exception {
+        capoEventRepo.save(fakeEvent1);
+
+        mockMvc.perform(delete("/api/capoevent/1"))
+                .andExpect(status().isNoContent());
+    }
+
+    @Test
+    void deleteById_shouldReturnStatusNotFound() throws Exception {
+
+        capoEventRepo.save(fakeEvent1); // has id 1
+
+        mockMvc.perform(delete("/api/capoevent/2"))
                 .andExpect(status().isNotFound());
     }
 }
