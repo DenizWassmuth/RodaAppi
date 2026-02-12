@@ -10,7 +10,8 @@ import {useEffect, useState} from "react";
 import LoggedInPage from "./components/LoggedInPage.tsx";
 import ProtectedRoute from "./components/ProtectedRoute.tsx";
 import axios from "axios";
-import type {AppUser} from "./types/UserType.ts";
+import type {AppUserType} from "./types/AppUser.ts";
+
 
 function login(){
     // schaue wo sind wir gerade und passe die Zieladresse entsprechend an
@@ -27,7 +28,7 @@ function logout(){
 
 function App() {
 
-    const [user, setUser] = useState<AppUser>(undefined);
+    const [user, setUser] = useState<AppUserType>(undefined);
 
     const loadUser = () => {
         axios.get("/api/auth")
@@ -41,7 +42,7 @@ function App() {
 
   return (
       <>
-          <header><Navbar user={user} setUser={setUser}/></header>
+          <header><Navbar appUser={user} setAppUser={setUser}/></header>
           {user === null  && <button onClick={login}>Login</button>}
           {user !== null && user !== undefined && <button onClick={logout}>Logout</button>}
           <Routes>

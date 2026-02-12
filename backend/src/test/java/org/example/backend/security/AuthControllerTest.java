@@ -37,9 +37,7 @@ class AuthControllerTest {
     private final String appUserJSON = """
             {
             "id":"1",
-            "username": "chiko",
-            "createdIds": ["2"],
-            "bookmarkedIds": ["3"]
+            "username": "chiko"
             }
             """;
 

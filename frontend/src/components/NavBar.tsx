@@ -2,7 +2,7 @@ import '../index.css'
 import {useNavigate} from "react-router-dom";
 import Logging from "./Logging.tsx";
 import type {FormEvent} from "react";
-import type {UserProps} from "../types/UserType.ts";
+import type {UserProps} from "../types/AppUser.ts";
 
 function handleOnClick(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();

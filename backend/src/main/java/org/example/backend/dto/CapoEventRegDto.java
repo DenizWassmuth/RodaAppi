@@ -1,27 +1,21 @@
-package org.example.backend.models;
+package org.example.backend.dto;
 
 import lombok.With;
-import org.example.backend.data.LocationData;
 import org.example.backend.enums.CapoEventType;
 import org.example.backend.enums.RepetitionRhythm;
-import org.springframework.data.mongodb.core.mapping.Document;
-
 
 import java.time.LocalDateTime;
 
 @With
-@Document(collection = "capoevent")
-public record CapoEvent(
-        String id,
-        String creatorId,
+public record CapoEventRegDto(
         String creatorName,
         String eventTitle,
         String eventDescription,
         String thumbnail,
-        LocationData locationData,
+        String eventLocation,
+        String street,
         LocalDateTime eventStart,
         LocalDateTime eventEnd,
         CapoEventType eventType,
-        RepetitionRhythm repRhythm
-        ) {
+        RepetitionRhythm repRhythm) {
 }

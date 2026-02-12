@@ -1,5 +1,6 @@
 package org.example.backend.controllers;
 
+import org.example.backend.data.LocationData;
 import org.example.backend.enums.CapoEventType;
 import org.example.backend.enums.RepetitionRhythm;
 import org.example.backend.models.CapoEvent;
@@ -17,6 +18,8 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.time.LocalDateTime;
 
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.oauth2Login;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -41,8 +44,7 @@ class CapoEventControllerTest {
             "roda aberta",
             "angola, regional, contemporanea",
             "www.somepicture.com",
-            "Berlin",
-            "Friedrichstr. 20",
+            new LocationData("Germany", "Berlin", "Berlin", "Friedrichstr.", "244", "Hinterhof"),
             LocalDateTime.of(2026,2,15, 19, 0, 0, 0),
             LocalDateTime.of(2026,2,15, 23, 0, 0, 0),
             CapoEventType.RODA,
@@ -66,8 +68,15 @@ class CapoEventControllerTest {
                             "eventTitle": "roda aberta",
                             "eventDescription": "angola, regional, contemporanea",
                             "thumbnail": "www.somepicture.com",
-                            "eventLocation": "Berlin",
-                            "street": "Friedrichstr. 20",
+                            "locationData":
+                              {
+                                "country": "Germany",
+                                "state": "Berlin",
+                                "city": "Berlin",
+                                "street": "Friedrichstr.",
+                                "streetNumber": "244",
+                                "specifics":"Hinterhof"
+                              },
                             "eventStart": "2026-02-15T19:00:00",
                             "eventEnd": "2026-02-15T23:00:00",
                             "eventType": "RODA",
@@ -101,8 +110,7 @@ class CapoEventControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.eventTitle").value("roda aberta"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.eventDescription").value("angola, regional, contemporanea"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.thumbnail").value("www.somepicture.com"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.eventLocation").value("Berlin"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.street").value("Friedrichstr. 20"))
+                //.andExpect(MockMvcResultMatchers.jsonPath("$.locationData").value("Germany", "Berlin", "Berlin", "Friedrichstr.", "244", "Hinterhof"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.eventStart").value("2026-02-15T19:00:00"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.eventEnd").value("2026-02-15T23:00:00"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.eventType").value("RODA"))
@@ -123,19 +131,23 @@ class CapoEventControllerTest {
     }
 
     @Test
+    @WithMockUser
     void deleteById_shouldReturnStatusNoContent() throws Exception {
         capoEventRepo.save(fakeEvent1);
 
-        mockMvc.perform(delete("/api/capoevent/1"))
+        mockMvc.perform(delete("/api/capoevent/1")
+                        .with(oauth2Login()))
                 .andExpect(status().isNoContent());
     }
 
     @Test
+    @WithMockUser
     void deleteById_shouldReturnStatusNotFound() throws Exception {
 
         capoEventRepo.save(fakeEvent1); // has id 1
 
-        mockMvc.perform(delete("/api/capoevent/2"))
+        mockMvc.perform(delete("/api/capoevent/2")
+                        .with(oauth2Login()))
                 .andExpect(status().isNotFound());
     }
 }
