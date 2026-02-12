@@ -1,3 +1,6 @@
+export type CapoEventEnumType = "RODA" | "WORKSHOP" ;
+
+export type RepetitionRhythmEnumType = "ONCE" | "DAILY" | "WEEKLY" | "MONTHLY" | "YEARLY" | "CUSTOM";
 
 export type LocationDataType = {
     country: string;
@@ -9,16 +12,21 @@ export type LocationDataType = {
 };
 
 export type CapoEventType = {
-    id: string;
-    creatorId: string;
-    creatorName: string;
-    eventTitle: string;
-    eventDescription: string;
+    id: string,
+    creatorId: string,
+    creatorName: string,
+    eventTitle: string,
+    eventDescription: string,
     thumbnail: string;
     locationData: LocationDataType;
     eventStart: string;
     eventEnd: string;
-    eventType: string;
-    repRhythm: string;
+    eventType: CapoEventEnumType;
+    repRhythm: RepetitionRhythmEnumType;
+}
+
+export type CapoEventProps = {
+    capoEvent: CapoEventType;
+    setCapoEvent: (capoEvent: CapoEventType) => void;
 }
 

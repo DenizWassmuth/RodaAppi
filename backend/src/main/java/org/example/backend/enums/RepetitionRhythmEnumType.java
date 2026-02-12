@@ -1,6 +1,6 @@
 package org.example.backend.enums;
 
-public enum RepetitionRhythm {
+public enum RepetitionRhythmEnumType {
     ONCE("once"),
     DAILY("daily"),
     WEEKLY("weekly"),
@@ -10,7 +10,7 @@ public enum RepetitionRhythm {
     CUSTOM("custom");
 
     private final String literal;
-    RepetitionRhythm(String literal) {
+    RepetitionRhythmEnumType(String literal) {
         this.literal = literal;
     }
 }

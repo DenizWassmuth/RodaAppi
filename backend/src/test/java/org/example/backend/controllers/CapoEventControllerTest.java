@@ -1,8 +1,8 @@
 package org.example.backend.controllers;
 
 import org.example.backend.data.LocationData;
-import org.example.backend.enums.CapoEventType;
-import org.example.backend.enums.RepetitionRhythm;
+import org.example.backend.enums.CapoEventEnumType;
+import org.example.backend.enums.RepetitionRhythmEnumType;
 import org.example.backend.models.CapoEvent;
 import org.example.backend.repositories.CapoEventRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -18,7 +18,6 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.time.LocalDateTime;
 
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.oauth2Login;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -47,8 +46,8 @@ class CapoEventControllerTest {
             new LocationData("Germany", "Berlin", "Berlin", "Friedrichstr.", "244", "Hinterhof"),
             LocalDateTime.of(2026,2,15, 19, 0, 0, 0),
             LocalDateTime.of(2026,2,15, 23, 0, 0, 0),
-            CapoEventType.RODA,
-            RepetitionRhythm.ONCE
+            CapoEventEnumType.RODA,
+            RepetitionRhythmEnumType.ONCE
     );
 
     @Test

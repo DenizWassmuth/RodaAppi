@@ -2,8 +2,8 @@ package org.example.backend.models;
 
 import lombok.With;
 import org.example.backend.data.LocationData;
-import org.example.backend.enums.CapoEventType;
-import org.example.backend.enums.RepetitionRhythm;
+import org.example.backend.enums.CapoEventEnumType;
+import org.example.backend.enums.RepetitionRhythmEnumType;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 
@@ -21,7 +21,7 @@ public record CapoEvent(
         LocationData locationData,
         LocalDateTime eventStart,
         LocalDateTime eventEnd,
-        CapoEventType eventType,
-        RepetitionRhythm repRhythm
+        CapoEventEnumType eventType,
+        RepetitionRhythmEnumType repRhythm
         ) {
 }

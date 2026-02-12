@@ -11,24 +11,16 @@ import LoggedInPage from "./components/LoggedInPage.tsx";
 import ProtectedRoute from "./components/ProtectedRoute.tsx";
 import axios from "axios";
 import type {AppUserType} from "./types/AppUser.ts";
+import type {CapoEventType} from "./types/CapoEvent.ts";
+import CapoEventCard from "./components/CapoEventCard.tsx";
 
 
-function login(){
-    // schaue wo sind wir gerade und passe die Zieladresse entsprechend an
-    const host:string = globalThis.location.host === "localhost:5173" ?
-        "http://localhost:8080" : window.location.origin
-    window.open(host + "/oauth2/authorization/github", "_self")
-}
 
-function logout(){
-    const host:string = globalThis.location.host === "localhost:5173" ?
-        "http://localhost:8080" : window.location.origin
-    window.open(host + "/logout", "_self")
-}
 
 function App() {
 
     const [user, setUser] = useState<AppUserType>(undefined);
+    const [capoEvents, setCapoEvents] = useState<CapoEventType[]>([]);
 
     const loadUser = () => {
         axios.get("/api/auth")
@@ -36,15 +28,25 @@ function App() {
             .catch((error) => setUser(null));
     }
 
+    function fetchEvents(){
+        axios.get("/api/capoevent")
+        .then((response) => setCapoEvents(response.data))
+    }
+
     useEffect(() => {
         loadUser();
+        fetchEvents();
     }, []);
 
   return (
       <>
           <header><Navbar appUser={user} setAppUser={setUser}/></header>
-          {user === null  && <button onClick={login}>Login</button>}
-          {user !== null && user !== undefined && <button onClick={logout}>Logout</button>}
+          <div>
+              <main>
+                  {capoEvents.map(capoEvent => (<CapoEventCard capoEvent={capoEvent} />))}
+              </main>
+          </div>
+
           <Routes>
               <Route path={"/"} element={<LandingPage/>}/>
               <Route path={"/rodas"} element={<RodasPage/>}/>
