@@ -3,6 +3,8 @@ package org.example.backend.controllers;
 import org.example.backend.models.CapoEvent;
 import org.example.backend.services.CapoEventService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -42,5 +44,4 @@ public class CapoEventController {
 
         return ResponseEntity.notFound().build();
     }
-
 }

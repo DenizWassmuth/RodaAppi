@@ -14,9 +14,6 @@ import type {AppUserType} from "./types/AppUser.ts";
 import type {CapoEventType} from "./types/CapoEvent.ts";
 import CapoEventCard from "./components/CapoEventCard.tsx";
 
-
-
-
 function App() {
 
     const [user, setUser] = useState<AppUserType>(undefined);

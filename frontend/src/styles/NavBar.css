@@ -1,4 +1,4 @@
-.navbar-div {
+.navbar_div {
     position: fixed;
     top: 0;
     left: 50%;
@@ -11,7 +11,7 @@
     border-radius: 20px;
 }
 
-.navbar-btn {
+.navbar_btn {
     padding: 30px 50px;
     border: 5px solid yellow;
 
@@ -23,7 +23,7 @@
     height: 100%;
 }
 
-.navbar-btn:hover {
+.navbar_btn:hover {
     background-color: darkgray;
     color: black;
 }

@@ -29,21 +29,28 @@ export default function Navbar(props:Readonly<UserProps>) {
         nav(path);
     }
 
+    const isLoggedIn = props.appUser !== null && props.appUser !== undefined;
+
     return (
-        <div className="navbar-div">
+        <div className="navbar_div">
             <form onSubmit={handleOnClick}>
-                <button className="navbar-btn" onClick={() => goTo("/")}>Home</button>
-                <button className="navbar-btn" onClick={() => goTo("/rodas")}>Rodas</button>
-                <button className="navbar-btn" onClick={() => goTo("/workshops")}>Workshops</button>
-                <button className="navbar-btn" onClick={() => goTo("/loggedin")}>logged in</button>
+                <button className="navbar_btn" onClick={() => goTo("/")}>Home</button>
+                <button className="navbar_btn" onClick={() => goTo("/rodas")}>Rodas</button>
+                <button className="navbar_btn" onClick={() => goTo("/workshops")}>Workshops</button>
 
                 <Logging appUser={props.appUser} setAppUser={props.setAppUser}/>
 
-                {
-                    props.appUser === null && <button className="navbar-btn" onClick={login}>Login</button>
+                {!isLoggedIn && (
+                    <>
+                        <button className="navbar_btn" onClick={login}>Login</button>
+                    </>)
                 }
-                {
-                    props.appUser !== null && props.appUser !== undefined && <button className="navbar-btn" onClick={logout}>Logout</button>
+
+                {isLoggedIn && (
+                    <>
+                        <button className="navbar_btn" onClick={() => goTo("/loggedin")}>logged in</button>
+                        <button className="navbar_btn" onClick={logout}>Logout</button>
+                    </>)
                 }
             </form>
         </div>
