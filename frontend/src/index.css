@@ -1,3 +1,4 @@
+{/*
 :root {
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
@@ -64,5 +65,45 @@ button:focus-visible {
   }
   button {
     background-color: #f9f9f9;
+  }
+}
+*/}
+
+body {
+  background-color: black;
+}
+
+.page_layout {
+  display: grid;
+
+  column-gap: 40px;
+  padding: 20px;
+  margin-top: 130px;
+  max-width: 100%;
+}
+
+.events_row {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px;
+}
+
+@media (max-width: 1000px) {
+  .page_layout {
+    grid-template-columns: 1fr;
+  }
+
+  .filter-sidebar {
+    position: static;
+  }
+
+  .events_row {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .events_row {
+    grid-template-columns: 1fr;
   }
 }

@@ -12,11 +12,11 @@ import ProtectedRoute from "./components/ProtectedRoute.tsx";
 import axios from "axios";
 import type {AppUserType} from "./types/AppUser.ts";
 import type {CapoEventType} from "./types/CapoEvent.ts";
-import CapoEventCard from "./components/CapoEventCard.tsx";
+import CapoEventPage from "./components/CapoEventPage.tsx";
 
 function App() {
 
-    const [user, setUser] = useState<AppUserType>(undefined);
+    const [user, setUser] = useState<AppUserType>(null);
     const [capoEvents, setCapoEvents] = useState<CapoEventType[]>([]);
 
     const loadUser = () => {
@@ -25,29 +25,24 @@ function App() {
             .catch((error) => setUser(null));
     }
 
-    function fetchEvents(){
-        axios.get("/api/capoevent")
-        .then((response) => setCapoEvents(response.data))
+    async function fetchEvents(){
+       await axios.get<CapoEventType[]>("/api/capoevent").
+       then((response) => setCapoEvents(response.data));
     }
 
     useEffect(() => {
         loadUser();
-        fetchEvents();
+        fetchEvents().then(() => console.log("data fetched"));
     }, []);
 
   return (
       <>
           <header><Navbar appUser={user} setAppUser={setUser}/></header>
-          <div>
-              <main>
-                  {capoEvents.map(capoEvent => (<CapoEventCard capoEvent={capoEvent} />))}
-              </main>
-          </div>
-
           <Routes>
-              <Route path={"/"} element={<LandingPage/>}/>
-              <Route path={"/rodas"} element={<RodasPage/>}/>
-              <Route path={"/workshops"} element={<WorkshopsPage/>}/>
+              <Route path={"/"} element={<LandingPage events={capoEvents}/>}/>
+              <Route path={"/rodas"} element={<RodasPage events={capoEvents}/>}/>
+              <Route path={"/workshops"} element={<WorkshopsPage events={capoEvents}/>}/>
+              <Route path={"/capoevent/:id"} element={<CapoEventPage appUser={user} fetchEvents={fetchEvents}/>}/>
 
               <Route element={<ProtectedRoute user={user?.username}/> }>
                   <Route path={"/loggedin"} element={<LoggedInPage userName={user?.username}/>}/>

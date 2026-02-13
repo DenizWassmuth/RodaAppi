@@ -1,13 +1,7 @@
 import '../index.css'
 import {useNavigate} from "react-router-dom";
-import Logging from "./Logging.tsx";
-import type {FormEvent} from "react";
 import type {UserProps} from "../types/AppUser.ts";
 import '../styles/NavBar.css'
-
-function handleOnClick(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-}
 
 function login(){
     // schaue wo sind wir gerade und passe die Zieladresse entsprechend an
@@ -33,26 +27,22 @@ export default function Navbar(props:Readonly<UserProps>) {
 
     return (
         <div className="navbar_div">
-            <form onSubmit={handleOnClick}>
-                <button className="navbar_btn" onClick={() => goTo("/")}>Home</button>
-                <button className="navbar_btn" onClick={() => goTo("/rodas")}>Rodas</button>
-                <button className="navbar_btn" onClick={() => goTo("/workshops")}>Workshops</button>
-
-                <Logging appUser={props.appUser} setAppUser={props.setAppUser}/>
+                <button className="navbar_btn" type={"button"} onClick={() => goTo("/")}>Home</button>
+                <button className="navbar_btn" type={"button"} onClick={() => goTo("/rodas")}>Rodas</button>
+                <button className="navbar_btn" type={"button"} onClick={() => goTo("/workshops")}>Workshops</button>
 
                 {!isLoggedIn && (
                     <>
-                        <button className="navbar_btn" onClick={login}>Login</button>
+                        <button className="navbar_btn" type={"button"}  onClick={login}>Login</button>
                     </>)
                 }
 
                 {isLoggedIn && (
                     <>
-                        <button className="navbar_btn" onClick={() => goTo("/loggedin")}>logged in</button>
-                        <button className="navbar_btn" onClick={logout}>Logout</button>
+                        <button className="navbar_btn" type={"button"} onClick={() => goTo("/loggedin")}>Dashboard</button>
+                        <button className="navbar_btn" type={"button"} onClick={logout}>Logout</button>
                     </>)
                 }
-            </form>
         </div>
     )
 }
