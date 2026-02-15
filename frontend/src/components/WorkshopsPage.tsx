@@ -18,7 +18,7 @@ export default function WorkshopsPage(props: Readonly<EventsProps>) {
                     {
                         props.events
                             .filter(capoEvent => capoEvent.eventType.match("WORKSHOP"))
-                            .map((event: CapoEventType) => (<CapoEventCard key={event.id} capoEvent={event} />))
+                            .map((event: CapoEventType) => (<CapoEventCard key={event.id} capoEvent={event}/>))
                     }
                 </div>
             </main>

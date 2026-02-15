@@ -12,7 +12,6 @@ import java.util.Optional;
 public class CapoEventService {
 
     private final CapoEventRepository capoEventRepo;
-
     public CapoEventService(CapoEventRepository repo) {
         this.capoEventRepo = repo;
     }
