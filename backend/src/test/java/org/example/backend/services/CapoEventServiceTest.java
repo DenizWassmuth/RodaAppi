@@ -84,9 +84,9 @@ CapoEvent fakeEvent1 = new CapoEvent(
     @Test
     void deleteById_shouldReturnTrue_whenEventIsDeleted() {
 
-        Mockito.when(capoEventRepo.existsById("1")).thenReturn(true);
+        Mockito.when(capoEventRepo.findById("1")).thenReturn(Optional.of(fakeEvent1));
 
-        boolean expected = capoEventService.deleteById("1");
+        boolean expected = capoEventService.deleteById("1", fakeEvent1.id());
 
         assertTrue(expected);
     }
@@ -94,10 +94,28 @@ CapoEvent fakeEvent1 = new CapoEvent(
     @Test
     void deleteById_shouldReturnFalse_whenEventDoesNotExist() {
 
-        Mockito.when(capoEventRepo.existsById("1")).thenReturn(false);
+        Mockito.when(capoEventRepo.findById("1")).thenReturn(Optional.empty());
 
-        boolean expected = capoEventService.deleteById("1");
+        boolean actual = capoEventService.deleteById("1", "1");
 
-        assertFalse(expected);
+        assertFalse(actual);
+    }
+
+    @Test
+    void deleteById_shouldReturnFalse_whenWhenCreatorIdAndUserIdDoNotMatch() {
+
+        Mockito.when(capoEventRepo.findById("1")).thenReturn(Optional.of(fakeEvent1));
+
+        boolean actual = capoEventService.deleteById("1", "4");
+
+        assertFalse(actual);
+    }
+
+    @Test
+    void getAllByCreatorId() {
+    }
+
+    @Test
+    void createCapoEvent() {
     }
 }

@@ -134,18 +134,29 @@ class CapoEventControllerTest {
     void deleteById_shouldReturnStatusNoContent() throws Exception {
         capoEventRepo.save(fakeEvent1);
 
-        mockMvc.perform(delete("/api/capoevent/1")
+        mockMvc.perform(delete("/api/capoevent/1/1")
                         .with(oauth2Login()))
                 .andExpect(status().isNoContent());
     }
 
     @Test
     @WithMockUser
-    void deleteById_shouldReturnStatusNotFound() throws Exception {
+    void deleteById_shouldReturnStatusNotFound_whenFoundButCreatorIdDoesNotMatchUserId() throws Exception {
 
         capoEventRepo.save(fakeEvent1); // has id 1
 
-        mockMvc.perform(delete("/api/capoevent/2")
+        mockMvc.perform(delete("/api/capoevent/2/1")
+                        .with(oauth2Login()))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @WithMockUser
+    void deleteById_shouldReturnStatusNotFound_whenEventWithEventIdIsNotFound() throws Exception {
+
+        capoEventRepo.save(fakeEvent1); // has id 1
+
+        mockMvc.perform(delete("/api/capoevent/1/2")
                         .with(oauth2Login()))
                 .andExpect(status().isNotFound());
     }

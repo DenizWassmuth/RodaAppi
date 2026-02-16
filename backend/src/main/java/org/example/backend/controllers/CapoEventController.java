@@ -34,11 +34,10 @@ public class CapoEventController {
         return ResponseEntity.ok(foundEvent);
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Boolean> deleteById(@PathVariable String id) {
+    @DeleteMapping("/{userId}/{eventId}")
+    public ResponseEntity<Boolean> deleteById(@PathVariable String userId, @PathVariable String eventId) {
 
-        boolean deleted = capoEventService.deleteById(id);
-        if (deleted) {
+        if (capoEventService.deleteById(userId, eventId)) {
             return ResponseEntity.noContent().build();
         }
 
