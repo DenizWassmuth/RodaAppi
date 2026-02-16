@@ -41,11 +41,6 @@ export default function CapoEventPage(props:Readonly<EventPageProps>) {
 
         console.log("awaiting axios response for deleteEvent with eventId: ", eventId);
 
-        //await axios.delete(`/api/capoevent/${user.id}/${eventId}`)
-        //    .then(() => props.fetchEvents()
-        //        .then(() => nav("/"))
-        //        .catch(error => console.log( error + ", axios responded with error for deleteEvent with eventId : ", eventId)));
-
        await deleteCapoEvent(user.id, eventId, props.fetchEvents, nav, "/");
     }
 
@@ -58,12 +53,9 @@ export default function CapoEventPage(props:Readonly<EventPageProps>) {
                 </div>
                 <div>
                     <div className="details">
-
                         {eventIsCreatedByUser && (
-                            <>
-                                <button type={"button"} onClick={() => deleteEvent(props.appUser, capoEvent?.id)}>delete</button>
-                            </>)
-                        }
+                            <button type={"button"} onClick={() => deleteEvent(props.appUser, capoEvent?.id)}>delete</button>
+                        )}
                         {/* <p><b>Streamable:</b> {movie.streamable.length ? movie.streamable.join(", ") : "—"}</p>
                         <p><b>Release date:</b> {w.releaseDate}</p>
                         <p><b>Duration:</b> {w.duration}</p>

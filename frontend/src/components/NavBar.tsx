@@ -6,13 +6,13 @@ import '../styles/NavBar.css'
 function login(){
     // schaue wo sind wir gerade und passe die Zieladresse entsprechend an
     const host:string = globalThis.location.host === "localhost:5173" ?
-        "http://localhost:8080" : window.location.origin
+        "http://localhost:8080" : globalThis.location.origin
     window.open(host + "/oauth2/authorization/github", "_self")
 }
 
 function logout(){
     const host:string = globalThis.location.host === "localhost:5173" ?
-        "http://localhost:8080" : window.location.origin
+        "http://localhost:8080" : globalThis.location.origin
     window.open(host + "/logout", "_self")
 }
 
@@ -32,9 +32,8 @@ export default function Navbar(props:Readonly<UserProps>) {
                 <button className="navbar_btn" type={"button"} onClick={() => goTo("/workshops")}>Workshops</button>
 
                 {!isLoggedIn && (
-                    <>
-                        <button className="navbar_btn" type={"button"}  onClick={login}>Login</button>
-                    </>)
+                    <button className="navbar_btn" type={"button"}  onClick={login}>Login</button>
+                   )
                 }
 
                 {isLoggedIn && (

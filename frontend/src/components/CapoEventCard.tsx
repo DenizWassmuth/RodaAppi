@@ -26,14 +26,13 @@ export default function CapoEventCard(props: Readonly<EventCardProps>) {
     }
 
     return (
-        <>
             <Link className="card_link" to={`/capoevent/${props.capoEvent.id}`}>
                 <div className="event_card" style={{backgroundImage: `url(${props.capoEvent.thumbnail})`}}>
                     <div className="event_info">
                         <h3>{props.capoEvent.eventTitle}</h3>
                         <p>{props.capoEvent.eventType} · {props.capoEvent.locationData.city} · {props.capoEvent.eventStart}</p>
                         <p>{props.capoEvent.creatorName}</p>
-                        {isCreatedByUser && (<>
+                        {isCreatedByUser && (
                             <p>
                                 <button type={"button"}
                                         onClick={(e) => {
@@ -42,10 +41,9 @@ export default function CapoEventCard(props: Readonly<EventCardProps>) {
                                         }}>delete
                                 </button>
                             </p>
-                        </>)}
+                        )}
                     </div>
                 </div>
             </Link>
-        </>
     )
 }
