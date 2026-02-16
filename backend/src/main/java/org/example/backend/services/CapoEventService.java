@@ -52,12 +52,10 @@ public class CapoEventService {
         );
 
         // TODO: compare if same event already exists
-
         capoEventRepo.save(newEvent);
         return newEvent;
     }
 
-    // TODO fix frontend
     public boolean deleteById(String userId, String eventId){
 
        CapoEvent foundEvent = capoEventRepo.findById(eventId).orElse(null);
