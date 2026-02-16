@@ -4,6 +4,7 @@ import type {CapoEventType} from "../types/CapoEvent.ts";
 import axios from "axios";
 import "../styles/CapoEventPage.css"
 import type {AppUserType} from "../types/AppUser.ts";
+import {deleteCapoEvent} from "../utility/AxiosUtilities.ts";
 
 type EventPageProps = {
     appUser: AppUserType
@@ -40,10 +41,12 @@ export default function CapoEventPage(props:Readonly<EventPageProps>) {
 
         console.log("awaiting axios response for deleteEvent with eventId: ", eventId);
 
-        await axios.delete(`/api/capoevent/${user.id}/${eventId}`)
-            .then(() => props.fetchEvents()
-                .then(() => nav("/"))
-                .catch(error => console.log( error + ", axios responded with error for deleteEvent with eventId : ", eventId)));
+        //await axios.delete(`/api/capoevent/${user.id}/${eventId}`)
+        //    .then(() => props.fetchEvents()
+        //        .then(() => nav("/"))
+        //        .catch(error => console.log( error + ", axios responded with error for deleteEvent with eventId : ", eventId)));
+
+       await deleteCapoEvent(user.id, eventId, props.fetchEvents, nav, "/");
     }
 
     return (

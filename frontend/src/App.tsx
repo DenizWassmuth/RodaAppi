@@ -3,9 +3,6 @@ import './index.css'
 
 import Navbar from "./components/NavBar.tsx";
 import {Route, Routes} from "react-router-dom";
-import LandingPage from "./components/LandingPage.tsx";
-import RodasPage from "./components/RodasPage.tsx";
-import WorkshopsPage from "./components/WorkshopsPage.tsx";
 import {useEffect, useState} from "react";
 import LoggedInPage from "./components/LoggedInPage.tsx";
 import ProtectedRoute from "./components/ProtectedRoute.tsx";
@@ -13,6 +10,8 @@ import axios from "axios";
 import type {AppUserType} from "./types/AppUser.ts";
 import type {CapoEventType} from "./types/CapoEvent.ts";
 import CapoEventPage from "./components/CapoEventPage.tsx";
+import PreviewPage from "./components/PreviewPage.tsx";
+
 
 function App() {
 
@@ -25,27 +24,29 @@ function App() {
             .catch((error) => setUser(null));
     }
 
-    async function fetchEvents(){
-       await axios.get<CapoEventType[]>("/api/capoevent").
-       then((response) => setCapoEvents(response.data));
+    async function fetchEvents() {
+        return await axios.get<CapoEventType[]>("/api/capoevent")
+            .then((response) => setCapoEvents(response.data));
     }
+
 
     useEffect(() => {
         loadUser();
-        fetchEvents().then(() => console.log("data fetched"));
+        fetchEvents()
+            .catch((error) => error + ": could not fetch capoEvents");
     }, []);
 
   return (
       <>
           <header><Navbar appUser={user} setAppUser={setUser}/></header>
           <Routes>
-              <Route path={"/"} element={<LandingPage events={capoEvents}/>}/>
-              <Route path={"/rodas"} element={<RodasPage events={capoEvents}/>}/>
-              <Route path={"/workshops"} element={<WorkshopsPage events={capoEvents}/>}/>
+              <Route path={"/"} element={<PreviewPage userId={user?.id} events={capoEvents} fetchEvents={fetchEvents} typeOfEvent={"NONE"}/>}/>
+              <Route path={"/rodas"} element={<PreviewPage userId={user?.id} events={capoEvents} fetchEvents={fetchEvents} typeOfEvent={"RODA"}/>}/>
+              <Route path={"/workshops"} element={<PreviewPage userId={user?.id} events={capoEvents} fetchEvents={fetchEvents} typeOfEvent={"WORKSHOP"}/>}/>
               <Route path={"/capoevent/:id"} element={<CapoEventPage appUser={user} fetchEvents={fetchEvents}/>}/>
 
               <Route element={<ProtectedRoute user={user?.username}/> }>
-                  <Route path={"/loggedin"} element={<LoggedInPage userName={user?.username}/>}/>
+                  <Route path={"/loggedin"} element={<LoggedInPage userId={user?.id} events={capoEvents} fetchEvents={fetchEvents} typeOfEvent={"NONE"}/>}/>
               </Route>
           </Routes>
       </>

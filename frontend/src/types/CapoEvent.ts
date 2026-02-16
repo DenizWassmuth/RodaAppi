@@ -1,4 +1,4 @@
-export type CapoEventEnumType = "RODA" | "WORKSHOP" ;
+export type CapoEventEnumType = "RODA" | "WORKSHOP" | "NONE" ;
 
 export type RepetitionRhythmEnumType = "ONCE" | "DAILY" | "WEEKLY" | "MONTHLY" | "YEARLY" | "CUSTOM";
 
