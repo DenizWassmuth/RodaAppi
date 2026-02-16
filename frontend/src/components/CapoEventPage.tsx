@@ -53,9 +53,8 @@ export default function CapoEventPage(props:Readonly<EventPageProps>) {
                 </div>
                 <div>
                     <div className="details">
-                        {eventIsCreatedByUser && (
-                            <button type={"button"} onClick={() => deleteEvent(props.appUser, capoEvent?.id)}>delete</button>
-                        )}
+                        <button type={"button"} disabled={!eventIsCreatedByUser} hidden={!eventIsCreatedByUser}
+                                onClick={() => deleteEvent(props.appUser, capoEvent?.id)}>delete</button>
                         {/* <p><b>Streamable:</b> {movie.streamable.length ? movie.streamable.join(", ") : "—"}</p>
                         <p><b>Release date:</b> {w.releaseDate}</p>
                         <p><b>Duration:</b> {w.duration}</p>

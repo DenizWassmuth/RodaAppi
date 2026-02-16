@@ -1,12 +1,14 @@
 package org.example.backend.controllers;
 
 import org.example.backend.data.LocationData;
+import org.example.backend.dto.CapoEventRegDto;
 import org.example.backend.enums.CapoEventEnumType;
 import org.example.backend.enums.RepetitionRhythmEnumType;
 import org.example.backend.models.CapoEvent;
 import org.example.backend.repositories.CapoEventRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
@@ -18,6 +20,8 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.time.LocalDateTime;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.oauth2Login;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -159,5 +163,52 @@ class CapoEventControllerTest {
         mockMvc.perform(delete("/api/capoevent/1/2")
                         .with(oauth2Login()))
                 .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @WithMockUser
+    void create_shouldReturnStatusBadRequest() throws Exception {
+
+        mockMvc.perform(post("/api/capoevent")
+                        .with(oauth2Login()))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @WithMockUser
+    void create_shouldReturnStatusNoContent() throws Exception {
+
+        mockMvc.perform(post("/api/capoevent")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "userId": "123456",
+                                  "eventTitle": "Roda Aberta",
+                                  "eventDescription": "Angola + Regional. Bring water, beginners welcome.",
+                                  "thumbnail": "https://example.com/images/roda.jpg",
+                                  "locationData": {
+                                    "city": "Berlin",
+                                    "street": "Friedrichstr. 20",
+                                    "zip": "10117",
+                                    "country": "DE"
+                                  },
+                                  "eventStart": "2026-02-15T19:00:00",
+                                  "eventEnd": "2026-02-15T23:00:00",
+                                  "eventType": "RODA",
+                                  "repRhythm": "ONCE"
+                                }
+                                
+                                """)
+                        .with(oauth2Login()))
+                .andExpect(status().isCreated())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.creatorId").value("123456"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.eventTitle").value("Roda Aberta"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.eventDescription").value("Angola + Regional. Bring water, beginners welcome."))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.thumbnail").value("https://example.com/images/roda.jpg"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.locationData").isNotEmpty())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.eventType").value("RODA"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.repRhythm").value("ONCE"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.eventStart").value("2026-02-15T19:00:00"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.eventEnd").value("2026-02-15T23:00:00"));
     }
 }

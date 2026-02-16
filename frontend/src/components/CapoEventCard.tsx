@@ -25,25 +25,28 @@ export default function CapoEventCard(props: Readonly<EventCardProps>) {
             .catch((error) => {console.log("could not delete capoEvent through CapoEventCard: " + error.toString())});
     }
 
+    const localDateTime = props.capoEvent.eventStart;
+
+    const [date, timeWithRest] = localDateTime.split("T");
+    const time = timeWithRest.slice(0, 5);
+
     return (
-            <Link className="card_link" to={`/capoevent/${props.capoEvent.id}`}>
-                <div className="event_card" style={{backgroundImage: `url(${props.capoEvent.thumbnail})`}}>
-                    <div className="event_info">
-                        <h3>{props.capoEvent.eventTitle}</h3>
-                        <p>{props.capoEvent.eventType} · {props.capoEvent.locationData.city} · {props.capoEvent.eventStart}</p>
-                        <p>{props.capoEvent.creatorName}</p>
-                        {isCreatedByUser && (
-                            <p>
-                                <button type={"button"}
-                                        onClick={(e) => {
-                                            e.preventDefault();
-                                            handleDelete();
-                                        }}>delete
-                                </button>
-                            </p>
-                        )}
-                    </div>
+        <Link className="card_link" to={`/capoevent/${props.capoEvent.id}`}>
+            <div className="event_card" style={{backgroundImage: `url(${props.capoEvent.thumbnail})`}}>
+                <div className="event_info">
+                    <h3>{props.capoEvent.eventTitle}</h3>
+                    <p>{props.capoEvent.eventType} · {props.capoEvent.locationData.city} · {date} · {time} </p>
+                    <p>{props.capoEvent.creatorName}</p>
+                        <p>
+                            <button type={"button"} hidden={!isCreatedByUser} disabled={!isCreatedByUser}
+                                    onClick={(e) => {
+                                        e.preventDefault();
+                                        handleDelete();
+                                    }}>delete
+                            </button>
+                        </p>
                 </div>
-            </Link>
+            </div>
+        </Link>
     )
 }

@@ -30,3 +30,15 @@ export type CapoEventProps = {
     setCapoEvent: (capoEvent: CapoEventType) => void;
 }
 
+export type EventRegDto = {
+    userId: string,
+    eventTitle: string,
+    eventDescription: string,
+    thumbnail: string,
+    locationData: LocationDataType,
+    eventStart: string,
+    eventEnd: string,
+    eventType: CapoEventEnumType,
+    repRhythm: RepetitionRhythmEnumType
+}
+

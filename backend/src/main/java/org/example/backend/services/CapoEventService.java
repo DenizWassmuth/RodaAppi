@@ -32,29 +32,28 @@ public class CapoEventService {
         return capoEventRepo.findById(id).orElse(null);
     }
 
-    public CapoEvent createCapoEvent(CapoEventRegDto RegDto){
+    public CapoEvent createCapoEvent(CapoEventRegDto regDto){
 
-        if(RegDto == null){
-            return null;
+        if (regDto == null) {
+            throw new IllegalArgumentException("regDto is null");
         }
 
         CapoEvent newEvent = new CapoEvent(
                 createId(),
-                RegDto.userId(),
-                RegDto.userName(),
-                RegDto.eventTitle(),
-                RegDto.eventDescription(),
-                RegDto.thumbnail(),
-                RegDto.locationData(),
-                RegDto.eventStart(),
-                RegDto.eventEnd(),
-                RegDto.eventType(),
-                RegDto.repRhythm()
+                regDto.userId(),
+                regDto.userName(),
+                regDto.eventTitle(),
+                regDto.eventDescription(),
+                regDto.thumbnail(),
+                regDto.locationData(),
+                regDto.eventStart(),
+                regDto.eventEnd(),
+                regDto.eventType(),
+                regDto.repRhythm()
         );
 
         // TODO: compare if same event already exists
-        capoEventRepo.save(newEvent);
-        return newEvent;
+        return capoEventRepo.save(newEvent);
     }
 
     public boolean deleteById(String userId, String eventId){

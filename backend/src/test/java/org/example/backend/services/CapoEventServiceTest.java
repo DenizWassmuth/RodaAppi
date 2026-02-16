@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 
 class CapoEventServiceTest {
 
@@ -132,35 +133,36 @@ CapoEvent fakeEvent1 = new CapoEvent(
     }
 
     @Test
-    void createCapoEvent_shouldReturnNull_whenDTOIsNull() {
+    void createCapoEvent_shouldThrowIllegalArgumentException_whenDTOIsNull() {
 
-        CapoEvent actual = capoEventService.createCapoEvent(null);
-        assertNull(actual);
+        assertThrows(IllegalArgumentException.class, () -> capoEventService.createCapoEvent(null));
     }
 
     @Test
     void createCapoEvent_shouldReturnCapoEvent_basedOnRegDto() {
 
-        CapoEventRegDto RegDto = new CapoEventRegDto(
+        Mockito.when(capoEventRepo.save(any())).thenReturn(fakeEvent1);
+
+        CapoEventRegDto regDto = new CapoEventRegDto(
                 "1",
                 "chiko",
-                "Roda im Hinterhof",
-                "come as you like",
-                "www.something.de",
+                "roda aberta",
+                "angola, regional, contemporanea",
+                "www.somepicture.com",
                 new LocationData("Germany", "Berlin", "Berlin", "Friedrichstr.", "244", "Hinterhof"),
-                LocalDateTime.of(2026,11,5,17,0),
-                LocalDateTime.of(2026,11,5,19,0),
+                LocalDateTime.of(2026,2,15, 19, 0, 0, 0),
+                LocalDateTime.of(2026,2,15, 23, 0, 0, 0),
                 CapoEventEnumType.RODA,
                 RepetitionRhythmEnumType.ONCE
         );
 
-        CapoEvent actual = capoEventService.createCapoEvent(RegDto);
+        CapoEvent actual = capoEventService.createCapoEvent(regDto);
 
         assertNotNull(actual);
         assertNotNull(actual.id());
         assertNotEquals(0, actual.id().length());
-        assertEquals(RegDto.userId(), actual.creatorId());
-        assertEquals(RegDto.eventTitle(), actual.eventTitle());
-        assertEquals(RegDto.eventDescription(), actual.eventDescription());
+        assertEquals(regDto.userId(), actual.creatorId());
+        assertEquals(regDto.eventTitle(), actual.eventTitle());
+        assertEquals(regDto.eventDescription(), actual.eventDescription());
     }
 }
