@@ -15,7 +15,8 @@ public class CapoEventService {
     public CapoEventService(CapoEventRepository repo) {
         this.capoEventRepo = repo;
     }
-    private String createdId(){
+
+    String createId(){
         return UUID.randomUUID().toString();
     }
 
@@ -38,7 +39,7 @@ public class CapoEventService {
         }
 
         CapoEvent newEvent = new CapoEvent(
-                createdId(),
+                createId(),
                 RegDto.userId(),
                 RegDto.userName(),
                 RegDto.eventTitle(),

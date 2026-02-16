@@ -22,14 +22,15 @@ export default function CapoEventCard(props: Readonly<EventCardProps>) {
     function handleDelete() {
 
         deleteCapoEvent(props.userId, props.capoEvent.id, props.fetchEvents, nav, location.pathname)
+            .catch((error) => {console.log("could not delete capoEvent through CapoEventCard: " + error.toString())});
     }
 
     return (
         <>
             <Link className="card_link" to={`/capoevent/${props.capoEvent.id}`}>
                 <div className="event_card" style={{backgroundImage: `url(${props.capoEvent.thumbnail})`}}>
-                    <h3>{props.capoEvent.eventTitle}</h3>
                     <div className="event_info">
+                        <h3>{props.capoEvent.eventTitle}</h3>
                         <p>{props.capoEvent.eventType} · {props.capoEvent.locationData.city} · {props.capoEvent.eventStart}</p>
                         <p>{props.capoEvent.creatorName}</p>
                         {isCreatedByUser && (<>
@@ -37,7 +38,6 @@ export default function CapoEventCard(props: Readonly<EventCardProps>) {
                                 <button type={"button"}
                                         onClick={(e) => {
                                             e.preventDefault();
-                                            //e.stopPropagation();
                                             handleDelete();
                                         }}>delete
                                 </button>
