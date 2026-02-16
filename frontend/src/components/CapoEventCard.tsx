@@ -1,4 +1,4 @@
-import {Link, useNavigate} from "react-router-dom";
+import {Link, useLocation, useNavigate} from "react-router-dom";
 import type {CapoEventType} from "../types/CapoEvent.ts";
 import "../styles/CapoEventCard.css"
 import "../index.css"
@@ -12,6 +12,8 @@ type EventCardProps = {
 
 export default function CapoEventCard(props: Readonly<EventCardProps>) {
 
+    const location = useLocation();
+
     const nav = useNavigate();
 
     const eventIsValid = props.capoEvent !== undefined && props.capoEvent !== null;
@@ -19,7 +21,7 @@ export default function CapoEventCard(props: Readonly<EventCardProps>) {
 
     function handleDelete() {
 
-        deleteCapoEvent(props.userId, props.capoEvent.id, props.fetchEvents, nav, "/loggedin")
+        deleteCapoEvent(props.userId, props.capoEvent.id, props.fetchEvents, nav, location.pathname)
     }
 
     return (
