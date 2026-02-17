@@ -10,6 +10,7 @@ import type {AppUserType} from "./types/AppUser.ts";
 import type {CapoEventType} from "./types/CapoEvent.ts";
 import CapoEventPage from "./components/CapoEventPage.tsx";
 import PreviewPage from "./components/PreviewPage.tsx";
+import CreateCapoEventPage from "./components/CreateCapoEventPage.tsx";
 
 
 function App() {
@@ -37,15 +38,16 @@ function App() {
 
   return (
       <>
-          <header><Navbar appUser={user} setAppUser={setUser}/></header>
+          <header><Navbar user={user}/></header>
           <Routes>
-              <Route path={"/"} element={<PreviewPage userId={user?.id} events={capoEvents} fetchEvents={fetchEvents} typeOfEvent={"NONE"}/>}/>
-              <Route path={"/rodas"} element={<PreviewPage userId={user?.id} events={capoEvents} fetchEvents={fetchEvents} typeOfEvent={"RODA"}/>}/>
-              <Route path={"/workshops"} element={<PreviewPage userId={user?.id} events={capoEvents} fetchEvents={fetchEvents} typeOfEvent={"WORKSHOP"}/>}/>
+              <Route path={"/"} element={<PreviewPage user={user} events={capoEvents} fetchEvents={fetchEvents} typeOfEvent={"NONE"}/>}/>
+              <Route path={"/rodas"} element={<PreviewPage user={user} events={capoEvents} fetchEvents={fetchEvents} typeOfEvent={"RODA"}/>}/>
+              <Route path={"/workshops"} element={<PreviewPage user={user} events={capoEvents} fetchEvents={fetchEvents} typeOfEvent={"WORKSHOP"}/>}/>
               <Route path={"/capoevent/:id"} element={<CapoEventPage appUser={user} fetchEvents={fetchEvents}/>}/>
 
               <Route element={<ProtectedRoute user={user?.username}/> }>
-                  <Route path={"/loggedin"} element={<LoggedInPage userId={user?.id} events={capoEvents} fetchEvents={fetchEvents} typeOfEvent={"NONE"}/>}/>
+                  <Route path={"/loggedin"} element={<LoggedInPage user={user} events={capoEvents} fetchEvents={fetchEvents} typeOfEvent={"NONE"}/>}/>
+                  <Route path={"/add"} element={<CreateCapoEventPage user={user} fetchEvents={fetchEvents}/>}/>
               </Route>
           </Routes>
       </>

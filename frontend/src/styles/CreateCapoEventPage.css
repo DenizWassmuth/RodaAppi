@@ -1,0 +1,93 @@
+.create-event {
+    color: white;
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 16px;
+}
+
+.create-event__title {
+    margin: 0 0 16px 0;
+    font-size: 28px;
+}
+
+.create-event__alert {
+    padding: 10px;
+    border-radius: 6px;
+    margin-bottom: 12px;
+    border: 1px solid #333;
+}
+
+.create-event__alert--error {
+    background: #4a0000;
+}
+
+.create-event__alert--success {
+    background: #0a3a0a;
+}
+
+.create-event__form {
+    display: grid;
+    gap: 12px;
+}
+
+.create-event__fieldset {
+    border: 1px solid #444;
+    border-radius: 8px;
+    padding: 12px;
+}
+
+.create-event__legend {
+    padding: 0 8px;
+    color: #ddd;
+}
+
+.create-event__label {
+    display: block;
+    margin-bottom: 10px;
+    color: #ddd;
+}
+
+.create-event__input,
+.create-event__textarea,
+.create-event__select {
+    display: block;
+    width: 100%;
+    margin-top: 6px;
+    padding: 10px;
+    border-radius: 6px;
+    border: 1px solid #555;
+    background: #111;
+    color: white;
+    box-sizing: border-box;
+}
+
+.create-event__textarea {
+    resize: vertical;
+}
+
+.create-event__submit {
+    padding: 10px 16px;
+    border-radius: 8px;
+    border: 1px solid #777;
+    background: #222;
+    color: white;
+    cursor: pointer;
+}
+
+.create-event__submit:hover {
+    background: #333;
+}
+
+/* Make the icon visible on dark backgrounds */
+.create-event__input::-webkit-calendar-picker-indicator {
+    opacity: 1;
+    cursor: pointer;
+
+    /* brighten it */
+    filter: invert(1) brightness(1.4) contrast(1.2);
+
+    /* optional: make it larger + easier to click */
+    width: 22px;
+    height: 22px;
+    padding: 6px;
+}
