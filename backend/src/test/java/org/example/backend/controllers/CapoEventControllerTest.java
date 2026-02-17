@@ -1,8 +1,8 @@
 package org.example.backend.controllers;
 
 import org.example.backend.data.LocationData;
-import org.example.backend.enums.CapoEventType;
-import org.example.backend.enums.RepetitionRhythm;
+import org.example.backend.enums.CapoEventEnumType;
+import org.example.backend.enums.RepetitionRhythmEnumType;
 import org.example.backend.models.CapoEvent;
 import org.example.backend.repositories.CapoEventRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -18,7 +18,6 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.time.LocalDateTime;
 
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.oauth2Login;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -47,8 +46,8 @@ class CapoEventControllerTest {
             new LocationData("Germany", "Berlin", "Berlin", "Friedrichstr.", "244", "Hinterhof"),
             LocalDateTime.of(2026,2,15, 19, 0, 0, 0),
             LocalDateTime.of(2026,2,15, 23, 0, 0, 0),
-            CapoEventType.RODA,
-            RepetitionRhythm.ONCE
+            CapoEventEnumType.RODA,
+            RepetitionRhythmEnumType.ONCE
     );
 
     @Test
@@ -135,19 +134,77 @@ class CapoEventControllerTest {
     void deleteById_shouldReturnStatusNoContent() throws Exception {
         capoEventRepo.save(fakeEvent1);
 
-        mockMvc.perform(delete("/api/capoevent/1")
+        mockMvc.perform(delete("/api/capoevent/1/1")
                         .with(oauth2Login()))
                 .andExpect(status().isNoContent());
     }
 
     @Test
     @WithMockUser
-    void deleteById_shouldReturnStatusNotFound() throws Exception {
+    void deleteById_shouldReturnStatusNotFound_whenFoundButCreatorIdDoesNotMatchUserId() throws Exception {
 
         capoEventRepo.save(fakeEvent1); // has id 1
 
-        mockMvc.perform(delete("/api/capoevent/2")
+        mockMvc.perform(delete("/api/capoevent/2/1")
                         .with(oauth2Login()))
                 .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @WithMockUser
+    void deleteById_shouldReturnStatusNotFound_whenEventWithEventIdIsNotFound() throws Exception {
+
+        capoEventRepo.save(fakeEvent1); // has id 1
+
+        mockMvc.perform(delete("/api/capoevent/1/2")
+                        .with(oauth2Login()))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @WithMockUser
+    void create_shouldReturnStatusBadRequest() throws Exception {
+
+        mockMvc.perform(post("/api/capoevent")
+                        .with(oauth2Login()))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @WithMockUser
+    void create_shouldReturnStatusNoContent() throws Exception {
+
+        mockMvc.perform(post("/api/capoevent")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "userId": "123456",
+                                  "eventTitle": "Roda Aberta",
+                                  "eventDescription": "Angola + Regional. Bring water, beginners welcome.",
+                                  "thumbnail": "https://example.com/images/roda.jpg",
+                                  "locationData": {
+                                    "city": "Berlin",
+                                    "street": "Friedrichstr. 20",
+                                    "zip": "10117",
+                                    "country": "DE"
+                                  },
+                                  "eventStart": "2026-02-15T19:00:00",
+                                  "eventEnd": "2026-02-15T23:00:00",
+                                  "eventType": "RODA",
+                                  "repRhythm": "ONCE"
+                                }
+                                
+                                """)
+                        .with(oauth2Login()))
+                .andExpect(status().isCreated())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.creatorId").value("123456"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.eventTitle").value("Roda Aberta"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.eventDescription").value("Angola + Regional. Bring water, beginners welcome."))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.thumbnail").value("https://example.com/images/roda.jpg"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.locationData").isNotEmpty())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.eventType").value("RODA"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.repRhythm").value("ONCE"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.eventStart").value("2026-02-15T19:00:00"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.eventEnd").value("2026-02-15T23:00:00"));
     }
 }

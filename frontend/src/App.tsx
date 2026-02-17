@@ -1,34 +1,21 @@
-import './App.css'
 import './index.css'
 
 import Navbar from "./components/NavBar.tsx";
 import {Route, Routes} from "react-router-dom";
-import LandingPage from "./components/LandingPage.tsx";
-import RodasPage from "./components/RodasPage.tsx";
-import WorkshopsPage from "./components/WorkshopsPage.tsx";
 import {useEffect, useState} from "react";
 import LoggedInPage from "./components/LoggedInPage.tsx";
 import ProtectedRoute from "./components/ProtectedRoute.tsx";
 import axios from "axios";
 import type {AppUserType} from "./types/AppUser.ts";
+import type {CapoEventType} from "./types/CapoEvent.ts";
+import CapoEventPage from "./components/CapoEventPage.tsx";
+import PreviewPage from "./components/PreviewPage.tsx";
 
-
-function login(){
-    // schaue wo sind wir gerade und passe die Zieladresse entsprechend an
-    const host:string = globalThis.location.host === "localhost:5173" ?
-        "http://localhost:8080" : window.location.origin
-    window.open(host + "/oauth2/authorization/github", "_self")
-}
-
-function logout(){
-    const host:string = globalThis.location.host === "localhost:5173" ?
-        "http://localhost:8080" : window.location.origin
-    window.open(host + "/logout", "_self")
-}
 
 function App() {
 
-    const [user, setUser] = useState<AppUserType>(undefined);
+    const [user, setUser] = useState<AppUserType>(null);
+    const [capoEvents, setCapoEvents] = useState<CapoEventType[]>([]);
 
     const loadUser = () => {
         axios.get("/api/auth")
@@ -36,22 +23,29 @@ function App() {
             .catch((error) => setUser(null));
     }
 
+    async function fetchEvents() {
+        return await axios.get<CapoEventType[]>("/api/capoevent")
+            .then((response) => setCapoEvents(response.data));
+    }
+
+
     useEffect(() => {
         loadUser();
+        fetchEvents()
+            .catch((error) => error + ": could not fetch capoEvents");
     }, []);
 
   return (
       <>
           <header><Navbar appUser={user} setAppUser={setUser}/></header>
-          {user === null  && <button onClick={login}>Login</button>}
-          {user !== null && user !== undefined && <button onClick={logout}>Logout</button>}
           <Routes>
-              <Route path={"/"} element={<LandingPage/>}/>
-              <Route path={"/rodas"} element={<RodasPage/>}/>
-              <Route path={"/workshops"} element={<WorkshopsPage/>}/>
+              <Route path={"/"} element={<PreviewPage userId={user?.id} events={capoEvents} fetchEvents={fetchEvents} typeOfEvent={"NONE"}/>}/>
+              <Route path={"/rodas"} element={<PreviewPage userId={user?.id} events={capoEvents} fetchEvents={fetchEvents} typeOfEvent={"RODA"}/>}/>
+              <Route path={"/workshops"} element={<PreviewPage userId={user?.id} events={capoEvents} fetchEvents={fetchEvents} typeOfEvent={"WORKSHOP"}/>}/>
+              <Route path={"/capoevent/:id"} element={<CapoEventPage appUser={user} fetchEvents={fetchEvents}/>}/>
 
               <Route element={<ProtectedRoute user={user?.username}/> }>
-                  <Route path={"/loggedin"} element={<LoggedInPage userName={user?.username}/>}/>
+                  <Route path={"/loggedin"} element={<LoggedInPage userId={user?.id} events={capoEvents} fetchEvents={fetchEvents} typeOfEvent={"NONE"}/>}/>
               </Route>
           </Routes>
       </>

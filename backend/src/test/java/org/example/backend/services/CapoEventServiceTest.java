@@ -1,8 +1,9 @@
 package org.example.backend.services;
 
 import org.example.backend.data.LocationData;
-import org.example.backend.enums.CapoEventType;
-import org.example.backend.enums.RepetitionRhythm;
+import org.example.backend.dto.CapoEventRegDto;
+import org.example.backend.enums.CapoEventEnumType;
+import org.example.backend.enums.RepetitionRhythmEnumType;
 import org.example.backend.models.CapoEvent;
 import org.example.backend.repositories.CapoEventRepository;
 import org.junit.jupiter.api.Test;
@@ -13,6 +14,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 
 class CapoEventServiceTest {
 
@@ -29,8 +31,8 @@ CapoEvent fakeEvent1 = new CapoEvent(
         new LocationData("Germany", "Berlin", "Berlin", "Friedrichstr.", "244", "Hinterhof"),
         LocalDateTime.of(2026,2,15, 19, 0, 0, 0),
         LocalDateTime.of(2026,2,15, 23, 0, 0, 0),
-        CapoEventType.RODA,
-        RepetitionRhythm.ONCE
+        CapoEventEnumType.RODA,
+        RepetitionRhythmEnumType.ONCE
 );
 
     @Test
@@ -84,9 +86,9 @@ CapoEvent fakeEvent1 = new CapoEvent(
     @Test
     void deleteById_shouldReturnTrue_whenEventIsDeleted() {
 
-        Mockito.when(capoEventRepo.existsById("1")).thenReturn(true);
+        Mockito.when(capoEventRepo.findById("1")).thenReturn(Optional.of(fakeEvent1));
 
-        boolean expected = capoEventService.deleteById("1");
+        boolean expected = capoEventService.deleteById("1", fakeEvent1.id());
 
         assertTrue(expected);
     }
@@ -94,10 +96,73 @@ CapoEvent fakeEvent1 = new CapoEvent(
     @Test
     void deleteById_shouldReturnFalse_whenEventDoesNotExist() {
 
-        Mockito.when(capoEventRepo.existsById("1")).thenReturn(false);
+        Mockito.when(capoEventRepo.findById("1")).thenReturn(Optional.empty());
 
-        boolean expected = capoEventService.deleteById("1");
+        boolean actual = capoEventService.deleteById("1", "1");
 
-        assertFalse(expected);
+        assertFalse(actual);
+    }
+
+    @Test
+    void deleteById_shouldReturnFalse_whenWhenCreatorIdAndUserIdDoNotMatch() {
+
+        Mockito.when(capoEventRepo.findById("1")).thenReturn(Optional.of(fakeEvent1));
+
+        boolean actual = capoEventService.deleteById("1", "4");
+
+        assertFalse(actual);
+    }
+
+    @Test
+    void getAllByCreatorId_shouldReturnEmptyArrayList_whenIdIsNull() {
+
+        List<CapoEvent> actualList = capoEventService.getAllByCreatorId(null);
+
+        assertNotNull(actualList);
+        assertEquals( 0, actualList.size());
+    }
+
+    @Test
+    void getAllByCreatorId_shouldReturnExpectedList() {
+        List<CapoEvent> expectedList = List.of(fakeEvent1);
+        Mockito.when(capoEventRepo.findAllByCreatorId("1")).thenReturn(expectedList);
+        List<CapoEvent> actualList = capoEventService.getAllByCreatorId("1");
+
+        assertNotNull(actualList);
+        assertEquals(expectedList, actualList);
+    }
+
+    @Test
+    void createCapoEvent_shouldThrowIllegalArgumentException_whenDTOIsNull() {
+
+        assertThrows(IllegalArgumentException.class, () -> capoEventService.createCapoEvent(null));
+    }
+
+    @Test
+    void createCapoEvent_shouldReturnCapoEvent_basedOnRegDto() {
+
+        Mockito.when(capoEventRepo.save(any())).thenReturn(fakeEvent1);
+
+        CapoEventRegDto regDto = new CapoEventRegDto(
+                "1",
+                "chiko",
+                "roda aberta",
+                "angola, regional, contemporanea",
+                "www.somepicture.com",
+                new LocationData("Germany", "Berlin", "Berlin", "Friedrichstr.", "244", "Hinterhof"),
+                LocalDateTime.of(2026,2,15, 19, 0, 0, 0),
+                LocalDateTime.of(2026,2,15, 23, 0, 0, 0),
+                CapoEventEnumType.RODA,
+                RepetitionRhythmEnumType.ONCE
+        );
+
+        CapoEvent actual = capoEventService.createCapoEvent(regDto);
+
+        assertNotNull(actual);
+        assertNotNull(actual.id());
+        assertNotEquals(0, actual.id().length());
+        assertEquals(regDto.userId(), actual.creatorId());
+        assertEquals(regDto.eventTitle(), actual.eventTitle());
+        assertEquals(regDto.eventDescription(), actual.eventDescription());
     }
 }
