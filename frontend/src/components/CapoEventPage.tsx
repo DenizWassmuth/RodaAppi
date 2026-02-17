@@ -30,17 +30,28 @@ export default function CapoEventPage(props:Readonly<EventPageProps>) {
 
     async function deleteEvent(user:AppUserType | undefined | null, eventId:string | undefined) {
         if (user === null || user === undefined) {
-            console.log("user === null or undefined");
+            console.log("user === null or undefined, cannot proceed to delete event");
             return;
         }
+
         if (eventId === null || eventId === undefined){
-            console.log("eventId === null or undefined");
+            console.log("eventId === null or undefined, cannot proceed to delete event");
             return;
         }
 
         console.log("awaiting axios response for deleteEvent with eventId: ", eventId);
 
        await deleteCapoEvent(user.id, eventId, props.fetchEvents, nav, "/");
+    }
+
+    function editEvent(id:string | undefined)
+    {
+        if (id === null || id === undefined){
+            console.log("eventId === null or undefined, cannot move on to edit page");
+            return;
+        }
+
+        nav("/edit/" + id);
     }
 
     return (
@@ -63,10 +74,15 @@ export default function CapoEventPage(props:Readonly<EventPageProps>) {
                         <p><b>{capoEvent?.eventStart}</b></p>
                         <p><b>{capoEvent?.eventEnd}</b></p>
 
-                        <button type={"button"} disabled={!eventIsCreatedByUser} hidden={!eventIsCreatedByUser}
+                       <p>
+                           <button type={"button"} disabled={!eventIsCreatedByUser} hidden={!eventIsCreatedByUser}
                                 onClick={() => deleteEvent(props.appUser, capoEvent?.id)}>delete
-                        </button>
-                    </div>
+                           </button> {" "}
+                           <button type={"button"} disabled={!eventIsCreatedByUser} hidden={!eventIsCreatedByUser}
+                                   onClick={() => editEvent(capoEvent?.id)}>edit
+                           </button>
+                       </p>
+                </div>
                 </div>
             </div>
         </article>

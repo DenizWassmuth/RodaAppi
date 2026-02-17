@@ -42,3 +42,4 @@ export type EventRegDto = {
     repRhythm: RepetitionRhythmEnumType
 }
 
+export type EventFormValue = Omit<EventRegDto, "userId">;

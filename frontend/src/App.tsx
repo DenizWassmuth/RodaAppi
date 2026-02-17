@@ -11,6 +11,7 @@ import type {CapoEventType} from "./types/CapoEvent.ts";
 import CapoEventPage from "./components/CapoEventPage.tsx";
 import PreviewPage from "./components/PreviewPage.tsx";
 import CreateCapoEventPage from "./components/CreateCapoEventPage.tsx";
+import EditCapoEventPage from "./components/EditcapoEventPage.tsx";
 
 
 function App() {
@@ -48,6 +49,7 @@ function App() {
               <Route element={<ProtectedRoute user={user?.username}/> }>
                   <Route path={"/loggedin"} element={<LoggedInPage user={user} events={capoEvents} fetchEvents={fetchEvents} typeOfEvent={"NONE"}/>}/>
                   <Route path={"/add"} element={<CreateCapoEventPage user={user} fetchEvents={fetchEvents}/>}/>
+                  <Route path={"/edit/:id"} element={<EditCapoEventPage user={user} fetchEvents={fetchEvents}/>}/>
               </Route>
           </Routes>
       </>
