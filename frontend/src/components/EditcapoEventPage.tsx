@@ -28,6 +28,7 @@ export default function EditCapoEventPage(props:Readonly<Props>) {
     if (!event) return <p style={{ color: "white" }}>Loading...</p>;
 
     const initial: EventFormValue = {
+        userName:event.creatorName,
         eventTitle: event.eventTitle,
         eventDescription: event.eventDescription,
         thumbnail: event.thumbnail,
@@ -46,7 +47,7 @@ export default function EditCapoEventPage(props:Readonly<Props>) {
             ...value,
         };
 
-        await axios.put(`/api/capoevent/${id}`, dto)
+        await axios.put(`/api/capoevent/update/${props.user.id}/${id}`, dto)
             .then(() => props.fetchEvents())
             .then(() => nav("/loggedin"));
     }

@@ -1,6 +1,7 @@
 package org.example.backend.controllers;
 
 import org.example.backend.data.LocationData;
+import org.example.backend.dto.CapoEventRegDto;
 import org.example.backend.enums.CapoEventEnumType;
 import org.example.backend.enums.RepetitionRhythmEnumType;
 import org.example.backend.models.CapoEvent;
@@ -46,6 +47,19 @@ class CapoEventControllerTest {
             new LocationData("Germany", "Berlin", "Berlin", "Friedrichstr.", "244", "Hinterhof"),
             LocalDateTime.of(2026,2,15, 19, 0, 0, 0),
             LocalDateTime.of(2026,2,15, 23, 0, 0, 0),
+            CapoEventEnumType.RODA,
+            RepetitionRhythmEnumType.ONCE
+    );
+
+    CapoEventRegDto fakeRegDto = new CapoEventRegDto(
+            "1",
+            "piru",
+            "roda fechada",
+            "angola",
+            "www.somepicture.com",
+            new LocationData("Germany", "Hamburg", "Hamburg", "Friedrichstr.", "23b", "Ende vom Parkplatz"),
+            LocalDateTime.of(2026,2,14, 19, 0, 0, 0),
+            LocalDateTime.of(2026,2,14, 23, 0, 0, 0),
             CapoEventEnumType.RODA,
             RepetitionRhythmEnumType.ONCE
     );
@@ -134,7 +148,7 @@ class CapoEventControllerTest {
     void deleteById_shouldReturnStatusNoContent() throws Exception {
         capoEventRepo.save(fakeEvent1);
 
-        mockMvc.perform(delete("/api/capoevent/1/1")
+        mockMvc.perform(delete("/api/capoevent/delete/1/1")
                         .with(oauth2Login()))
                 .andExpect(status().isNoContent());
     }
@@ -145,7 +159,7 @@ class CapoEventControllerTest {
 
         capoEventRepo.save(fakeEvent1); // has id 1
 
-        mockMvc.perform(delete("/api/capoevent/2/1")
+        mockMvc.perform(delete("/api/capoevent/delete/2/1")
                         .with(oauth2Login()))
                 .andExpect(status().isNotFound());
     }
@@ -156,7 +170,7 @@ class CapoEventControllerTest {
 
         capoEventRepo.save(fakeEvent1); // has id 1
 
-        mockMvc.perform(delete("/api/capoevent/1/2")
+        mockMvc.perform(delete("/api/capoevent/delete/1/2")
                         .with(oauth2Login()))
                 .andExpect(status().isNotFound());
     }
@@ -183,10 +197,11 @@ class CapoEventControllerTest {
                                   "eventDescription": "Angola + Regional. Bring water, beginners welcome.",
                                   "thumbnail": "https://example.com/images/roda.jpg",
                                   "locationData": {
-                                    "city": "Berlin",
-                                    "street": "Friedrichstr. 20",
-                                    "zip": "10117",
-                                    "country": "DE"
+                                    "country": "Germany",
+                                    "state": "Hamburg",
+                                    "city": "Hamburg",
+                                    "street": "Am Veringhof",
+                                    "streetnumber": "23b"
                                   },
                                   "eventStart": "2026-02-15T19:00:00",
                                   "eventEnd": "2026-02-15T23:00:00",
@@ -207,4 +222,57 @@ class CapoEventControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.eventStart").value("2026-02-15T19:00:00"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.eventEnd").value("2026-02-15T23:00:00"));
     }
+
+    @Test
+    @WithMockUser
+    void update_shouldReturnStatusBadRequest_whenRequestBodyIsNull() throws Exception {
+
+        mockMvc.perform(put("/api/capoevent/update/1/1")
+                        .with(oauth2Login()))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @WithMockUser
+    void update_shouldReturnStatusOk_andMatchTheUpdateJson() throws Exception {
+
+        capoEventRepo.save(fakeEvent1);
+
+        mockMvc.perform(put("/api/capoevent/update/1/1")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "userId": "1",
+                                  "userName": "chiko",
+                                  "eventTitle": "Roda fechada",
+                                  "eventDescription": "Angola",
+                                  "thumbnail": "https://example.com/images/roda.jpg",
+                                  "locationData": {
+                                    "country": "Germany",
+                                    "state": "Hamburg",
+                                    "city": "Hamburg",
+                                    "street": "Am Veringhof",
+                                    "streetnumber": "23b"
+                                  },
+                                  "eventStart": "2026-02-14T19:00:00",
+                                  "eventEnd": "2026-02-14T23:00:00",
+                                  "eventType": "RODA",
+                                  "repRhythm": "ONCE"
+                                }
+                                
+                                """)
+                        .with(oauth2Login()))
+                .andExpect(status().isCreated())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.creatorId").value("1"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.creatorName").value("chiko"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.eventTitle").value("Roda fechada"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.eventDescription").value("Angola"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.thumbnail").value("https://example.com/images/roda.jpg"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.locationData").isNotEmpty())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.eventType").value("RODA"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.repRhythm").value("ONCE"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.eventStart").value("2026-02-14T19:00:00"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.eventEnd").value("2026-02-14T23:00:00"));
+    }
+
 }

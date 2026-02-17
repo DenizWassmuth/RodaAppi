@@ -32,6 +32,7 @@ export type CapoEventProps = {
 
 export type EventRegDto = {
     userId: string,
+    userName: string | undefined | null,
     eventTitle: string,
     eventDescription: string,
     thumbnail: string,

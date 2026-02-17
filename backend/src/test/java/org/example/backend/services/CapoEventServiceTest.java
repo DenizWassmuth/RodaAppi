@@ -183,18 +183,29 @@ class CapoEventServiceTest {
     }
 
     @Test
-    void updateCapoEvent_shouldThrowIllegalArgumentException_whenDTOIsNull() {
-        assertThrows(IllegalArgumentException.class, () -> capoEventService.updateCapoEvent(fakeEvent1.id(), null));
+    void updateCapoEvent_shouldThrowIllegalArgumentException_whenUserIdIsnUll() {
+        assertThrows(IllegalArgumentException.class, () -> capoEventService.updateCapoEvent(null, fakeEvent1.id(), regDto));
     }
 
     @Test
-    void updateCapoEvent_shouldThrowIllegalArgumentException_whenIdIsNull() {
-        assertThrows(IllegalArgumentException.class, () -> capoEventService.updateCapoEvent(null, regDto));
+    void updateCapoEvent_shouldThrowIllegalArgumentException_whenEventIdIsNull() {
+        assertThrows(IllegalArgumentException.class, () -> capoEventService.updateCapoEvent(fakeEvent1.creatorId(), null, regDto));
+    }
+
+    @Test
+    void updateCapoEvent_shouldThrowIllegalArgumentException_whenDTOIsNull() {
+        assertThrows(IllegalArgumentException.class, () -> capoEventService.updateCapoEvent(fakeEvent1.creatorId(), fakeEvent1.id(), null));
     }
 
     @Test
     void updateCapoEvent_shouldThrowIllegalArgumentException_whenNotFound() {
-        assertThrows(NoSuchElementException.class, () -> capoEventService.updateCapoEvent("2", regDto));
+        assertThrows(NoSuchElementException.class, () -> capoEventService.updateCapoEvent("1","2", regDto));
+    }
+
+    @Test
+    void updateCapoEvent_shouldThrowMatchException_whenCreatorIdAndUserIdDoNotMatch() {
+        Mockito.when(capoEventRepo.findById("1")).thenReturn(Optional.of(fakeEvent1));
+        assertThrows(MatchException.class, () -> capoEventService.updateCapoEvent("2","1", regDto));
     }
 
     @Test
@@ -214,10 +225,11 @@ class CapoEventServiceTest {
 
         Mockito.when(capoEventRepo.save(expected)).thenReturn(expected);
 
-        CapoEvent actual = capoEventService.updateCapoEvent("1", regDto);
+        CapoEvent actual = capoEventService.updateCapoEvent("1", "1", regDto);
 
         assertNotNull(actual);
         assertNotEquals(fakeEvent1, actual);
+        assertEquals(expected.creatorId(), actual.creatorId());
         assertEquals(expected.id(), actual.id());
         assertEquals(expected.eventTitle(), actual.eventTitle());
         assertEquals(expected.eventDescription(), actual.eventDescription());

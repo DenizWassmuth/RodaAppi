@@ -12,6 +12,7 @@ type CreateEventProps = {
 
 export default function CreateCapoEventPage(props:Readonly<CreateEventProps>) {
     const empty: EventFormValue = {
+        userName:props.user?.username,
         eventTitle: "",
         eventDescription: "",
         thumbnail: "",

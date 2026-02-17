@@ -36,13 +36,17 @@ public class CapoEventController {
 
     @PostMapping()
     public ResponseEntity<CapoEvent> create(@RequestBody CapoEventRegDto regDto) {
-
         CapoEvent newEvent = capoEventService.createCapoEvent(regDto);
-
         return ResponseEntity.status(HttpStatus.CREATED).body(newEvent);
     }
 
-    @DeleteMapping("/{userId}/{eventId}")
+    @PutMapping("/update/{userId}/{eventId}")
+    public ResponseEntity<CapoEvent> update(@PathVariable String userId, @PathVariable String eventId, @RequestBody CapoEventRegDto regDto) {
+        CapoEvent updatedEvent = capoEventService.updateCapoEvent(userId, eventId, regDto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(updatedEvent);
+    }
+
+    @DeleteMapping("/delete/{userId}/{eventId}")
     public ResponseEntity<Boolean> deleteById(@PathVariable String userId, @PathVariable String eventId) {
 
         if (capoEventService.deleteById(userId, eventId)) {

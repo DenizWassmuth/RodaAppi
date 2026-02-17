@@ -58,18 +58,26 @@ public class CapoEventService {
         return capoEventRepo.save(newEvent);
     }
 
-    public CapoEvent updateCapoEvent(String id, CapoEventRegDto updateDto) {
+    public CapoEvent updateCapoEvent(String userId, String eventId, CapoEventRegDto updateDto) {
 
-        if (id == null) {
-            throw new IllegalArgumentException("id is null");
+        if(userId == null){
+            throw new IllegalArgumentException("userId is null");
+        }
+
+        if (eventId == null) {
+            throw new IllegalArgumentException("eventId is null");
         }
 
         if (updateDto == null) {
             throw new IllegalArgumentException("updateDto is null");
         }
 
-       CapoEvent refEvent = capoEventRepo.findById(id).orElseThrow(() -> new NoSuchElementException("id not found"));
+       CapoEvent refEvent = capoEventRepo.findById(eventId).orElseThrow(() -> new NoSuchElementException("id not found"));
        // CapoEvent refEvent = capoEventRepo.findById(id).orElse(null);
+
+        if (!refEvent.creatorId().equals(userId)) {
+            throw new MatchException("userId does not match creatorId", new Throwable());
+        }
 
         CapoEvent updatedEvent = refEvent
                 .withEventTitle(updateDto.eventTitle())
