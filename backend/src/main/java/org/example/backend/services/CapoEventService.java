@@ -3,7 +3,6 @@ package org.example.backend.services;
 import org.example.backend.dto.CapoEventRegDto;
 import org.example.backend.models.CapoEvent;
 import org.example.backend.repositories.CapoEventRepository;
-import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -73,7 +72,6 @@ public class CapoEventService {
         }
 
        CapoEvent refEvent = capoEventRepo.findById(eventId).orElseThrow(() -> new NoSuchElementException("id not found"));
-       // CapoEvent refEvent = capoEventRepo.findById(id).orElse(null);
 
         if (!refEvent.creatorId().equals(userId)) {
             throw new MatchException("userId does not match creatorId", new Throwable());

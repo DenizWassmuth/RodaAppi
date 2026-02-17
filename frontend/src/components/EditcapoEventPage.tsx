@@ -56,7 +56,6 @@ export default function EditCapoEventPage(props:Readonly<Props>) {
 
     return (
         <CapoEventForm
-            title="Edit Event"
             submitText="Update"
             initialValue={initial}
             onSubmit={submit}

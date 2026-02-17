@@ -57,7 +57,6 @@ export default function CreateCapoEventPage(props:Readonly<CreateEventProps>) {
 
             {isLoggedIn && (
                 <CapoEventForm
-                    title="Create Event"
                     submitText="Create"
                     initialValue={empty}
                     onSubmit={submit}

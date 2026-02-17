@@ -5,13 +5,12 @@ import type {CapoEventEnumType, EventFormValue, RepetitionRhythmEnumType} from "
 
 
 type EventFormularProps = {
-    title: string;
     submitText: string;
     initialValue: EventFormValue;
     onSubmit: (value: EventFormValue) => Promise<void>;
 };
 
-export default function CapoEventForm(props: EventFormularProps) {
+export default function CapoEventForm(props: Readonly<EventFormularProps>) {
     const [value, setValue] = useState<EventFormValue>(props.initialValue);
     const [error, setError] = useState<string | null>(null);
 

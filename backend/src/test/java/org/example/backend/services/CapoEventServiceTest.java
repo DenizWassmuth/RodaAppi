@@ -6,7 +6,6 @@ import org.example.backend.enums.CapoEventEnumType;
 import org.example.backend.enums.RepetitionRhythmEnumType;
 import org.example.backend.models.CapoEvent;
 import org.example.backend.repositories.CapoEventRepository;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
@@ -159,7 +158,7 @@ class CapoEventServiceTest {
 
         Mockito.when(capoEventRepo.save(any())).thenReturn(fakeEvent1);
 
-        CapoEventRegDto regDto = new CapoEventRegDto(
+        CapoEventRegDto regEventDto = new CapoEventRegDto(
                 "1",
                 "chiko",
                 "roda aberta",
@@ -177,9 +176,9 @@ class CapoEventServiceTest {
         assertNotNull(actual);
         assertNotNull(actual.id());
         assertNotEquals(0, actual.id().length());
-        assertEquals(regDto.userId(), actual.creatorId());
-        assertEquals(regDto.eventTitle(), actual.eventTitle());
-        assertEquals(regDto.eventDescription(), actual.eventDescription());
+        assertEquals(regEventDto.userId(), actual.creatorId());
+        assertEquals(regEventDto.eventTitle(), actual.eventTitle());
+        assertEquals(regEventDto.eventDescription(), actual.eventDescription());
     }
 
     @Test
