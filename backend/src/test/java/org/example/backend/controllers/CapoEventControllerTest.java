@@ -109,7 +109,7 @@ class CapoEventControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.eventTitle").value("roda aberta"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.eventDescription").value("angola, regional, contemporanea"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.thumbnail").value("www.somepicture.com"))
-                //.andExpect(MockMvcResultMatchers.jsonPath("$.locationData").value("Germany", "Berlin", "Berlin", "Friedrichstr.", "244", "Hinterhof"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.locationData").isNotEmpty())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.eventStart").value("2026-02-15T19:00:00"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.eventEnd").value("2026-02-15T23:00:00"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.eventType").value("RODA"))
