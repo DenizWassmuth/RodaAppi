@@ -1,6 +1,6 @@
 import '../index.css'
 import {useNavigate} from "react-router-dom";
-import type {UserProps} from "../types/AppUser.ts";
+import type {AppUserType} from "../types/AppUser.ts";
 import '../styles/NavBar.css'
 
 function login(){
@@ -16,14 +16,18 @@ function logout(){
     window.open(host + "/logout", "_self")
 }
 
-export default function Navbar(props:Readonly<UserProps>) {
+type NavBarProps = {
+    user:AppUserType
+}
+
+export default function Navbar(props:Readonly<NavBarProps>) {
 
     const nav = useNavigate();
     function goTo(path: string) {
         nav(path);
     }
 
-    const isLoggedIn = props.appUser !== null && props.appUser !== undefined;
+    const isLoggedIn = props.user !== null && props.user !== undefined;
 
     return (
         <div className="navbar_div">
@@ -37,11 +41,11 @@ export default function Navbar(props:Readonly<UserProps>) {
                     onClick={login}>Login
             </button>
             <button className="navbar_btn" type={"button"} hidden={!isLoggedIn} disabled={!isLoggedIn}
-                    onClick={() => goTo("/loggedin")}>Dashboard
-            </button>
+                    onClick={() => goTo("/loggedin")}> Dashboard </button>
             <button className="navbar_btn" type={"button"} hidden={!isLoggedIn} disabled={!isLoggedIn}
-                    onClick={logout}>Logout
-            </button>
+                    onClick={() => goTo("/add")}> Add </button>
+            <button className="navbar_btn" type={"button"} hidden={!isLoggedIn} disabled={!isLoggedIn}
+                    onClick={logout}>Logout</button>
         </div>
     )
 }
