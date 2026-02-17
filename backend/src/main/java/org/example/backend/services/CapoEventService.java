@@ -3,9 +3,11 @@ package org.example.backend.services;
 import org.example.backend.dto.CapoEventRegDto;
 import org.example.backend.models.CapoEvent;
 import org.example.backend.repositories.CapoEventRepository;
+import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.UUID;
 
 @Service
@@ -54,6 +56,32 @@ public class CapoEventService {
 
         // TODO: compare if same event already exists
         return capoEventRepo.save(newEvent);
+    }
+
+    public CapoEvent updateCapoEvent(String id, CapoEventRegDto updateDto) {
+
+        if (id == null) {
+            throw new IllegalArgumentException("id is null");
+        }
+
+        if (updateDto == null) {
+            throw new IllegalArgumentException("updateDto is null");
+        }
+
+       CapoEvent refEvent = capoEventRepo.findById(id).orElseThrow(() -> new NoSuchElementException("id not found"));
+       // CapoEvent refEvent = capoEventRepo.findById(id).orElse(null);
+
+        CapoEvent updatedEvent = refEvent
+                .withEventTitle(updateDto.eventTitle())
+                .withEventDescription(updateDto.eventDescription())
+                .withThumbnail(updateDto.thumbnail())
+                .withLocationData(updateDto.locationData())
+                .withEventStart(updateDto.eventStart())
+                .withEventEnd(updateDto.eventEnd())
+                .withEventType(updateDto.eventType())
+                .withRepRhythm(updateDto.repRhythm());
+
+        return capoEventRepo.save(updatedEvent);
     }
 
     public boolean deleteById(String userId, String eventId){

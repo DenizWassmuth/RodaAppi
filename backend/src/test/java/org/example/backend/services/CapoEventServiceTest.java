@@ -6,11 +6,13 @@ import org.example.backend.enums.CapoEventEnumType;
 import org.example.backend.enums.RepetitionRhythmEnumType;
 import org.example.backend.models.CapoEvent;
 import org.example.backend.repositories.CapoEventRepository;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -18,22 +20,36 @@ import static org.mockito.ArgumentMatchers.any;
 
 class CapoEventServiceTest {
 
-CapoEventRepository capoEventRepo = Mockito.mock(CapoEventRepository.class);
-CapoEventService capoEventService = new CapoEventService(capoEventRepo);
+    CapoEventRepository capoEventRepo = Mockito.mock(CapoEventRepository.class);
+    CapoEventService capoEventService = new CapoEventService(capoEventRepo);
 
-CapoEvent fakeEvent1 = new CapoEvent(
-        "1",
-        "1",
-        "chiko",
-        "roda aberta",
-        "angola, regional, contemporanea",
-        "www.somepicture.com",
-        new LocationData("Germany", "Berlin", "Berlin", "Friedrichstr.", "244", "Hinterhof"),
-        LocalDateTime.of(2026,2,15, 19, 0, 0, 0),
-        LocalDateTime.of(2026,2,15, 23, 0, 0, 0),
-        CapoEventEnumType.RODA,
-        RepetitionRhythmEnumType.ONCE
-);
+    CapoEvent fakeEvent1 = new CapoEvent(
+            "1",
+            "1",
+            "chiko",
+            "roda aberta",
+            "angola, regional, contemporanea",
+            "www.somepicture.com",
+            new LocationData("Germany", "Berlin", "Berlin", "Friedrichstr.", "244", "Hinterhof"),
+            LocalDateTime.of(2026, 2, 15, 19, 0, 0, 0),
+            LocalDateTime.of(2026, 2, 15, 23, 0, 0, 0),
+            CapoEventEnumType.RODA,
+            RepetitionRhythmEnumType.ONCE
+    );
+
+    CapoEventRegDto regDto = new CapoEventRegDto(
+            "1",
+            "chiko",
+            "roda fechada",
+            "angola",
+            "www.somepicture.com",
+            new LocationData("Germany", "Hamburg", "Hamburg", "Am Veringhof.", "23b", "Ende vom Parkplatz"),
+            LocalDateTime.of(2026, 2, 14, 19, 0, 0, 0),
+            LocalDateTime.of(2026, 2, 14, 23, 0, 0, 0),
+            CapoEventEnumType.RODA,
+            RepetitionRhythmEnumType.MONTHLY
+    );
+
 
     @Test
     void getAll_shouldReturnEmptyList_whenNoEventFound() {
@@ -164,5 +180,52 @@ CapoEvent fakeEvent1 = new CapoEvent(
         assertEquals(regDto.userId(), actual.creatorId());
         assertEquals(regDto.eventTitle(), actual.eventTitle());
         assertEquals(regDto.eventDescription(), actual.eventDescription());
+    }
+
+    @Test
+    void updateCapoEvent_shouldThrowIllegalArgumentException_whenDTOIsNull() {
+        assertThrows(IllegalArgumentException.class, () -> capoEventService.updateCapoEvent(fakeEvent1.id(), null));
+    }
+
+    @Test
+    void updateCapoEvent_shouldThrowIllegalArgumentException_whenIdIsNull() {
+        assertThrows(IllegalArgumentException.class, () -> capoEventService.updateCapoEvent(null, regDto));
+    }
+
+    @Test
+    void updateCapoEvent_shouldThrowIllegalArgumentException_whenNotFound() {
+        assertThrows(NoSuchElementException.class, () -> capoEventService.updateCapoEvent("2", regDto));
+    }
+
+    @Test
+    void updateCapoEvent_ShouldPass_andReturnTheUpdatedCapoEvent() {
+
+        Mockito.when(capoEventRepo.findById("1")).thenReturn(Optional.of(fakeEvent1));
+
+        CapoEvent expected = fakeEvent1
+                .withEventTitle(regDto.eventTitle())
+                .withEventDescription(regDto.eventDescription())
+                .withEventStart(regDto.eventStart())
+                .withEventEnd(regDto.eventEnd())
+                .withLocationData(regDto.locationData())
+                .withThumbnail(regDto.thumbnail())
+                .withRepRhythm(regDto.repRhythm())
+                .withEventType(regDto.eventType());
+
+        Mockito.when(capoEventRepo.save(expected)).thenReturn(expected);
+
+        CapoEvent actual = capoEventService.updateCapoEvent("1", regDto);
+
+        assertNotNull(actual);
+        assertNotEquals(fakeEvent1, actual);
+        assertEquals(expected.id(), actual.id());
+        assertEquals(expected.eventTitle(), actual.eventTitle());
+        assertEquals(expected.eventDescription(), actual.eventDescription());
+        assertEquals(expected.eventStart(), actual.eventStart());
+        assertEquals(expected.eventEnd(), actual.eventEnd());
+        assertEquals(expected.locationData(), actual.locationData());
+        assertEquals(expected.thumbnail(), actual.thumbnail());
+        assertEquals(expected.repRhythm(), actual.repRhythm());
+        assertEquals(expected.eventType(), actual.eventType());
     }
 }
