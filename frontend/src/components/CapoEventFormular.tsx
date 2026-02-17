@@ -4,21 +4,16 @@ import "../styles/CreateCapoEventPage.css";
 import type {CapoEventEnumType, EventFormValue, RepetitionRhythmEnumType} from "../types/CapoEvent.ts";
 
 
-type Props = {
+type EventFormularProps = {
     title: string;
     submitText: string;
     initialValue: EventFormValue;
     onSubmit: (value: EventFormValue) => Promise<void>;
 };
 
-export default function CapoEventForm(props: Props) {
+export default function CapoEventForm(props: EventFormularProps) {
     const [value, setValue] = useState<EventFormValue>(props.initialValue);
     const [error, setError] = useState<string | null>(null);
-
-    // Important for edit-page: when initialValue arrives async, update the form
-   /* useEffect(() => {
-        setValue(props.initialValue);
-    }, [props.initialValue]); */
 
     function updateField<K extends keyof EventFormValue>(key: K, v: EventFormValue[K]) {
         setValue((prev) => ({...prev, [key]: v}));
