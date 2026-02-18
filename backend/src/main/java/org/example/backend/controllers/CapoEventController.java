@@ -37,14 +37,33 @@ public class CapoEventController {
 
     @PostMapping()
     public ResponseEntity<CapoEvent> create(@RequestBody CapoEventRegDto regDto) {
-        CapoEvent newEvent = capoEventService.createCapoEvent(regDto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(newEvent);
+
+        try{
+            CapoEvent newEvent = capoEventService.createCapoEvent(regDto);
+            return ResponseEntity.status(HttpStatus.CREATED).body(newEvent);
+        }
+        catch (IllegalArgumentException ex){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
+        catch(MatchException ex){
+            return ResponseEntity.status(HttpStatus.CONFLICT).build();
+        }
     }
 
     @PutMapping("/update/{userId}/{eventId}")
     public ResponseEntity<CapoEvent> update(@PathVariable String userId, @PathVariable String eventId, @RequestBody CapoEventRegDto regDto) {
-        CapoEvent updatedEvent = capoEventService.updateCapoEvent(userId, eventId, regDto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(updatedEvent);
+
+        try{
+            CapoEvent updatedEvent = capoEventService.updateCapoEvent(userId, eventId, regDto);
+            return ResponseEntity.status(HttpStatus.CREATED).body(updatedEvent);
+        }
+        catch (IllegalArgumentException ex){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
+        catch(MatchException ex){
+            return ResponseEntity.status(HttpStatus.CONFLICT).build();
+        }
+
     }
 
     @DeleteMapping("/delete/{userId}/{eventId}")
@@ -56,7 +75,7 @@ public class CapoEventController {
             }
         }
         catch (MatchException matchException) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+            return ResponseEntity.status(HttpStatus.CONFLICT).build();
         }
         catch (NoSuchElementException noSuchElementException) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();

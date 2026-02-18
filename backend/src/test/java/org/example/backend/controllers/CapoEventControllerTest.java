@@ -57,7 +57,7 @@ class CapoEventControllerTest {
             "roda fechada",
             "angola",
             "www.somepicture.com",
-            new LocationData("Germany", "Hamburg", "Hamburg", "Friedrichstr.", "23b", "Ende vom Parkplatz"),
+            new LocationData("Germany", "Hamburg", "Hamburg", "Am Veringhof.", "23b", "Ende vom Parkplatz"),
             LocalDateTime.of(2026,2,14, 19, 0, 0, 0),
             LocalDateTime.of(2026,2,14, 23, 0, 0, 0),
             CapoEventEnumType.RODA,
@@ -155,13 +155,13 @@ class CapoEventControllerTest {
 
     @Test
     @WithMockUser
-    void deleteById_shouldReturnStatusNotFound_whenFoundButCreatorIdDoesNotMatchUserId() throws Exception {
+    void deleteById_shouldReturnStatusIsConflict_whenFoundButCreatorIdDoesNotMatchUserId() throws Exception {
 
         capoEventRepo.save(fakeEvent1); // has id 1
 
         mockMvc.perform(delete("/api/capoevent/delete/2/1")
                         .with(oauth2Login()))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isConflict());
     }
 
     @Test
@@ -186,13 +186,14 @@ class CapoEventControllerTest {
 
     @Test
     @WithMockUser
-    void create_shouldReturnStatusNoContent() throws Exception {
+    void create_shouldReturnStatusIsCreated_andReturnMatchContent() throws Exception {
 
         mockMvc.perform(post("/api/capoevent")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 {
                                   "userId": "123456",
+                                  "userName":"chiko",
                                   "eventTitle": "Roda Aberta",
                                   "eventDescription": "Angola + Regional. Bring water, beginners welcome.",
                                   "thumbnail": "https://example.com/images/roda.jpg",
@@ -212,7 +213,9 @@ class CapoEventControllerTest {
                                 """)
                         .with(oauth2Login()))
                 .andExpect(status().isCreated())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.id").isNotEmpty())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.creatorId").value("123456"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.creatorName").value("chiko"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.eventTitle").value("Roda Aberta"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.eventDescription").value("Angola + Regional. Bring water, beginners welcome."))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.thumbnail").value("https://example.com/images/roda.jpg"))
@@ -221,6 +224,39 @@ class CapoEventControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.repRhythm").value("ONCE"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.eventStart").value("2026-02-15T19:00:00"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.eventEnd").value("2026-02-15T23:00:00"));
+    }
+
+    @Test
+    @WithMockUser
+    void create_shouldReturnStatusIsStatusConflict_whenIdenticalEventExists() throws Exception {
+
+        capoEventRepo.save(fakeEvent1);
+
+        mockMvc.perform(post("/api/capoevent")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "userId": "1",
+                                  "userName":"chiko",
+                                  "eventTitle": "Roda Aberta",
+                                  "eventDescription": "Angola + Regional. Bring water, beginners welcome.",
+                                  "thumbnail": "https://example.com/images/roda.jpg",
+                                  "locationData": {
+                                    "country": "Germany",
+                                    "state": "Berlin",
+                                    "city": "Berlin",
+                                    "street": "Friedrichstr.",
+                                    "streetnumber": "244"
+                                  },
+                                  "eventStart": "2026-02-15T19:00:00",
+                                  "eventEnd": "2026-02-15T23:00:00",
+                                  "eventType": "RODA",
+                                  "repRhythm": "ONCE"
+                                }
+                                
+                                """)
+                        .with(oauth2Login()))
+                .andExpect(status().isConflict());
     }
 
     @Test
@@ -273,6 +309,39 @@ class CapoEventControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.repRhythm").value("ONCE"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.eventStart").value("2026-02-14T19:00:00"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.eventEnd").value("2026-02-14T23:00:00"));
+    }
+
+    @Test
+    @WithMockUser
+    void update_shouldReturnStatusIsConflict_whenIdenticalEventExists() throws Exception {
+
+        capoEventRepo.save(fakeEvent1);
+
+        mockMvc.perform(put("/api/capoevent/update/1/2")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "userId": "1",
+                                  "userName":"chiko",
+                                  "eventTitle": "Roda Aberta",
+                                  "eventDescription": "Angola + Regional. Bring water, beginners welcome.",
+                                  "thumbnail": "https://example.com/images/roda.jpg",
+                                  "locationData": {
+                                    "country": "Germany",
+                                    "state": "Berlin",
+                                    "city": "Berlin",
+                                    "street": "Friedrichstr.",
+                                    "streetnumber": "244"
+                                  },
+                                  "eventStart": "2026-02-15T19:00:00",
+                                  "eventEnd": "2026-02-15T23:00:00",
+                                  "eventType": "RODA",
+                                  "repRhythm": "ONCE"
+                                }
+                                
+                                """)
+                        .with(oauth2Login()))
+                .andExpect(status().isConflict());
     }
 
 }

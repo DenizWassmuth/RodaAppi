@@ -227,7 +227,7 @@ class CapoEventServiceTest {
     void updateCapoEvent_shouldThrowMatchException_whenEventAlreadyExists() {
 
         Mockito.when(capoEventRepo.findAll()).thenReturn(List.of(fakeEvent1));
-        assertThrows(MatchException.class, () -> capoEventService.updateCapoEvent("1","1", regDuplicateDto));
+        assertThrows(MatchException.class, () -> capoEventService.updateCapoEvent("1","2", regDuplicateDto));
     }
 
     @Test
