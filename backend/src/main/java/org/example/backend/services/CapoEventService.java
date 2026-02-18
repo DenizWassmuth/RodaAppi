@@ -60,21 +60,21 @@ public class CapoEventService {
     public CapoEvent updateCapoEvent(String userId, String eventId, CapoEventRegDto updateDto) {
 
         if(userId == null){
-            throw new IllegalArgumentException("userId is null");
+            throw new IllegalArgumentException("cannot update event, as userId is null");
         }
 
         if (eventId == null) {
-            throw new IllegalArgumentException("eventId is null");
+            throw new IllegalArgumentException("cannot update event, as eventId is null");
         }
 
         if (updateDto == null) {
-            throw new IllegalArgumentException("updateDto is null");
+            throw new IllegalArgumentException("cannot update event, as updateDto is null");
         }
 
-       CapoEvent refEvent = capoEventRepo.findById(eventId).orElseThrow(() -> new NoSuchElementException("id not found"));
+       CapoEvent refEvent = capoEventRepo.findById(eventId).orElseThrow(() -> new NoSuchElementException("cannot update event with id:" + eventId + ", as it was not found in db"));
 
         if (!refEvent.creatorId().equals(userId)) {
-            throw new MatchException("userId does not match creatorId", new Throwable());
+            throw new MatchException("cannot update event, as userId does not match creatorId", new Throwable());
         }
 
         CapoEvent updatedEvent = refEvent
@@ -92,13 +92,10 @@ public class CapoEventService {
 
     public boolean deleteById(String userId, String eventId){
 
-       CapoEvent foundEvent = capoEventRepo.findById(eventId).orElse(null);
-        if(foundEvent == null){
-            return false;
-        }
+       CapoEvent foundEvent = capoEventRepo.findById(eventId).orElseThrow(() -> new NoSuchElementException("cannot delete event with id:" + eventId + ", as it was not found in db"));
 
         if(!foundEvent.creatorId().equals(userId)){
-           return false;
+            throw new MatchException("cannot delete event with id:" + eventId + ", as userId does not match creatorId", new Throwable());
         }
 
         capoEventRepo.deleteById(eventId);

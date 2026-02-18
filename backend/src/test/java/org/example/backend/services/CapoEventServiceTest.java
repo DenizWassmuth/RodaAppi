@@ -109,23 +109,19 @@ class CapoEventServiceTest {
     }
 
     @Test
-    void deleteById_shouldReturnFalse_whenEventDoesNotExist() {
+    void deleteById_shouldThrowNoSuchElementException_whenNoEventFound() {
 
         Mockito.when(capoEventRepo.findById("1")).thenReturn(Optional.empty());
 
-        boolean actual = capoEventService.deleteById("1", "1");
-
-        assertFalse(actual);
+        assertThrows(NoSuchElementException.class, () -> capoEventService.deleteById("1", "1"));
     }
 
     @Test
-    void deleteById_shouldReturnFalse_whenWhenCreatorIdAndUserIdDoNotMatch() {
+    void deleteById_shouldThrowNoMatchException_whenWhenCreatorIdAndUserIdDoNotMatch() {
 
         Mockito.when(capoEventRepo.findById("1")).thenReturn(Optional.of(fakeEvent1));
 
-        boolean actual = capoEventService.deleteById("1", "4");
-
-        assertFalse(actual);
+        assertThrows(MatchException.class, () -> capoEventService.deleteById("2","1"));
     }
 
     @Test
