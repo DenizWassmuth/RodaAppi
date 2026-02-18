@@ -40,10 +40,10 @@ export default function EditCapoEventPage(props:Readonly<Props>) {
     };
 
     async function submit(value: EventFormValue) {
-        if (props?.user || props?.user?.id) throw new Error("Not logged in");
+        if (!props.user || !props.user.id) throw new Error("Not logged in");
 
         const dto: EventRegDto = {
-            userId: String(props?.user?.id),
+            userId: String(!props.user.id),
             ...value,
         };
 

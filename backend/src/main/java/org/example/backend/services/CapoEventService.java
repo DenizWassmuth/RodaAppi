@@ -22,7 +22,7 @@ public class CapoEventService {
         return UUID.randomUUID().toString();
     }
 
-    boolean eventAlreadyExists(CapoEventRegDto regDto){
+    boolean eventAlreadyExists(String toExclude, CapoEventRegDto regDto){
 
         if (regDto == null){
             throw new IllegalArgumentException("event cannot be null if it is to be compared to existing events");
@@ -32,6 +32,8 @@ public class CapoEventService {
         if(existingEvents.isEmpty()){
             return false;
         }
+
+        List<CapoEvent> toFilter = existingEvents.stream().filter(e -> !e.id().equals(toExclude)).toList();
 
         List<CapoEvent> filteredByStartDate = existingEvents.stream().filter(e ->
                 e.eventStart().equals(regDto.eventStart())).toList();
@@ -63,7 +65,7 @@ public class CapoEventService {
             throw new IllegalArgumentException("cannot create new event, as regDto is null");
         }
 
-        if (eventAlreadyExists(regDto)) {
+        if (eventAlreadyExists("", regDto)) {
             throw new MatchException("cannot create new event, event already exists", new Throwable());
         }
 
@@ -98,7 +100,7 @@ public class CapoEventService {
             throw new IllegalArgumentException("cannot update event, as updateDto is null");
         }
 
-        if (eventAlreadyExists(updateDto)) {
+        if (eventAlreadyExists(eventId,updateDto)) {
             throw new MatchException("cannot create new event, event already exists", new Throwable());
         }
 
