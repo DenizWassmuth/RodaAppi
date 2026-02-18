@@ -33,18 +33,17 @@ public class CapoEventService {
             return false;
         }
 
-        List<CapoEvent> toFilter = existingEvents.stream().filter(e -> !e.id().equals(toExclude)).toList();
+        List<CapoEvent> filtered = existingEvents.stream().filter(
+                e -> !e.id().equals(toExclude)).toList()
+                .stream().filter(
+                        e -> e.eventStart().equals(regDto.eventStart())).toList()
+                .stream().filter(
+                        e -> e.locationData().country().equals(regDto.locationData().country()) &&
+                                e.locationData().state().equals(regDto.locationData().state()) &&
+                                e.locationData().city().equals(regDto.locationData().city()) &&
+                                e.locationData().street().equals(regDto.locationData().street())).toList();
 
-        List<CapoEvent> filteredByStartDate = existingEvents.stream().filter(e ->
-                e.eventStart().equals(regDto.eventStart())).toList();
-
-        List<CapoEvent> filteredByLocation = filteredByStartDate.stream().filter(e ->
-                e.locationData().country().equals(regDto.locationData().country()) &&
-                e.locationData().state().equals(regDto.locationData().state()) &&
-                        e.locationData().city().equals(regDto.locationData().city()) &&
-                        e.locationData().street().equals(regDto.locationData().street())).toList();
-
-        return !filteredByLocation.isEmpty();
+        return !filtered.isEmpty();
     }
 
     public List<CapoEvent> getAll(){
