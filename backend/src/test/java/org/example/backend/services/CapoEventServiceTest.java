@@ -49,6 +49,19 @@ class CapoEventServiceTest {
             RepetitionRhythmEnumType.MONTHLY
     );
 
+    CapoEventRegDto regDuplicateDto = new CapoEventRegDto(
+            "1",
+            "chiko",
+            "roda aberta",
+            "angola, regional, contemporanea",
+            "www.somepicture.com",
+            new LocationData("Germany", "Berlin", "Berlin", "Friedrichstr.", "244", "Hinterhof"),
+            LocalDateTime.of(2026,2,15, 19, 0, 0, 0),
+            LocalDateTime.of(2026,2,15, 23, 0, 0, 0),
+            CapoEventEnumType.RODA,
+            RepetitionRhythmEnumType.ONCE
+    );
+
 
     @Test
     void getAll_shouldReturnEmptyList_whenNoEventFound() {
@@ -145,7 +158,6 @@ class CapoEventServiceTest {
 
     @Test
     void createCapoEvent_shouldThrowIllegalArgumentException_whenDTOIsNull() {
-
         assertThrows(IllegalArgumentException.class, () -> capoEventService.createCapoEvent(null));
     }
 
@@ -178,6 +190,14 @@ class CapoEventServiceTest {
     }
 
     @Test
+    void createCapoEvent_shouldThrowMatchException_whenEventAlreadyExists() {
+
+        Mockito.when(capoEventRepo.findAll()).thenReturn(List.of(fakeEvent1));
+
+        assertThrows(MatchException.class, () -> capoEventService.createCapoEvent(regDuplicateDto));
+    }
+
+    @Test
     void updateCapoEvent_shouldThrowIllegalArgumentException_whenUserIdIsnUll() {
         assertThrows(IllegalArgumentException.class, () -> capoEventService.updateCapoEvent(null, fakeEvent1.id(), regDto));
     }
@@ -201,6 +221,13 @@ class CapoEventServiceTest {
     void updateCapoEvent_shouldThrowMatchException_whenCreatorIdAndUserIdDoNotMatch() {
         Mockito.when(capoEventRepo.findById("1")).thenReturn(Optional.of(fakeEvent1));
         assertThrows(MatchException.class, () -> capoEventService.updateCapoEvent("2","1", regDto));
+    }
+
+    @Test
+    void updateCapoEvent_shouldThrowMatchException_whenEventAlreadyExists() {
+
+        Mockito.when(capoEventRepo.findAll()).thenReturn(List.of(fakeEvent1));
+        assertThrows(MatchException.class, () -> capoEventService.updateCapoEvent("1","1", regDuplicateDto));
     }
 
     @Test

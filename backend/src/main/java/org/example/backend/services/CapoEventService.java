@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.UUID;
+import java.util.stream.Stream;
 
 @Service
 public class CapoEventService {
@@ -19,6 +20,29 @@ public class CapoEventService {
 
     String createId(){
         return UUID.randomUUID().toString();
+    }
+
+    boolean eventAlreadyExists(CapoEventRegDto regDto){
+
+        if (regDto == null){
+            throw new IllegalArgumentException("event cannot be null if it is to be compared to existing events");
+        }
+
+        List<CapoEvent> existingEvents = capoEventRepo.findAll();
+        if(existingEvents.isEmpty()){
+            return false;
+        }
+
+        List<CapoEvent> filteredByStartDate = existingEvents.stream().filter(e ->
+                e.eventStart().equals(regDto.eventStart())).toList();
+
+        List<CapoEvent> filteredByLocation = filteredByStartDate.stream().filter(e ->
+                e.locationData().country().equals(regDto.locationData().country()) &&
+                e.locationData().state().equals(regDto.locationData().state()) &&
+                        e.locationData().city().equals(regDto.locationData().city()) &&
+                        e.locationData().street().equals(regDto.locationData().street())).toList();
+
+        return !filteredByLocation.isEmpty();
     }
 
     public List<CapoEvent> getAll(){
@@ -36,7 +60,11 @@ public class CapoEventService {
     public CapoEvent createCapoEvent(CapoEventRegDto regDto){
 
         if (regDto == null) {
-            throw new IllegalArgumentException("regDto is null");
+            throw new IllegalArgumentException("cannot create new event, as regDto is null");
+        }
+
+        if (eventAlreadyExists(regDto)) {
+            throw new MatchException("cannot create new event, event already exists", new Throwable());
         }
 
         CapoEvent newEvent = new CapoEvent(
@@ -53,7 +81,6 @@ public class CapoEventService {
                 regDto.repRhythm()
         );
 
-        // TODO: compare if same event already exists
         return capoEventRepo.save(newEvent);
     }
 
@@ -69,6 +96,10 @@ public class CapoEventService {
 
         if (updateDto == null) {
             throw new IllegalArgumentException("cannot update event, as updateDto is null");
+        }
+
+        if (eventAlreadyExists(updateDto)) {
+            throw new MatchException("cannot create new event, event already exists", new Throwable());
         }
 
        CapoEvent refEvent = capoEventRepo.findById(eventId).orElseThrow(() -> new NoSuchElementException("cannot update event with id:" + eventId + ", as it was not found in db"));

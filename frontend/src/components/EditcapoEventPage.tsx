@@ -52,8 +52,6 @@ export default function EditCapoEventPage(props:Readonly<Props>) {
             .then(() => nav("/loggedin"));
     }
 
-
-
     return (
         <CapoEventForm
             submitText="Update"
