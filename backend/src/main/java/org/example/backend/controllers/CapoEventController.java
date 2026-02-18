@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @RestController
 @RequestMapping("/api/capoevent")
@@ -49,10 +50,18 @@ public class CapoEventController {
     @DeleteMapping("/delete/{userId}/{eventId}")
     public ResponseEntity<Boolean> deleteById(@PathVariable String userId, @PathVariable String eventId) {
 
-        if (capoEventService.deleteById(userId, eventId)) {
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        try {
+            if (capoEventService.deleteById(userId, eventId)) {
+                return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+            }
+        }
+        catch (MatchException matchException) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
+        catch (NoSuchElementException noSuchElementException) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
 
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
     }
 }

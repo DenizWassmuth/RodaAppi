@@ -161,7 +161,7 @@ class CapoEventControllerTest {
 
         mockMvc.perform(delete("/api/capoevent/delete/2/1")
                         .with(oauth2Login()))
-                .andExpect(status().isNotFound());
+                .andExpect(status().isBadRequest());
     }
 
     @Test
