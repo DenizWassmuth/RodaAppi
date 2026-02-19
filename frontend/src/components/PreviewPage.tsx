@@ -17,7 +17,7 @@ export default function PreviewPage(props: Readonly<PageProps>) {
                                 <CapoEventCard
                                     key={capoEvent.id}
                                     capoEvent={capoEvent}
-                                    userId={props.userId}
+                                    userId={props.user?.id}
                                     fetchEvents={props.fetchEvents}/>)
                             )
                     }
@@ -29,7 +29,7 @@ export default function PreviewPage(props: Readonly<PageProps>) {
                                 <CapoEventCard
                                     key={event.id}
                                     capoEvent={event}
-                                    userId={props.userId}
+                                    userId={props.user?.id}
                                     fetchEvents={props.fetchEvents}/>))
                     }
                 </div>

@@ -6,6 +6,7 @@ import org.example.backend.repositories.CapoEventRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.UUID;
 
 @Service
@@ -54,6 +55,39 @@ public class CapoEventService {
 
         // TODO: compare if same event already exists
         return capoEventRepo.save(newEvent);
+    }
+
+    public CapoEvent updateCapoEvent(String userId, String eventId, CapoEventRegDto updateDto) {
+
+        if(userId == null){
+            throw new IllegalArgumentException("userId is null");
+        }
+
+        if (eventId == null) {
+            throw new IllegalArgumentException("eventId is null");
+        }
+
+        if (updateDto == null) {
+            throw new IllegalArgumentException("updateDto is null");
+        }
+
+       CapoEvent refEvent = capoEventRepo.findById(eventId).orElseThrow(() -> new NoSuchElementException("id not found"));
+
+        if (!refEvent.creatorId().equals(userId)) {
+            throw new MatchException("userId does not match creatorId", new Throwable());
+        }
+
+        CapoEvent updatedEvent = refEvent
+                .withEventTitle(updateDto.eventTitle())
+                .withEventDescription(updateDto.eventDescription())
+                .withThumbnail(updateDto.thumbnail())
+                .withLocationData(updateDto.locationData())
+                .withEventStart(updateDto.eventStart())
+                .withEventEnd(updateDto.eventEnd())
+                .withEventType(updateDto.eventType())
+                .withRepRhythm(updateDto.repRhythm());
+
+        return capoEventRepo.save(updatedEvent);
     }
 
     public boolean deleteById(String userId, String eventId){

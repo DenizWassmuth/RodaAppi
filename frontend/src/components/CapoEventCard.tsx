@@ -20,9 +20,21 @@ export default function CapoEventCard(props: Readonly<EventCardProps>) {
     const isCreatedByUser = eventIsValid && props.userId === props.capoEvent.creatorId;
 
     function handleDelete() {
-
         deleteCapoEvent(props.userId, props.capoEvent.id, props.fetchEvents, nav, location.pathname)
             .catch((error) => {console.log("could not delete capoEvent through CapoEventCard: " + error.toString())});
+    }
+
+    function handleEdit() {
+
+        const id:string = props.capoEvent.id;
+
+        if (id === null || id === undefined){
+            console.log("eventId === null or undefined, cannot move on to edit page");
+            return;
+        }
+
+        nav("/edit/" + id);
+
     }
 
     const localDateTime = props.capoEvent.eventStart;
@@ -37,14 +49,21 @@ export default function CapoEventCard(props: Readonly<EventCardProps>) {
                     <h3>{props.capoEvent.eventTitle}</h3>
                     <p>{props.capoEvent.eventType} · {props.capoEvent.locationData.city} · {date} · {time} </p>
                     <p>{props.capoEvent.creatorName}</p>
-                        <p>
-                            <button type={"button"} hidden={!isCreatedByUser} disabled={!isCreatedByUser}
-                                    onClick={(e) => {
-                                        e.preventDefault();
-                                        handleDelete();
-                                    }}>delete
-                            </button>
-                        </p>
+                    <p>
+                        <button type={"button"} hidden={!isCreatedByUser} disabled={!isCreatedByUser}
+                                onClick={(e) => {
+                                    e.preventDefault();
+                                    handleDelete();
+                                }}>delete
+                        </button>
+                        {"   "}
+                        <button type={"button"} hidden={!isCreatedByUser} disabled={!isCreatedByUser}
+                                onClick={(e) => {
+                                    e.preventDefault();
+                                    handleEdit();
+                                }}>edit
+                        </button>
+                    </p>
                 </div>
             </div>
         </Link>

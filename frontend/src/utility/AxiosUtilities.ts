@@ -8,7 +8,7 @@ export async function fetchAllCapoEvents() {
 
 export async function deleteCapoEvent(userId:string | undefined | null, eventId:string, fetchEvents: () => Promise<void>, nav:NavigateFunction, path:string) {
 
-  await axios.delete(`/api/capoevent/${userId}/${eventId}`)
+  await axios.delete(`/api/capoevent/delete/${userId}/${eventId}`)
       .then(() => fetchEvents()
           .then(() => nav(path))
           .catch(error => console.log( error + ", axios responded with error for deleteEvent with eventId: ", eventId)));
