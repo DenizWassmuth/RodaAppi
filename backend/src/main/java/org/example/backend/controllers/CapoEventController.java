@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @RestController
 @RequestMapping("/api/capoevent")
@@ -36,23 +37,50 @@ public class CapoEventController {
 
     @PostMapping()
     public ResponseEntity<CapoEvent> create(@RequestBody CapoEventRegDto regDto) {
-        CapoEvent newEvent = capoEventService.createCapoEvent(regDto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(newEvent);
+
+        try{
+            CapoEvent newEvent = capoEventService.createCapoEvent(regDto);
+            return ResponseEntity.status(HttpStatus.CREATED).body(newEvent);
+        }
+        catch (IllegalArgumentException ex){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
+        catch(MatchException ex){
+            return ResponseEntity.status(HttpStatus.CONFLICT).build();
+        }
     }
 
     @PutMapping("/update/{userId}/{eventId}")
     public ResponseEntity<CapoEvent> update(@PathVariable String userId, @PathVariable String eventId, @RequestBody CapoEventRegDto regDto) {
-        CapoEvent updatedEvent = capoEventService.updateCapoEvent(userId, eventId, regDto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(updatedEvent);
+
+        try{
+            CapoEvent updatedEvent = capoEventService.updateCapoEvent(userId, eventId, regDto);
+            return ResponseEntity.status(HttpStatus.CREATED).body(updatedEvent);
+        }
+        catch (IllegalArgumentException ex){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
+        catch(MatchException ex){
+            return ResponseEntity.status(HttpStatus.CONFLICT).build();
+        }
+
     }
 
     @DeleteMapping("/delete/{userId}/{eventId}")
     public ResponseEntity<Boolean> deleteById(@PathVariable String userId, @PathVariable String eventId) {
 
-        if (capoEventService.deleteById(userId, eventId)) {
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        try {
+            if (capoEventService.deleteById(userId, eventId)) {
+                return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+            }
+        }
+        catch (MatchException matchException) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).build();
+        }
+        catch (NoSuchElementException noSuchElementException) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
 
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
     }
 }

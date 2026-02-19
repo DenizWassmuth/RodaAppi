@@ -28,20 +28,21 @@ export default function CreateCapoEventPage(props:Readonly<CreateEventProps>) {
         eventEnd: "",
         eventType: "RODA",
         repRhythm: "ONCE",
+        repUntil: ""
     };
 
     const nav = useNavigate();
 
     async function submit(value: EventFormValue) {
-        if (props?.user || props?.user?.id) throw new Error("Not logged in");
+        if (!props.user || !props.user.id) throw new Error("Not logged in");
 
         const dto: EventRegDto = {
-            userId: String(props?.user?.id),
+            userId: String(props.user.id),
             ...value,
         };
 
         await axios.post("/api/capoevent", dto)
-            .then(()=> props.fetchEvents()
+            .then(() => props.fetchEvents()
                 .then(() => nav("/loggedin")));
     }
 

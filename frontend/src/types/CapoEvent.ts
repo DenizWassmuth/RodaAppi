@@ -14,15 +14,17 @@ export type LocationDataType = {
 export type CapoEventType = {
     id: string,
     creatorId: string,
+    seriesId: string,
+    occurrenceIndex: number,
     creatorName: string,
     eventTitle: string,
     eventDescription: string,
-    thumbnail: string;
-    locationData: LocationDataType;
-    eventStart: string;
-    eventEnd: string;
-    eventType: CapoEventEnumType;
-    repRhythm: RepetitionRhythmEnumType;
+    thumbnail: string,
+    locationData: LocationDataType,
+    eventStart: string,
+    eventEnd: string,
+    eventType: CapoEventEnumType,
+    repRhythm: RepetitionRhythmEnumType
 }
 
 export type CapoEventProps = {
@@ -40,7 +42,8 @@ export type EventRegDto = {
     eventStart: string,
     eventEnd: string,
     eventType: CapoEventEnumType,
-    repRhythm: RepetitionRhythmEnumType
+    repRhythm: RepetitionRhythmEnumType,
+    repUntil: string
 }
 
 export type EventFormValue = Omit<EventRegDto, "userId">;

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import {useState} from "react";
 
 import "../styles/CreateCapoEventPage.css";
 import type {CapoEventEnumType, EventFormValue, RepetitionRhythmEnumType} from "../types/CapoEvent.ts";
@@ -35,7 +35,7 @@ export default function CapoEventForm(props: Readonly<EventFormularProps>) {
         try {
             await props.onSubmit(value);
         } catch (e) {
-            setError("Submit failed. Check console / backend.");
+            setError(" Submit failed >>> " + e);
             console.error(e);
         }
     }
@@ -44,11 +44,11 @@ export default function CapoEventForm(props: Readonly<EventFormularProps>) {
         <main className="create-event">
             <h1 className="create-event__title">Create Capoeira Event</h1>
 
-            {error && <div className="create-event__alert create-event__alert--error">{error}</div>}
-
             <form className="create-event__form" onSubmit={handleSubmit}>
                 <fieldset className="create-event__fieldset">
                     <legend className="create-event__legend">Basic</legend>
+
+                    {error && <div className="create-event__alert create-event__alert--error">{error}</div>}
 
                     <label className="create-event__label">
                         * Event Type
@@ -181,7 +181,9 @@ export default function CapoEventForm(props: Readonly<EventFormularProps>) {
                             className="create-event__input"
                             type="datetime-local"
                             value={value.eventEnd}
-                            onChange={(e) => updateField("eventEnd", e.target.value)}
+                            onChange={(e) => {
+                                updateField("eventEnd", e.target.value);
+                                updateField("repUntil", e.target.value)}}
                             placeholder={value.eventStart}
                         />
                     </label>
@@ -202,6 +204,20 @@ export default function CapoEventForm(props: Readonly<EventFormularProps>) {
                             <option value="CUSTOM">CUSTOM</option>
                         </select>
                     </label>
+
+                    <label className="create-event__label" >
+                        repeat until
+                        <input
+                            disabled={value.repRhythm === "ONCE"}
+                            hidden={value.repRhythm === "ONCE"}
+                            className="create-event__input"
+                            type="datetime-local"
+                            value={value.repUntil}
+                            onChange={(e) => updateField("repUntil", e.target.value)}
+                            placeholder={value.eventEnd}
+                        />
+                    </label>
+
                 </fieldset>
 
                 <button className="create-event__submit" type="submit">
