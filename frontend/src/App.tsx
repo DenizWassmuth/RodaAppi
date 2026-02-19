@@ -3,15 +3,15 @@ import './index.css'
 import Navbar from "./components/NavBar.tsx";
 import {Route, Routes} from "react-router-dom";
 import {useEffect, useState} from "react";
-import LoggedInPage from "./components/LoggedInPage.tsx";
+import LoggedInPage from "./components/pages/LoggedInPage.tsx";
 import ProtectedRoute from "./components/ProtectedRoute.tsx";
 import axios from "axios";
 import type {AppUserType} from "./types/AppUser.ts";
 import type {CapoEventType} from "./types/CapoEvent.ts";
-import CapoEventPage from "./components/CapoEventPage.tsx";
-import PreviewPage from "./components/PreviewPage.tsx";
-import CreateCapoEventPage from "./components/CreateCapoEventPage.tsx";
-import EditCapoEventPage from "./components/EditcapoEventPage.tsx";
+import CapoEventPage from "./components/pages/CapoEventPage.tsx";
+import PreviewPage from "./components/pages/PreviewPage.tsx";
+import CreateCapoEventPage from "./components/pages/CreateCapoEventPage.tsx";
+import EditCapoEventPage from "./components/pages/EditcapoEventPage.tsx";
 
 
 function App() {
@@ -30,7 +30,6 @@ function App() {
             .then((response) => setCapoEvents(response.data));
     }
 
-
     useEffect(() => {
         loadUser();
         fetchEvents()
@@ -46,7 +45,7 @@ function App() {
               <Route path={"/workshops"} element={<PreviewPage user={user} events={capoEvents} fetchEvents={fetchEvents} typeOfEvent={"WORKSHOP"}/>}/>
               <Route path={"/capoevent/:id"} element={<CapoEventPage appUser={user} fetchEvents={fetchEvents}/>}/>
 
-              <Route element={<ProtectedRoute user={user?.username}/> }>
+              <Route element={<ProtectedRoute user={user}/> }>
                   <Route path={"/loggedin"} element={<LoggedInPage user={user} events={capoEvents} fetchEvents={fetchEvents} typeOfEvent={"NONE"}/>}/>
                   <Route path={"/add"} element={<CreateCapoEventPage user={user} fetchEvents={fetchEvents}/>}/>
                   <Route path={"/edit/:id"} element={<EditCapoEventPage user={user} fetchEvents={fetchEvents}/>}/>

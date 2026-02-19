@@ -47,3 +47,5 @@ export type EventRegDto = {
 }
 
 export type EventFormValue = Omit<EventRegDto, "userId">;
+
+export type DeleteScope = "ONLY_THIS" | "ALL_IN_SERIES" | "BEFORE_THIS" | "AFTER_THIS";

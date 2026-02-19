@@ -2,9 +2,9 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import {useNavigate, useParams} from "react-router-dom";
 
-import type {CapoEventType, EventFormValue, EventRegDto} from "../types/CapoEvent";
-import type { AppUserType } from "../types/AppUser";
-import CapoEventForm from "./CapoEventFormular.tsx";
+import type {CapoEventType, EventFormValue, EventRegDto} from "../../types/CapoEvent.ts";
+import type { AppUserType } from "../../types/AppUser.ts";
+import CapoEventForm from "../CapoEventForm.tsx";
 
 type Props = {
     user: AppUserType;
@@ -58,6 +58,7 @@ export default function EditCapoEventPage(props:Readonly<Props>) {
             submitText="Update"
             initialValue={initial}
             onSubmit={submit}
+            bEditMode={true}
         />
     );
 }

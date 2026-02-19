@@ -1,8 +1,8 @@
 import axios from "axios";
-import CapoEventForm from "../components/CapoEventFormular";
+import CapoEventForm from "../CapoEventForm.tsx";
 
-import type { AppUserType } from "../types/AppUser";
-import type {EventFormValue, EventRegDto} from "../types/CapoEvent.ts";
+import type { AppUserType } from "../../types/AppUser.ts";
+import type {EventFormValue, EventRegDto} from "../../types/CapoEvent.ts";
 import {useNavigate} from "react-router-dom";
 
 type CreateEventProps = {
@@ -61,6 +61,7 @@ export default function CreateCapoEventPage(props:Readonly<CreateEventProps>) {
                     submitText="Create"
                     initialValue={empty}
                     onSubmit={submit}
+                    bEditMode={false}
                 />)}
         </>
     );

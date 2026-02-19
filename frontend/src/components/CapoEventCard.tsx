@@ -1,8 +1,10 @@
 import {Link, useLocation, useNavigate} from "react-router-dom";
-import type {CapoEventType} from "../types/CapoEvent.ts";
+import type {CapoEventType, DeleteScope} from "../types/CapoEvent.ts";
 import "../styles/CapoEventCard.css"
 import "../index.css"
 import {deleteCapoEvent} from "../utility/AxiosUtilities.ts";
+import {useState} from "react";
+import DeleteOptionsModal from "./modals/DeleteOptionsModal.tsx";
 
 type EventCardProps = {
     capoEvent: CapoEventType
@@ -12,14 +14,19 @@ type EventCardProps = {
 
 export default function CapoEventCard(props: Readonly<EventCardProps>) {
 
-    const location = useLocation();
+    const [deleteOption, setDeleteOption] = useState(false);
+    const [deleteScope, setDeleteScope] = useState<DeleteScope>("ONLY_THIS");
 
+    const location = useLocation();
     const nav = useNavigate();
 
     const eventIsValid = props.capoEvent !== undefined && props.capoEvent !== null;
     const isCreatedByUser = eventIsValid && props.userId === props.capoEvent.creatorId;
 
     function handleDelete() {
+
+        console.log("awaiting axios response for deleteEvent with id: ", props.capoEvent.id + " and scope: ", deleteScope);
+
         deleteCapoEvent(props.userId, props.capoEvent.id, props.fetchEvents, nav, location.pathname)
             .catch((error) => {console.log("could not delete capoEvent through CapoEventCard: " + error.toString())});
     }
@@ -43,6 +50,7 @@ export default function CapoEventCard(props: Readonly<EventCardProps>) {
     const time = timeWithRest.slice(0, 5);
 
     return (
+        <div>
         <Link className="card_link" to={`/capoevent/${props.capoEvent.id}`}>
             <div className="event_card" style={{backgroundImage: `url(${props.capoEvent.thumbnail})`}}>
                 <div className="event_info">
@@ -53,7 +61,7 @@ export default function CapoEventCard(props: Readonly<EventCardProps>) {
                         <button type={"button"} hidden={!isCreatedByUser} disabled={!isCreatedByUser}
                                 onClick={(e) => {
                                     e.preventDefault();
-                                    handleDelete();
+                                    setDeleteOption(true);
                                 }}>delete
                         </button>
                         {"   "}
@@ -67,5 +75,16 @@ export default function CapoEventCard(props: Readonly<EventCardProps>) {
                 </div>
             </div>
         </Link>
+            <DeleteOptionsModal
+                deleteScope={deleteScope}
+                setScope={setDeleteScope}
+                open={deleteOption}
+                onConfirm={async () => {
+                    setDeleteOption(false);
+                    handleDelete();
+                }}
+                onCancel={() => setDeleteOption(false)}
+            />
+        </div>
     )
 }

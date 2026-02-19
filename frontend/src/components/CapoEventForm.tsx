@@ -8,6 +8,7 @@ type EventFormularProps = {
     submitText: string;
     initialValue: EventFormValue;
     onSubmit: (value: EventFormValue) => Promise<void>;
+    bEditMode: boolean;
 };
 
 export default function CapoEventForm(props: Readonly<EventFormularProps>) {
@@ -40,6 +41,8 @@ export default function CapoEventForm(props: Readonly<EventFormularProps>) {
         }
     }
 
+    const showRepUntil = value.repRhythm !== "ONCE" && !props.bEditMode;
+
     return (
         <main className="create-event">
             <h1 className="create-event__title">Create Capoeira Event</h1>
@@ -51,12 +54,13 @@ export default function CapoEventForm(props: Readonly<EventFormularProps>) {
                     {error && <div className="create-event__alert create-event__alert--error">{error}</div>}
 
                     <label className="create-event__label">
-                        * Event Type
+                        Event Type
                         <select
                             className="create-event__select"
                             value={value.eventType}
                             onChange={(e) => updateField("eventType", e.target.value as CapoEventEnumType)}
                             required={true}
+                            disabled={props.bEditMode}
                         >
                             <option value="RODA">RODA</option>
                             <option value="WORKSHOP">WORKSHOP</option>
@@ -64,7 +68,7 @@ export default function CapoEventForm(props: Readonly<EventFormularProps>) {
                     </label>
 
                     <label className="create-event__label">
-                        * Title
+                        Title
                         <input
                             className="create-event__input"
                             value={value.eventTitle}
@@ -100,32 +104,35 @@ export default function CapoEventForm(props: Readonly<EventFormularProps>) {
                     <legend className="create-event__legend">Location</legend>
 
                     <label className="create-event__label">
-                        * Country
+                        Country
                         <input
                             className="create-event__input"
                             value={value.locationData.country}
                             onChange={(e) => updateLocationField("country", e.target.value)}
                             required={true}
+                            disabled={props.bEditMode}
                         />
                     </label>
 
                     <label className="create-event__label">
-                        * State
+                        State
                         <input
                             className="create-event__input"
                             value={value.locationData.state}
                             onChange={(e) => updateLocationField("state", e.target.value)}
                             required={true}
+                            disabled={props.bEditMode}
                         />
                     </label>
 
                     <label className="create-event__label">
-                        * City
+                        City
                         <input
                             className="create-event__input"
                             value={value.locationData.city}
                             onChange={(e) => updateLocationField("city", e.target.value)}
                             required={true}
+                            disabled={props.bEditMode}
                         />
                     </label>
 
@@ -162,7 +169,7 @@ export default function CapoEventForm(props: Readonly<EventFormularProps>) {
                     <legend className="create-event__legend">Time</legend>
 
                     <label className="create-event__label">
-                        * Event Start
+                        Event Start
                         <input
                             className="create-event__input"
                             type="datetime-local"
@@ -189,12 +196,13 @@ export default function CapoEventForm(props: Readonly<EventFormularProps>) {
                     </label>
 
                     <label className="create-event__label">
-                        * Repetition Rhythm
+                        Repetition Rhythm
                         <select
                             className="create-event__select"
                             value={value.repRhythm}
                             onChange={(e) => updateField("repRhythm", e.target.value as RepetitionRhythmEnumType)}
                             required={true}
+                            disabled={props.bEditMode}
                         >
                             <option value="ONCE">ONCE</option>
                             <option value="DAILY">DAILY</option>
@@ -205,19 +213,17 @@ export default function CapoEventForm(props: Readonly<EventFormularProps>) {
                         </select>
                     </label>
 
-                    <label className="create-event__label" >
-                        repeat until
-                        <input
-                            disabled={value.repRhythm === "ONCE"}
-                            hidden={value.repRhythm === "ONCE"}
-                            className="create-event__input"
-                            type="datetime-local"
-                            value={value.repUntil}
-                            onChange={(e) => updateField("repUntil", e.target.value)}
-                            placeholder={value.eventEnd}
-                        />
-                    </label>
-
+                    { showRepUntil && (
+                        <label className="create-event__label" >
+                            repeat until
+                            <input
+                                className="create-event__input"
+                                type="datetime-local"
+                                value={value.repUntil}
+                                onChange={(e) => updateField("repUntil", e.target.value)}
+                            />
+                        </label>
+                    )}
                 </fieldset>
 
                 <button className="create-event__submit" type="submit">

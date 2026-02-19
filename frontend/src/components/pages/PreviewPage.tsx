@@ -1,8 +1,8 @@
-import CapoEventCard from "./CapoEventCard.tsx";
-import "../styles/CapoEventCard.css"
-import "../index.css"
-import type {PageProps} from "../types/PreviewPageProps.ts";
-import type {CapoEventType} from "../types/CapoEvent.ts";
+import CapoEventCard from "../CapoEventCard.tsx";
+import "../../styles/CapoEventCard.css"
+import "../../index.css"
+import type {PageProps} from "../../types/PreviewPageProps.ts";
+import type {CapoEventType} from "../../types/CapoEvent.ts";
 
 
 export default function PreviewPage(props: Readonly<PageProps>) {

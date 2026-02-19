@@ -1,7 +1,7 @@
-import CapoEventCard from "./CapoEventCard.tsx";
-import "../styles/CapoEventCard.css"
-import "../index.css"
-import type {PageProps} from "../types/PreviewPageProps.ts";
+import CapoEventCard from "../CapoEventCard.tsx";
+import "../../styles/CapoEventCard.css"
+import "../../index.css"
+import type {PageProps} from "../../types/PreviewPageProps.ts";
 
 export default function LoggedInPage(props:Readonly<PageProps>) {
 
