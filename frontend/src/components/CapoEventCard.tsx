@@ -27,7 +27,8 @@ export default function CapoEventCard(props: Readonly<EventCardProps>) {
 
         console.log("awaiting axios response for deleteEvent with id: ", props.capoEvent.id + " and scope: ", deleteScope);
 
-        deleteCapoEvent(props.userId, props.capoEvent.id, props.fetchEvents, nav, location.pathname)
+        // TODO: pass scope
+        deleteCapoEvent(props.userId, props.capoEvent.id, deleteScope, props.fetchEvents, nav, location.pathname)
             .catch((error) => {console.log("could not delete capoEvent through CapoEventCard: " + error.toString())});
     }
 
@@ -41,11 +42,9 @@ export default function CapoEventCard(props: Readonly<EventCardProps>) {
         }
 
         nav("/edit/" + id);
-
     }
 
     const localDateTime = props.capoEvent.eventStart;
-
     const [date, timeWithRest] = localDateTime.split("T");
     const time = timeWithRest.slice(0, 5);
 

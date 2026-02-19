@@ -46,7 +46,7 @@ export default function CapoEventPage(props:Readonly<EventPageProps>) {
         console.log("awaiting axios response for deleteEvent with id: ", eventId + " and scope: ", deleteScope);
 
         // TODO pass deleteScope
-       await deleteCapoEvent(user.id, eventId, props.fetchEvents, nav, "/");
+       await deleteCapoEvent(user.id, eventId, deleteScope, props.fetchEvents, nav, "/");
     }
 
     function editEvent(id:string | undefined)
