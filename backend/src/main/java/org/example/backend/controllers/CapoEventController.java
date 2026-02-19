@@ -1,6 +1,7 @@
 package org.example.backend.controllers;
 
 import org.example.backend.dto.CapoEventRegDto;
+import org.example.backend.enums.DeleteScope;
 import org.example.backend.models.CapoEvent;
 import org.example.backend.services.CapoEventService;
 import org.springframework.http.HttpStatus;
@@ -67,10 +68,10 @@ public class CapoEventController {
     }
 
     @DeleteMapping("/delete/{userId}/{eventId}")
-    public ResponseEntity<Boolean> deleteById(@PathVariable String userId, @PathVariable String eventId) {
+    public ResponseEntity<Boolean> deleteById(@PathVariable String userId, @PathVariable String eventId, @RequestParam (defaultValue = "ONLY_THIS") DeleteScope deleteScope) {
 
         try {
-            if (capoEventService.deleteById(userId, eventId)) {
+            if (capoEventService.deleteById(userId, eventId, deleteScope)) {
                 return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
             }
         }

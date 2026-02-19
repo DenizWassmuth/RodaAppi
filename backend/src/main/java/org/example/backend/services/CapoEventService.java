@@ -1,6 +1,7 @@
 package org.example.backend.services;
 
 import org.example.backend.dto.CapoEventRegDto;
+import org.example.backend.enums.DeleteScope;
 import org.example.backend.enums.RepetitionRhythmEnumType;
 import org.example.backend.models.CapoEvent;
 import org.example.backend.repositories.CapoEventRepository;
@@ -9,6 +10,8 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Stream;
+
+import static org.example.backend.enums.DeleteScope.*;
 
 @Service
 public class CapoEventService {
@@ -27,23 +30,6 @@ public class CapoEventService {
         if (regDto == null){
             throw new IllegalArgumentException("event cannot be null if it is to be compared to existing events");
         }
-
-//        List<CapoEvent> existingEvents = capoEventRepo.findAll();
-//        if(existingEvents.isEmpty()){
-//            return false;
-//        }
-//
-//        List<CapoEvent> filtered = existingEvents.stream().filter(
-//                e -> !e.id().equals(idToExclude)).toList()
-//                .stream().filter(
-//                        e -> e.eventStart().equals(regDto.eventStart())).toList()
-//                .stream().filter(
-//                        e -> e.locationData().country().equals(regDto.locationData().country()) &&
-//                                e.locationData().state().equals(regDto.locationData().state()) &&
-//                                e.locationData().city().equals(regDto.locationData().city()) &&
-//                                e.locationData().street().equals(regDto.locationData().street())).toList();
-//
-//        return !filtered.isEmpty();
 
         return capoEventRepo
                 .existsByIdNotAndEventStartAndLocationDataCountryAndLocationDataStateAndLocationDataCityAndLocationDataStreet(
@@ -173,15 +159,17 @@ public class CapoEventService {
         return capoEventRepo.save(updatedEvent);
     }
 
-    public boolean deleteById(String userId, String eventId){
+    public boolean deleteById(String userId, String eventId, DeleteScope deleteScope){
 
-       CapoEvent foundEvent = capoEventRepo.findById(eventId).orElseThrow(() -> new NoSuchElementException("cannot delete event with id:" + eventId + ", as it was not found in db"));
+       CapoEvent foundEvent = capoEventRepo.findByIdAndCreatorId(eventId, userId).orElseThrow(() -> new NoSuchElementException("cannot delete event with userId:" + userId + " and eventId:" + eventId + ", as it was not found in db"));
 
-        if(!foundEvent.creatorId().equals(userId)){
-            throw new MatchException("cannot delete event with id:" + eventId + ", as userId does not match creatorId", new Throwable());
+        switch (deleteScope) {
+            case ONLY_THIS -> capoEventRepo.deleteByIdAndCreatorId(eventId, userId);
+            case ALL_IN_SERIES -> capoEventRepo.deleteAllBySeriesId(foundEvent.seriesId());
+            case BEFORE_THIS -> capoEventRepo.deleteAllBySeriesIdAndOccurrenceIndexIsLessThanEqual(foundEvent.seriesId(), foundEvent.occurrenceIndex());
+            case AFTER_THIS -> capoEventRepo.deleteAllBySeriesIdAndOccurrenceIndexIsGreaterThanEqual(foundEvent.seriesId(), foundEvent.occurrenceIndex());
         }
 
-        capoEventRepo.deleteById(eventId);
         return !capoEventRepo.existsById(eventId);
     }
 }

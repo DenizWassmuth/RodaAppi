@@ -7,8 +7,8 @@ import {useState} from "react";
 import DeleteOptionsModal from "./modals/DeleteOptionsModal.tsx";
 
 type EventCardProps = {
-    capoEvent: CapoEventType
     userId: string | undefined | null
+    capoEvent: CapoEventType
     fetchEvents: () => Promise<void>
 }
 
@@ -25,9 +25,21 @@ export default function CapoEventCard(props: Readonly<EventCardProps>) {
 
     function handleDelete() {
 
-        console.log("awaiting axios response for deleteEvent with id: ", props.capoEvent.id + " and scope: ", deleteScope);
+        if (props.capoEvent === null) {
+            console.log("capoEvent === null or undefined, cannot proceed to delete event");
+            return;
+        }
 
-        // TODO: pass scope
+        if (props.capoEvent.id === null || props.capoEvent.id === undefined){
+            console.log("eventId === null or undefined, cannot proceed to delete event");
+            return;
+        }
+
+        if (props.userId === null || props.userId === undefined){
+            console.log("userId === null or undefined, cannot proceed to delete event");
+            return;
+        }
+
         deleteCapoEvent(props.userId, props.capoEvent.id, deleteScope, props.fetchEvents, nav, location.pathname)
             .catch((error) => {console.log("could not delete capoEvent through CapoEventCard: " + error.toString())});
     }

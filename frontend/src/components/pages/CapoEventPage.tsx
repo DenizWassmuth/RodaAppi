@@ -32,21 +32,19 @@ export default function CapoEventPage(props:Readonly<EventPageProps>) {
 
     }, [id]);
 
-    async function deleteEvent(user:AppUserType | undefined | null, eventId:string | undefined) {
-        if (user === null || user === undefined) {
+    async function handleDelete() {
+        if (props.appUser === null || props.appUser === undefined) {
             console.log("user === null or undefined, cannot proceed to delete event");
             return;
         }
 
-        if (eventId === null || eventId === undefined){
+        if (id === null || id === undefined){
             console.log("eventId === null or undefined, cannot proceed to delete event");
             return;
         }
 
-        console.log("awaiting axios response for deleteEvent with id: ", eventId + " and scope: ", deleteScope);
-
-        // TODO pass deleteScope
-       await deleteCapoEvent(user.id, eventId, deleteScope, props.fetchEvents, nav, "/");
+       await deleteCapoEvent(props.appUser.id, id, deleteScope, props.fetchEvents, nav, "/")
+           .catch((error) => {console.log("could not delete capoEvent through CapoEventPage " + error.toString())});
     }
 
     function editEvent(id:string | undefined)
@@ -93,7 +91,7 @@ export default function CapoEventPage(props:Readonly<EventPageProps>) {
                             open={deleteOption}
                             onConfirm={async () => {
                                 setDeleteOption(false);
-                                await deleteEvent(props.appUser, id);
+                                await handleDelete();
                             }}
                             onCancel={() => setDeleteOption(false)}
                         />
