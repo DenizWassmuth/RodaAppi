@@ -25,9 +25,11 @@ class CapoEventServiceTest {
     CapoEvent fakeEvent1 = new CapoEvent(
             "1",
             "1",
+            "1",
+            0,
             "chiko",
             "roda aberta",
-            "angola, regional, contemporanea",
+            "angola, regional, comtemporanea",
             "www.somepicture.com",
             new LocationData("Germany", "Berlin", "Berlin", "Friedrichstr.", "244", "Hinterhof"),
             LocalDateTime.of(2026, 2, 15, 19, 0, 0, 0),
@@ -36,31 +38,35 @@ class CapoEventServiceTest {
             RepetitionRhythmEnumType.ONCE
     );
 
+    CapoEventRegDto regDuplicateDto = new CapoEventRegDto(
+            "1",
+            "chiko",
+            "roda aberta",
+            "angola, regional, comtemporanea",
+            "www.somepicture.com",
+            new LocationData("Germany", "Berlin", "Berlin", "Friedrichstr.", "244", "Hinterhof"),
+            LocalDateTime.of(2026,2,15, 19, 0, 0, 0),
+            LocalDateTime.of(2026,2,15, 23, 0, 0, 0),
+            CapoEventEnumType.RODA,
+            RepetitionRhythmEnumType.ONCE,
+            LocalDateTime.of(2026,2,15, 23, 0, 0, 0)
+    );
+
     CapoEventRegDto regDto = new CapoEventRegDto(
             "1",
             "chiko",
-            "roda fechada",
+            "roda aberta",
             "angola",
             "www.somepicture.com",
             new LocationData("Germany", "Hamburg", "Hamburg", "Am Veringhof.", "23b", "Ende vom Parkplatz"),
             LocalDateTime.of(2026, 2, 14, 19, 0, 0, 0),
             LocalDateTime.of(2026, 2, 14, 23, 0, 0, 0),
             CapoEventEnumType.RODA,
-            RepetitionRhythmEnumType.MONTHLY
+            RepetitionRhythmEnumType.MONTHLY,
+            LocalDateTime.of(2027, 2, 14, 19, 0, 0, 0)
     );
 
-    CapoEventRegDto regDuplicateDto = new CapoEventRegDto(
-            "1",
-            "chiko",
-            "roda aberta",
-            "angola, regional, contemporanea",
-            "www.somepicture.com",
-            new LocationData("Germany", "Berlin", "Berlin", "Friedrichstr.", "244", "Hinterhof"),
-            LocalDateTime.of(2026,2,15, 19, 0, 0, 0),
-            LocalDateTime.of(2026,2,15, 23, 0, 0, 0),
-            CapoEventEnumType.RODA,
-            RepetitionRhythmEnumType.ONCE
-    );
+
 
 
     @Test
@@ -162,6 +168,22 @@ class CapoEventServiceTest {
     }
 
     @Test
+    void createCapoEvent_shouldThrowMatchException_whenEventAlreadyExists() {
+
+        Mockito.when(capoEventRepo
+                        .existsByIdNotAndEventStartAndLocationDataCountryAndLocationDataStateAndLocationDataCityAndLocationDataStreet(
+                                null,
+                                regDuplicateDto.eventStart(),
+                                regDuplicateDto.locationData().country(),
+                                regDuplicateDto.locationData().state(),
+                                regDuplicateDto.locationData().city(),
+                                regDuplicateDto.locationData().street()))
+                .thenReturn(true);
+
+        assertThrows(MatchException.class, () -> capoEventService.createCapoEvent(regDuplicateDto));
+    }
+
+    @Test
     void createCapoEvent_shouldReturnCapoEvent_basedOnRegDto() {
 
         Mockito.when(capoEventRepo.save(any())).thenReturn(fakeEvent1);
@@ -169,17 +191,18 @@ class CapoEventServiceTest {
         CapoEventRegDto regEventDto = new CapoEventRegDto(
                 "1",
                 "chiko",
-                "roda aberta",
-                "angola, regional, contemporanea",
+                "roda fechada",
+                "angola",
                 "www.somepicture.com",
                 new LocationData("Germany", "Berlin", "Berlin", "Friedrichstr.", "244", "Hinterhof"),
                 LocalDateTime.of(2026,2,15, 19, 0, 0, 0),
                 LocalDateTime.of(2026,2,15, 23, 0, 0, 0),
                 CapoEventEnumType.RODA,
-                RepetitionRhythmEnumType.ONCE
+                RepetitionRhythmEnumType.ONCE,
+                LocalDateTime.of(2026,2,15, 23, 0, 0, 0)
         );
 
-        CapoEvent actual = capoEventService.createCapoEvent(regDto);
+        CapoEvent actual = capoEventService.createCapoEvent(regEventDto);
 
         assertNotNull(actual);
         assertNotNull(actual.id());
@@ -189,13 +212,6 @@ class CapoEventServiceTest {
         assertEquals(regEventDto.eventDescription(), actual.eventDescription());
     }
 
-    @Test
-    void createCapoEvent_shouldThrowMatchException_whenEventAlreadyExists() {
-
-        Mockito.when(capoEventRepo.findAll()).thenReturn(List.of(fakeEvent1));
-
-        assertThrows(MatchException.class, () -> capoEventService.createCapoEvent(regDuplicateDto));
-    }
 
     @Test
     void updateCapoEvent_shouldThrowIllegalArgumentException_whenUserIdIsnUll() {
@@ -219,14 +235,22 @@ class CapoEventServiceTest {
 
     @Test
     void updateCapoEvent_shouldThrowMatchException_whenCreatorIdAndUserIdDoNotMatch() {
-        Mockito.when(capoEventRepo.findById("1")).thenReturn(Optional.of(fakeEvent1));
+        Mockito.when(capoEventRepo.findById("1")).thenReturn(Optional.of(fakeEvent1)); // user id is 1
         assertThrows(MatchException.class, () -> capoEventService.updateCapoEvent("2","1", regDto));
     }
 
     @Test
     void updateCapoEvent_shouldThrowMatchException_whenEventAlreadyExists() {
 
-        Mockito.when(capoEventRepo.findAll()).thenReturn(List.of(fakeEvent1));
+        Mockito.when(capoEventRepo
+                        .existsByIdNotAndEventStartAndLocationDataCountryAndLocationDataStateAndLocationDataCityAndLocationDataStreet(
+                                "2",
+                                regDuplicateDto.eventStart(),
+                                regDuplicateDto.locationData().country(),
+                                regDuplicateDto.locationData().state(),
+                                regDuplicateDto.locationData().city(),
+                                regDuplicateDto.locationData().street()))
+                .thenReturn(true);
         assertThrows(MatchException.class, () -> capoEventService.updateCapoEvent("1","2", regDuplicateDto));
     }
 

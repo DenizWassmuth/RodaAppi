@@ -40,6 +40,8 @@ class CapoEventControllerTest {
     CapoEvent fakeEvent1 = new CapoEvent(
             "1",
             "1",
+            "1",
+            0,
             "chiko",
             "roda aberta",
             "angola, regional, contemporanea",
@@ -61,7 +63,8 @@ class CapoEventControllerTest {
             LocalDateTime.of(2026,2,14, 19, 0, 0, 0),
             LocalDateTime.of(2026,2,14, 23, 0, 0, 0),
             CapoEventEnumType.RODA,
-            RepetitionRhythmEnumType.ONCE
+            RepetitionRhythmEnumType.ONCE,
+            LocalDateTime.of(2026,2,14, 23, 0, 0, 0)
     );
 
     @Test
@@ -207,7 +210,8 @@ class CapoEventControllerTest {
                                   "eventStart": "2026-02-15T19:00:00",
                                   "eventEnd": "2026-02-15T23:00:00",
                                   "eventType": "RODA",
-                                  "repRhythm": "ONCE"
+                                  "repRhythm": "ONCE",
+                                  "repUntil": "2026-02-15T23:00:00"
                                 }
                                 
                                 """)
@@ -228,7 +232,7 @@ class CapoEventControllerTest {
 
     @Test
     @WithMockUser
-    void create_shouldReturnStatusIsStatusConflict_whenIdenticalEventExists() throws Exception {
+    void create_shouldReturnStatusIsConflict_whenIdenticalEventExists() throws Exception {
 
         capoEventRepo.save(fakeEvent1);
 
@@ -251,7 +255,8 @@ class CapoEventControllerTest {
                                   "eventStart": "2026-02-15T19:00:00",
                                   "eventEnd": "2026-02-15T23:00:00",
                                   "eventType": "RODA",
-                                  "repRhythm": "ONCE"
+                                  "repRhythm": "ONCE",
+                                  "repUntil": "2026-02-15T23:00:00"
                                 }
                                 
                                 """)

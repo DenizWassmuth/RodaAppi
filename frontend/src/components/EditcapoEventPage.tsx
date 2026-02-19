@@ -37,6 +37,7 @@ export default function EditCapoEventPage(props:Readonly<Props>) {
         eventEnd: event.eventEnd,
         eventType: event.eventType,
         repRhythm: event.repRhythm,
+        repUntil:""
     };
 
     async function submit(value: EventFormValue) {

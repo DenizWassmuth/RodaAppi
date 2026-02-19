@@ -28,6 +28,7 @@ export default function CreateCapoEventPage(props:Readonly<CreateEventProps>) {
         eventEnd: "",
         eventType: "RODA",
         repRhythm: "ONCE",
+        repUntil: ""
     };
 
     const nav = useNavigate();
@@ -41,7 +42,7 @@ export default function CreateCapoEventPage(props:Readonly<CreateEventProps>) {
         };
 
         await axios.post("/api/capoevent", dto)
-            .then(()=> props.fetchEvents()
+            .then(() => props.fetchEvents()
                 .then(() => nav("/loggedin")));
     }
 
