@@ -1,5 +1,6 @@
 package org.example.backend.controllers;
 
+import org.apache.coyote.BadRequestException;
 import org.example.backend.dto.CapoEventRegDto;
 import org.example.backend.enums.DeleteScope;
 import org.example.backend.models.CapoEvent;
@@ -74,14 +75,15 @@ public class CapoEventController {
     public ResponseEntity<Boolean> deleteById(@PathVariable String userId, @PathVariable String eventId, @RequestParam (defaultValue = "ONLY_THIS") DeleteScope deleteScope) {
 
         try {
-            if (capoEventService.deleteById(userId, eventId, deleteScope)) {
-                return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
-            }
+            capoEventService.deleteById(userId, eventId, deleteScope) ;
         }
         catch (NoSuchElementException noSuchElementException) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
+        catch(IllegalArgumentException ex){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
 
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 }
