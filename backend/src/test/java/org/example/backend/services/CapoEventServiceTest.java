@@ -115,29 +115,6 @@ class CapoEventServiceTest {
         assertNull(actualCapoEvent);
     }
 
-    @Test
-    void deleteById_shouldReturnTrue_whenEventIsDeleted() {
-        Mockito.when(capoEventRepo.findByIdAndCreatorId("1", "1")).thenReturn(Optional.of(fakeEvent1));
-
-        boolean expected = capoEventService.deleteById("1", fakeEvent1.id(), DeleteScope.ONLY_THIS);
-
-        assertTrue(expected);
-    }
-
-//    @Test
-//    void deleteById_shouldThrowNoSuchElementException_whenNoEventFound() {
-//
-//        Mockito.when(capoEventRepo.findByIdAndCreatorId("1", "1")).thenReturn(Optional.empty());
-//
-//        assertThrows(NoSuchElementException.class, () -> capoEventService.deleteById("1", "1", DeleteScope.ONLY_THIS));
-//    }
-
-    @Test
-    void deleteById_shouldThrowNoSuchElementException_whenWhenCreatorIdAndUserIdDoNotMatch() {
-        Mockito.when(capoEventRepo.findByIdAndCreatorId("1", "1")).thenReturn(Optional.of(fakeEvent1));
-
-        assertThrows(NoSuchElementException.class, () -> capoEventService.deleteById("2","1",  DeleteScope.ONLY_THIS));
-    }
 
     @Test
     void getAllByCreatorId_shouldReturnEmptyArrayList_whenIdIsNull() {
@@ -281,5 +258,65 @@ class CapoEventServiceTest {
         assertEquals(expected.thumbnail(), actual.thumbnail());
         assertEquals(expected.repRhythm(), actual.repRhythm());
         assertEquals(expected.eventType(), actual.eventType());
+    }
+
+
+//    @Test
+//    void deleteById_shouldThrowNoSuchElementException_whenNoEventFound() {
+//
+//        Mockito.when(capoEventRepo.findByIdAndCreatorId("1", "1")).thenReturn(Optional.empty());
+//
+//        assertThrows(NoSuchElementException.class, () -> capoEventService.deleteById("1", "1", DeleteScope.ONLY_THIS));
+//    }
+
+    @Test
+    void deleteById_shouldThrowNoSuchElementException_whenWhenCreatorIdAndUserIdDoNotMatch() {
+        Mockito.when(capoEventRepo.findByIdAndCreatorId("1", "1")).thenReturn(Optional.of(fakeEvent1));
+
+        assertThrows(NoSuchElementException.class, () -> capoEventService.deleteById("2","1",  DeleteScope.ONLY_THIS));
+    }
+
+    @Test
+    void deleteById_shouldThrowIllegalArgumentException_deleteScopeIsNotElementOfEnum() {
+        Mockito.when(capoEventRepo.findByIdAndCreatorId("1", "1")).thenReturn(Optional.of(fakeEvent1));
+
+        assertThrows(IllegalArgumentException.class, () -> capoEventService.deleteById("1","1",  DeleteScope.valueOf("NO_REAL_SCOPE")));
+    }
+
+    @Test
+    void deleteById_shouldReturnTrue_whenEventIsDeleted_ONLY_THIS() {
+        Mockito.when(capoEventRepo.findByIdAndCreatorId("1", "1")).thenReturn(Optional.of(fakeEvent1));
+
+        boolean expected = capoEventService.deleteById("1", fakeEvent1.id(), DeleteScope.ONLY_THIS);
+
+        assertTrue(expected);
+    }
+
+    @Test
+    void deleteById_shouldReturnTrue_whenEventIsDeleted_ALL_IN_SERIES() {
+        Mockito.when(capoEventRepo.findByIdAndCreatorId("1", "1")).thenReturn(Optional.of(fakeEvent1));
+
+        boolean expected = capoEventService.deleteById("1", fakeEvent1.id(), DeleteScope.ALL_IN_SERIES);
+
+        assertTrue(expected);
+    }
+
+    @Test
+    void deleteById_shouldReturnTrue_whenEventIsDeleted_After_THIS() {
+        Mockito.when(capoEventRepo.findByIdAndCreatorId("1", "1")).thenReturn(Optional.of(fakeEvent1));
+
+        boolean expected = capoEventService.deleteById("1", fakeEvent1.id(), DeleteScope.AFTER_THIS);
+
+        assertTrue(expected);
+    }
+
+
+    @Test
+    void deleteById_shouldReturnTrue_whenEventIsDeleted_BEFORE_THIS() {
+        Mockito.when(capoEventRepo.findByIdAndCreatorId("1", "1")).thenReturn(Optional.of(fakeEvent1));
+
+        boolean expected = capoEventService.deleteById("1", fakeEvent1.id(), DeleteScope.BEFORE_THIS);
+
+        assertTrue(expected);
     }
 }

@@ -72,7 +72,7 @@ public class CapoEventController {
     }
 
     @DeleteMapping("/delete/{userId}/{eventId}")
-    public ResponseEntity<Boolean> deleteById(@PathVariable String userId, @PathVariable String eventId, @RequestParam (defaultValue = "ONLY_THIS") DeleteScope deleteScope) {
+    public ResponseEntity<Void> deleteById(@PathVariable String userId, @PathVariable String eventId, @RequestParam (defaultValue = "ONLY_THIS") DeleteScope deleteScope) {
 
         try {
             capoEventService.deleteById(userId, eventId, deleteScope) ;
