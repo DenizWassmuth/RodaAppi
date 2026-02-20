@@ -3,6 +3,7 @@ package org.example.backend.controllers;
 import org.example.backend.data.LocationData;
 import org.example.backend.dto.CapoEventRegDto;
 import org.example.backend.enums.CapoEventEnumType;
+import org.example.backend.enums.DeleteScope;
 import org.example.backend.enums.RepetitionRhythmEnumType;
 import org.example.backend.models.CapoEvent;
 import org.example.backend.repositories.CapoEventRepository;
@@ -169,7 +170,7 @@ class CapoEventControllerTest {
 
     @Test
     @WithMockUser
-    void deleteById_shouldReturnStatusNotFound_whenEventWithEventIdIsNotFound() throws Exception {
+    void deleteById_shouldReturnStatusNotFound_() throws Exception {
 
         capoEventRepo.save(fakeEvent1); // has id 1
 
@@ -180,12 +181,52 @@ class CapoEventControllerTest {
 
     @Test
     @WithMockUser
-    void create_shouldReturnStatusBadRequest() throws Exception {
+    void deleteById_shouldReturnBadRequest() throws Exception {
 
-        mockMvc.perform(post("/api/capoevent")
+        capoEventRepo.save(fakeEvent1); // has id 1
+
+        mockMvc.perform(delete("/api/capoevent/delete/1/1")
+                        .param("deleteScope", "NO_REAL_SCOPE")
                         .with(oauth2Login()))
                 .andExpect(status().isBadRequest());
     }
+
+    @Test
+    @WithMockUser
+    void deleteById_shouldReturnIsNoContent_whenScopeAll_IN_SERIES() throws Exception {
+
+        capoEventRepo.save(fakeEvent1); // has id 1
+
+        mockMvc.perform(delete("/api/capoevent/delete/1/1")
+                        .param("deleteScope", DeleteScope.ALL_IN_SERIES.toString())
+                        .with(oauth2Login()))
+                .andExpect(status().isNoContent());
+    }
+
+    @Test
+    @WithMockUser
+    void deleteById_shouldReturnIsNoContent_whenScope_AFTER_THIS() throws Exception {
+
+        capoEventRepo.save(fakeEvent1); // has id 1
+
+        mockMvc.perform(delete("/api/capoevent/delete/1/1")
+                        .param("deleteScope", DeleteScope.AFTER_THIS.toString())
+                        .with(oauth2Login()))
+                .andExpect(status().isNoContent());
+    }
+
+    @Test
+    @WithMockUser
+    void deleteById_shouldReturnIsNoContent_whenScope_BEFORE_THIS() throws Exception {
+
+        capoEventRepo.save(fakeEvent1); // has id 1
+
+        mockMvc.perform(delete("/api/capoevent/delete/1/1")
+                        .param("deleteScope", DeleteScope.BEFORE_THIS.toString())
+                        .with(oauth2Login()))
+                .andExpect(status().isNoContent());
+    }
+
 
     @Test
     @WithMockUser
@@ -232,6 +273,17 @@ class CapoEventControllerTest {
 
     @Test
     @WithMockUser
+    void create_shouldReturnStatusBadRequest_whenBodyIsNull() throws Exception {
+
+        mockMvc.perform(post("/api/capoevent")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .with(oauth2Login()))
+                .andExpect(status().isBadRequest());
+
+    }
+
+    @Test
+    @WithMockUser
     void create_shouldReturnStatusIsConflict_whenIdenticalEventExists() throws Exception {
 
         capoEventRepo.save(fakeEvent1);
@@ -262,6 +314,38 @@ class CapoEventControllerTest {
                                 """)
                         .with(oauth2Login()))
                 .andExpect(status().isConflict());
+    }
+
+    @Test
+    @WithMockUser
+    void create_shouldReturnStatusBadRequest_whenRepUntilIsBeforeStart() throws Exception {
+
+        mockMvc.perform(post("/api/capoevent")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "userId": "1",
+                                  "userName":"chiko",
+                                  "eventTitle": "Roda Aberta",
+                                  "eventDescription": "Angola + Regional. Bring water, beginners welcome.",
+                                  "thumbnail": "https://example.com/images/roda.jpg",
+                                  "locationData": {
+                                    "country": "Germany",
+                                    "state": "Berlin",
+                                    "city": "Berlin",
+                                    "street": "Friedrichstr.",
+                                    "streetnumber": "244"
+                                  },
+                                  "eventStart": "2026-02-15T19:00:00",
+                                  "eventEnd": "2026-02-15T23:00:00",
+                                  "eventType": "RODA",
+                                  "repRhythm": "DAILY",
+                                  "repUntil": "2025-02-15T23:00:00"
+                                }
+                                
+                                """)
+                        .with(oauth2Login()))
+                .andExpect(status().isBadRequest());
     }
 
     @Test
