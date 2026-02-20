@@ -4,13 +4,17 @@ import CapoEventForm from "../CapoEventForm.tsx";
 import type { AppUserType } from "../../types/AppUser.ts";
 import type {EventFormValue, EventRegDto} from "../../types/CapoEvent.ts";
 import {useNavigate} from "react-router-dom";
+import CreateAndEditModal from "../modals/Create&EditModal.tsx";
+import {useState} from "react";
 
-type CreateEventProps = {
+type Props = {
     user: AppUserType;
     fetchEvents: () => Promise<void>;
+    onClosePath:string;
+
 };
 
-export default function CreateCapoEventPage(props:Readonly<CreateEventProps>) {
+export default function CreateCapoEventPage(props:Readonly<Props>) {
     const empty: EventFormValue = {
         userName:props.user?.username,
         eventTitle: "",
@@ -31,6 +35,7 @@ export default function CreateCapoEventPage(props:Readonly<CreateEventProps>) {
         repUntil: ""
     };
 
+    const [openFormModal, setOpenFormModal] = useState(true);
     const nav = useNavigate();
 
     async function submit(value: EventFormValue) {
@@ -41,12 +46,23 @@ export default function CreateCapoEventPage(props:Readonly<CreateEventProps>) {
             ...value,
         };
 
+        setOpenFormModal(false);
+
         await axios.post("/api/capoevent", dto)
             .then(() => props.fetchEvents()
                 .then(() => nav("/loggedin")));
     }
 
+    function onClose(){
+        setOpenFormModal(false);
+        nav(props.onClosePath)
+    }
+
     const isLoggedIn = props.user !== null && props.user !== undefined;
+
+    if (!openFormModal) {
+        return null;
+    }
 
     return (
         <>
@@ -56,13 +72,18 @@ export default function CreateCapoEventPage(props:Readonly<CreateEventProps>) {
                 </div>
             )}
 
-            {isLoggedIn && (
-                <CapoEventForm
-                    submitText="Create"
-                    initialValue={empty}
-                    onSubmit={submit}
-                    bEditMode={false}
-                />)}
+            {isLoggedIn && openFormModal && (
+                <CreateAndEditModal title={""} open={openFormModal} onClose={() => onClose()} >
+                    <div>
+                        <CapoEventForm
+                            submitText="Create"
+                            initialValue={empty}
+                            onSubmit={submit}
+                            bEditMode={false}
+                        />
+                    </div>
+                </CreateAndEditModal>)
+            }
         </>
     );
 }

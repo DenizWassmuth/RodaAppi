@@ -75,9 +75,6 @@ public class CapoEventController {
                 return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
             }
         }
-        catch (MatchException matchException) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).build();
-        }
         catch (NoSuchElementException noSuchElementException) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }

@@ -1,4 +1,4 @@
-import "../../styles/Modal.css";
+import "../../styles/DeleteModal.css";
 
 type Props = {
     open: boolean;

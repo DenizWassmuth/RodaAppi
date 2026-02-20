@@ -3,6 +3,7 @@ package org.example.backend.services;
 import org.example.backend.data.LocationData;
 import org.example.backend.dto.CapoEventRegDto;
 import org.example.backend.enums.CapoEventEnumType;
+import org.example.backend.enums.DeleteScope;
 import org.example.backend.enums.RepetitionRhythmEnumType;
 import org.example.backend.models.CapoEvent;
 import org.example.backend.repositories.CapoEventRepository;
@@ -66,9 +67,6 @@ class CapoEventServiceTest {
             LocalDateTime.of(2027, 2, 14, 19, 0, 0, 0)
     );
 
-
-
-
     @Test
     void getAll_shouldReturnEmptyList_whenNoEventFound() {
         // GIVEN
@@ -119,33 +117,30 @@ class CapoEventServiceTest {
 
     @Test
     void deleteById_shouldReturnTrue_whenEventIsDeleted() {
+        Mockito.when(capoEventRepo.findByIdAndCreatorId("1", "1")).thenReturn(Optional.of(fakeEvent1));
 
-        Mockito.when(capoEventRepo.findById("1")).thenReturn(Optional.of(fakeEvent1));
-
-        boolean expected = capoEventService.deleteById("1", fakeEvent1.id());
+        boolean expected = capoEventService.deleteById("1", fakeEvent1.id(), DeleteScope.ONLY_THIS);
 
         assertTrue(expected);
     }
 
+//    @Test
+//    void deleteById_shouldThrowNoSuchElementException_whenNoEventFound() {
+//
+//        Mockito.when(capoEventRepo.findByIdAndCreatorId("1", "1")).thenReturn(Optional.empty());
+//
+//        assertThrows(NoSuchElementException.class, () -> capoEventService.deleteById("1", "1", DeleteScope.ONLY_THIS));
+//    }
+
     @Test
-    void deleteById_shouldThrowNoSuchElementException_whenNoEventFound() {
+    void deleteById_shouldThrowNoSuchElementException_whenWhenCreatorIdAndUserIdDoNotMatch() {
+        Mockito.when(capoEventRepo.findByIdAndCreatorId("1", "1")).thenReturn(Optional.of(fakeEvent1));
 
-        Mockito.when(capoEventRepo.findById("1")).thenReturn(Optional.empty());
-
-        assertThrows(NoSuchElementException.class, () -> capoEventService.deleteById("1", "1"));
-    }
-
-    @Test
-    void deleteById_shouldThrowNoMatchException_whenWhenCreatorIdAndUserIdDoNotMatch() {
-
-        Mockito.when(capoEventRepo.findById("1")).thenReturn(Optional.of(fakeEvent1));
-
-        assertThrows(MatchException.class, () -> capoEventService.deleteById("2","1"));
+        assertThrows(NoSuchElementException.class, () -> capoEventService.deleteById("2","1",  DeleteScope.ONLY_THIS));
     }
 
     @Test
     void getAllByCreatorId_shouldReturnEmptyArrayList_whenIdIsNull() {
-
         List<CapoEvent> actualList = capoEventService.getAllByCreatorId(null);
 
         assertNotNull(actualList);
@@ -156,6 +151,7 @@ class CapoEventServiceTest {
     void getAllByCreatorId_shouldReturnExpectedList() {
         List<CapoEvent> expectedList = List.of(fakeEvent1);
         Mockito.when(capoEventRepo.findAllByCreatorId("1")).thenReturn(expectedList);
+
         List<CapoEvent> actualList = capoEventService.getAllByCreatorId("1");
 
         assertNotNull(actualList);

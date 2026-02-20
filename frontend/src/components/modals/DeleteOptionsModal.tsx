@@ -1,5 +1,5 @@
 import { useState } from "react";
-import "../../styles/Modal.css";
+import "../../styles/DeleteModal.css";
 import ConfirmModal from "./ConfirmModal.tsx";
 
 export type DeleteScope = "ONLY_THIS" | "ALL_IN_SERIES" | "BEFORE_THIS" | "AFTER_THIS";

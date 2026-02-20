@@ -158,13 +158,13 @@ class CapoEventControllerTest {
 
     @Test
     @WithMockUser
-    void deleteById_shouldReturnStatusIsConflict_whenFoundButCreatorIdDoesNotMatchUserId() throws Exception {
+    void deleteById_shouldReturnStatusNotFound() throws Exception {
 
-        capoEventRepo.save(fakeEvent1); // has id 1
+        capoEventRepo.save(fakeEvent1); // has creatorId 1
 
         mockMvc.perform(delete("/api/capoevent/delete/2/1")
                         .with(oauth2Login()))
-                .andExpect(status().isConflict());
+                .andExpect(status().isNotFound());
     }
 
     @Test

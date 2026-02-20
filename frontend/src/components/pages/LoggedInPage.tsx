@@ -1,12 +1,15 @@
 import CapoEventCard from "../CapoEventCard.tsx";
 import "../../styles/CapoEventCard.css"
 import "../../index.css"
-import type {PageProps} from "../../types/PreviewPageProps.ts";
+import type {PageProps} from "../../types/PageProps.ts";
+
 
 export default function LoggedInPage(props:Readonly<PageProps>) {
 
     const filteredEvents = props.user ?
         props.events.filter((capoEvent) => capoEvent.creatorId === props.user?.id) : [];
+
+    props.setCurrentPath(props.pathToSet);
 
     return (
         <div>

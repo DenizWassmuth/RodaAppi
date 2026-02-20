@@ -45,7 +45,7 @@ export default function CapoEventForm(props: Readonly<EventFormularProps>) {
 
     return (
         <main className="create-event">
-            <h1 className="create-event__title">Create Capoeira Event</h1>
+            <h1 className="create-event__title">{props.submitText} Capoeira Event</h1>
 
             <form className="create-event__form" onSubmit={handleSubmit}>
                 <fieldset className="create-event__fieldset">

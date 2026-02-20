@@ -18,6 +18,7 @@ function App() {
 
     const [user, setUser] = useState<AppUserType>(null);
     const [capoEvents, setCapoEvents] = useState<CapoEventType[]>([]);
+    const [currentPath, setCurrentPath] = useState<string>("/");
 
     const loadUser = () => {
         axios.get("/api/auth")
@@ -40,15 +41,15 @@ function App() {
       <>
           <header><Navbar user={user}/></header>
           <Routes>
-              <Route path={"/"} element={<PreviewPage user={user} events={capoEvents} fetchEvents={fetchEvents} typeOfEvent={"NONE"}/>}/>
-              <Route path={"/rodas"} element={<PreviewPage user={user} events={capoEvents} fetchEvents={fetchEvents} typeOfEvent={"RODA"}/>}/>
-              <Route path={"/workshops"} element={<PreviewPage user={user} events={capoEvents} fetchEvents={fetchEvents} typeOfEvent={"WORKSHOP"}/>}/>
+              <Route path={"/"} element={<PreviewPage user={user} events={capoEvents} fetchEvents={fetchEvents} typeOfEvent={"NONE"} pathToSet={"/"} setCurrentPath={setCurrentPath}/>}/>
+              <Route path={"/rodas"} element={<PreviewPage user={user} events={capoEvents} fetchEvents={fetchEvents} typeOfEvent={"RODA"} pathToSet={"rodas"} setCurrentPath={setCurrentPath}/>}/>
+              <Route path={"/workshops"} element={<PreviewPage user={user} events={capoEvents} fetchEvents={fetchEvents} typeOfEvent={"WORKSHOP"} pathToSet={"workshops"} setCurrentPath={setCurrentPath}/>}/>
               <Route path={"/capoevent/:id"} element={<CapoEventPage appUser={user} fetchEvents={fetchEvents}/>}/>
 
               <Route element={<ProtectedRoute user={user}/> }>
-                  <Route path={"/loggedin"} element={<LoggedInPage user={user} events={capoEvents} fetchEvents={fetchEvents} typeOfEvent={"NONE"}/>}/>
-                  <Route path={"/add"} element={<CreateCapoEventPage user={user} fetchEvents={fetchEvents}/>}/>
-                  <Route path={"/edit/:id"} element={<EditCapoEventPage user={user} fetchEvents={fetchEvents}/>}/>
+                  <Route path={"/loggedin"} element={<LoggedInPage user={user} events={capoEvents} fetchEvents={fetchEvents} typeOfEvent={"NONE"} pathToSet={"/loggedin"} setCurrentPath={setCurrentPath}/>}/>
+                  <Route path={"/add"} element={<CreateCapoEventPage user={user} fetchEvents={fetchEvents} onClosePath={currentPath}/>}/>
+                  <Route path={"/edit/:id"} element={<EditCapoEventPage user={user} fetchEvents={fetchEvents} onClosePath={currentPath} />}/>
               </Route>
           </Routes>
       </>

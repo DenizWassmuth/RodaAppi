@@ -1,11 +1,13 @@
 import CapoEventCard from "../CapoEventCard.tsx";
 import "../../styles/CapoEventCard.css"
 import "../../index.css"
-import type {PageProps} from "../../types/PreviewPageProps.ts";
+import type {PageProps} from "../../types/PageProps.ts";
 import type {CapoEventType} from "../../types/CapoEvent.ts";
 
 
 export default function PreviewPage(props: Readonly<PageProps>) {
+
+    props.setCurrentPath(props.pathToSet);
 
     return (
         <div>
@@ -21,7 +23,6 @@ export default function PreviewPage(props: Readonly<PageProps>) {
                                     fetchEvents={props.fetchEvents}/>)
                             )
                     }
-
                     {
                         props.typeOfEvent.toString().length >= 0 && props.events
                             .filter(capoEvent => capoEvent.eventType.match(props.typeOfEvent))
