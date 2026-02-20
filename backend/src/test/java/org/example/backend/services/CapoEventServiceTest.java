@@ -8,6 +8,8 @@ import org.example.backend.enums.RepetitionRhythmEnumType;
 import org.example.backend.models.CapoEvent;
 import org.example.backend.repositories.CapoEventRepository;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 import org.mockito.Mockito;
 
 import java.time.LocalDateTime;
@@ -194,6 +196,44 @@ class CapoEventServiceTest {
         assertEquals(regEventDto.userId(), actual.creatorId());
         assertEquals(regEventDto.eventTitle(), actual.eventTitle());
         assertEquals(regEventDto.eventDescription(), actual.eventDescription());
+    }
+
+    @ParameterizedTest
+    @EnumSource(value = RepetitionRhythmEnumType.class, names = {"DAILY", "WEEKLY", "MONTHLY", "QUARTERLY", "YEARLY"})
+    void shiftLocalDateTime_shouldShiftCorrectly_forSupportedRhythms(RepetitionRhythmEnumType rhythm) {
+
+        LocalDateTime start = LocalDateTime.of(2026, 2, 15, 19, 0);
+
+        LocalDateTime expected = switch (rhythm) {
+            case DAILY -> start.plusDays(1);
+            case WEEKLY -> start.plusWeeks(1);
+            case MONTHLY -> start.plusMonths(1);
+            case QUARTERLY -> start.plusMonths(3);
+            case YEARLY -> start.plusYears(1);
+            default -> throw new IllegalStateException("test enum set is wrong");
+        };
+
+        LocalDateTime actual = capoEventService.shiftLocalDateTime(start, rhythm);
+
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    void shiftLocalDateTime_shouldReturnSameValue_forOnce() {
+
+        LocalDateTime start = LocalDateTime.of(2026, 2, 15, 19, 0);
+
+        LocalDateTime actual = capoEventService.shiftLocalDateTime(start, RepetitionRhythmEnumType.ONCE);
+
+        assertEquals(start, actual);
+    }
+
+    @Test
+    void shiftLocalDateTime_shouldThrowIllegalArgumentException_forCustom() { // We test the CUSTOM case.
+
+        LocalDateTime start = LocalDateTime.of(2026, 2, 15, 19, 0);
+
+        assertThrows(IllegalArgumentException.class, () -> capoEventService.shiftLocalDateTime(start, RepetitionRhythmEnumType.CUSTOM));
     }
 
 

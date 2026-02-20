@@ -43,7 +43,7 @@ public class CapoEventService {
         );
     }
 
-    private LocalDateTime shiftLocalDateTime(LocalDateTime toShift, RepetitionRhythmEnumType rhythm) {
+    LocalDateTime shiftLocalDateTime(LocalDateTime toShift, RepetitionRhythmEnumType rhythm) {
 
         return switch (rhythm) {
             case DAILY -> toShift.plusDays(1);
