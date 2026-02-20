@@ -13,8 +13,22 @@ export default function CreateAndEditModal(props: Readonly<Props>) {
 
     if (!props.open) return null;
 
+    function handleBackdropKeyDown(e: React.KeyboardEvent<HTMLDivElement>) {
+        if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            props.onClose();
+        }
+    }
+
     return (
-        <div className="modal__backdrop" onClick={props.onClose}>
+        <div
+            className="modal__backdrop"
+            role="button"
+            tabIndex={0}
+            aria-label="Close dialog"
+            onClick={props.onClose}
+            onKeyDown={handleBackdropKeyDown}
+        >
             <div className="modal__panel" onClick={(e) => e.stopPropagation()}>
                 <div className="modal__header">
                     {props.title && <h2 className="modal__title">{props.title}</h2>}

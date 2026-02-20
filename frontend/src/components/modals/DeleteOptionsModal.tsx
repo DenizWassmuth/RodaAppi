@@ -19,8 +19,22 @@ export default function DeleteOptionsModal(props: Props) {
 
     if (!props.open) return null;
 
+    function handleBackdropKeyDown(e: React.KeyboardEvent<HTMLDivElement>) {
+        if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            props.onCancel();
+        }
+    }
+
     return (
-        <div className="modal__backdrop" onClick={props.onCancel}>
+        <div
+            className="modal__backdrop"
+            role="button"
+            tabIndex={0}
+            aria-label="Close dialog"
+            onClick={props.onCancel}
+            onKeyDown={handleBackdropKeyDown}
+        >
             <div className="modal__panel" onClick={(e) => e.stopPropagation()}>
                 <h3 className="modal__title">Delete which events?</h3>
                 <p className="modal__message">Choose what should be deleted.</p>
