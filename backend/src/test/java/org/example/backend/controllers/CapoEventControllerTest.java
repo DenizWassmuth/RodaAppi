@@ -147,86 +147,6 @@ class CapoEventControllerTest {
                 .andExpect(status().isNotFound());
     }
 
-    @Test
-    @WithMockUser
-    void deleteById_shouldReturnStatusNoContent() throws Exception {
-        capoEventRepo.save(fakeEvent1);
-
-        mockMvc.perform(delete("/api/capoevent/delete/1/1")
-                        .with(oauth2Login()))
-                .andExpect(status().isNoContent());
-    }
-
-    @Test
-    @WithMockUser
-    void deleteById_shouldReturnStatusNotFound() throws Exception {
-
-        capoEventRepo.save(fakeEvent1); // has creatorId 1
-
-        mockMvc.perform(delete("/api/capoevent/delete/2/1")
-                        .with(oauth2Login()))
-                .andExpect(status().isNotFound());
-    }
-
-    @Test
-    @WithMockUser
-    void deleteById_shouldReturnStatusNotFound_() throws Exception {
-
-        capoEventRepo.save(fakeEvent1); // has id 1
-
-        mockMvc.perform(delete("/api/capoevent/delete/1/2")
-                        .with(oauth2Login()))
-                .andExpect(status().isNotFound());
-    }
-
-    @Test
-    @WithMockUser
-    void deleteById_shouldReturnBadRequest() throws Exception {
-
-        capoEventRepo.save(fakeEvent1); // has id 1
-
-        mockMvc.perform(delete("/api/capoevent/delete/1/1")
-                        .param("deleteScope", "NO_REAL_SCOPE")
-                        .with(oauth2Login()))
-                .andExpect(status().isBadRequest());
-    }
-
-    @Test
-    @WithMockUser
-    void deleteById_shouldReturnIsNoContent_whenScopeAll_IN_SERIES() throws Exception {
-
-        capoEventRepo.save(fakeEvent1); // has id 1
-
-        mockMvc.perform(delete("/api/capoevent/delete/1/1")
-                        .param("deleteScope", DeleteScope.ALL_IN_SERIES.toString())
-                        .with(oauth2Login()))
-                .andExpect(status().isNoContent());
-    }
-
-    @Test
-    @WithMockUser
-    void deleteById_shouldReturnIsNoContent_whenScope_AFTER_THIS() throws Exception {
-
-        capoEventRepo.save(fakeEvent1); // has id 1
-
-        mockMvc.perform(delete("/api/capoevent/delete/1/1")
-                        .param("deleteScope", DeleteScope.AFTER_THIS.toString())
-                        .with(oauth2Login()))
-                .andExpect(status().isNoContent());
-    }
-
-    @Test
-    @WithMockUser
-    void deleteById_shouldReturnIsNoContent_whenScope_BEFORE_THIS() throws Exception {
-
-        capoEventRepo.save(fakeEvent1); // has id 1
-
-        mockMvc.perform(delete("/api/capoevent/delete/1/1")
-                        .param("deleteScope", DeleteScope.BEFORE_THIS.toString())
-                        .with(oauth2Login()))
-                .andExpect(status().isNoContent());
-    }
-
 
     @Test
     @WithMockUser
@@ -464,5 +384,86 @@ class CapoEventControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.repRhythm").value("ONCE"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.eventStart").value("2026-02-14T19:00:00"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.eventEnd").value("2026-02-14T23:00:00"));
+    }
+
+    @Test
+    @WithMockUser
+    void deleteById_shouldReturnStatusNoContent() throws Exception {
+
+        capoEventRepo.save(fakeEvent1);
+
+        mockMvc.perform(delete("/api/capoevent/delete/1/1")
+                        .with(oauth2Login()))
+                .andExpect(status().isNoContent());
+    }
+
+    @Test
+    @WithMockUser
+    void deleteById_shouldReturnStatusNotFound_2_1() throws Exception {
+
+        capoEventRepo.save(fakeEvent1); // has creatorId 1
+
+        mockMvc.perform(delete("/api/capoevent/delete/2/1")
+                        .with(oauth2Login()))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @WithMockUser
+    void deleteById_shouldReturnStatusNotFound_1_2() throws Exception {
+
+        capoEventRepo.save(fakeEvent1); // has id 1
+
+        mockMvc.perform(delete("/api/capoevent/delete/1/2")
+                        .with(oauth2Login()))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @WithMockUser
+    void deleteById_shouldReturnBadRequest() throws Exception {
+
+        capoEventRepo.save(fakeEvent1); // has id 1
+
+        mockMvc.perform(delete("/api/capoevent/delete/1/1")
+                        .param("deleteScope", "NO_REAL_SCOPE")
+                        .with(oauth2Login()))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @WithMockUser
+    void deleteById_shouldReturnIsNoContent_whenScopeAll_IN_SERIES() throws Exception {
+
+        capoEventRepo.save(fakeEvent1); // has id 1
+
+        mockMvc.perform(delete("/api/capoevent/delete/1/1")
+                        .param("deleteScope", DeleteScope.ALL_IN_SERIES.toString())
+                        .with(oauth2Login()))
+                .andExpect(status().isNoContent());
+    }
+
+    @Test
+    @WithMockUser
+    void deleteById_shouldReturnIsNoContent_whenScope_AFTER_THIS() throws Exception {
+
+        capoEventRepo.save(fakeEvent1); // has id 1
+
+        mockMvc.perform(delete("/api/capoevent/delete/1/1")
+                        .param("deleteScope", DeleteScope.AFTER_THIS.toString())
+                        .with(oauth2Login()))
+                .andExpect(status().isNoContent());
+    }
+
+    @Test
+    @WithMockUser
+    void deleteById_shouldReturnIsNoContent_whenScope_BEFORE_THIS() throws Exception {
+
+        capoEventRepo.save(fakeEvent1); // has id 1
+
+        mockMvc.perform(delete("/api/capoevent/delete/1/1")
+                        .param("deleteScope", DeleteScope.BEFORE_THIS.toString())
+                        .with(oauth2Login()))
+                .andExpect(status().isNoContent());
     }
 }
