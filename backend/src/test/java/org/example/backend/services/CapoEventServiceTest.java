@@ -152,7 +152,6 @@ class CapoEventServiceTest {
         assertThrows(IllegalArgumentException.class, () -> capoEventService.createCapoEvent(withedRegDto));
     }
 
-
     @Test
     void createCapoEvent_shouldThrowMatchException_whenEventAlreadyExists() {
 
