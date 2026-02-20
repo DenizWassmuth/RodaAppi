@@ -1,6 +1,5 @@
 package org.example.backend.controllers;
 
-import org.apache.coyote.BadRequestException;
 import org.example.backend.dto.CapoEventRegDto;
 import org.example.backend.enums.DeleteScope;
 import org.example.backend.models.CapoEvent;
@@ -44,10 +43,10 @@ public class CapoEventController {
             CapoEvent newEvent = capoEventService.createCapoEvent(regDto);
             return ResponseEntity.status(HttpStatus.CREATED).body(newEvent);
         }
-        catch (IllegalArgumentException ex){
+        catch (IllegalArgumentException _){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
-        catch(MatchException ex){
+        catch(MatchException _){
             return ResponseEntity.status(HttpStatus.CONFLICT).build();
         }
     }
@@ -59,13 +58,13 @@ public class CapoEventController {
             CapoEvent updatedEvent = capoEventService.updateCapoEvent(userId, eventId, regDto);
             return ResponseEntity.status(HttpStatus.CREATED).body(updatedEvent);
         }
-        catch (IllegalArgumentException ex){
+        catch (IllegalArgumentException _){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
-        catch(NoSuchElementException ex){
+        catch(NoSuchElementException _){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
-        catch(MatchException ex){
+        catch(MatchException _){
             return ResponseEntity.status(HttpStatus.CONFLICT).build();
         }
 
@@ -77,10 +76,10 @@ public class CapoEventController {
         try {
             capoEventService.deleteById(userId, eventId, deleteScope) ;
         }
-        catch (NoSuchElementException noSuchElementException) {
+        catch (NoSuchElementException _) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
-        catch(IllegalArgumentException ex){
+        catch(IllegalArgumentException _){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
 

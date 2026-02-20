@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 @With
 @Document(collection = "capoevent")
 public record CapoEvent(
-        String  id,
+        @Id String  id,
         String creatorId,
         String seriesId,
         int occurrenceIndex,
