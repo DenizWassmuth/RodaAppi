@@ -232,7 +232,7 @@ class CapoEventServiceTest {
     @Test
     void updateCapoEvent_shouldThrowMatchException_whenCreatorIdAndUserIdDoNotMatch() {
         Mockito.when(capoEventRepo.findById("1")).thenReturn(Optional.of(fakeEvent1)); // user id is 1
-        assertThrows(MatchException.class, () -> capoEventService.updateCapoEvent("2","1", regDto));
+        assertThrows(NoSuchElementException.class, () -> capoEventService.updateCapoEvent("2","1", regDto));
     }
 
     @Test
@@ -253,7 +253,7 @@ class CapoEventServiceTest {
     @Test
     void updateCapoEvent_ShouldPass_andReturnTheUpdatedCapoEvent() {
 
-        Mockito.when(capoEventRepo.findById("1")).thenReturn(Optional.of(fakeEvent1));
+        Mockito.when(capoEventRepo.findByIdAndCreatorId("1", "1")).thenReturn(Optional.of(fakeEvent1));
 
         CapoEvent expected = fakeEvent1
                 .withEventTitle(regDto.eventTitle())
