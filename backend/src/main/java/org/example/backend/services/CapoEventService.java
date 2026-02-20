@@ -140,11 +140,7 @@ public class CapoEventService {
             throw new MatchException("cannot create new event, event already exists", new Throwable());
         }
 
-       CapoEvent refEvent = capoEventRepo.findById(eventId).orElseThrow(() -> new NoSuchElementException("cannot update event with id:" + eventId + ", as it was not found in db"));
-
-        if (!refEvent.creatorId().equals(userId)) {
-            throw new MatchException("cannot update event, as userId does not match creatorId", new Throwable());
-        }
+       CapoEvent refEvent = capoEventRepo.findByIdAndCreatorId(eventId, userId).orElseThrow(() -> new NoSuchElementException("cannot update event with id:" + eventId + ", as it was not found in db"));
 
         CapoEvent updatedEvent = refEvent
                 .withEventTitle(updateDto.eventTitle())

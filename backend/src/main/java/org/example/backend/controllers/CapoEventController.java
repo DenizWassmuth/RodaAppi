@@ -61,6 +61,9 @@ public class CapoEventController {
         catch (IllegalArgumentException ex){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
+        catch(NoSuchElementException ex){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
         catch(MatchException ex){
             return ResponseEntity.status(HttpStatus.CONFLICT).build();
         }
