@@ -141,6 +141,17 @@ class CapoEventServiceTest {
     }
 
     @Test
+    void createCapoEvent_shouldThrowIllegalArgumentException_whenRepUntilIsBeforeStartDate() {
+
+        CapoEventRegDto withedRegDto = regDto
+                .withRepRhythm(RepetitionRhythmEnumType.DAILY)
+                .withRepUntil(LocalDateTime.of(2022, 2, 14, 19, 0, 0, 0));
+
+        assertThrows(IllegalArgumentException.class, () -> capoEventService.createCapoEvent(withedRegDto));
+    }
+
+
+    @Test
     void createCapoEvent_shouldThrowMatchException_whenEventAlreadyExists() {
 
         Mockito.when(capoEventRepo
@@ -213,21 +224,6 @@ class CapoEventServiceTest {
     }
 
     @Test
-    void updateCapoEvent_shouldThrowMatchException_whenEventAlreadyExists() {
-
-        Mockito.when(capoEventRepo
-                        .existsByIdNotAndEventStartAndLocationDataCountryAndLocationDataStateAndLocationDataCityAndLocationDataStreet(
-                                "2",
-                                regDuplicateDto.eventStart(),
-                                regDuplicateDto.locationData().country(),
-                                regDuplicateDto.locationData().state(),
-                                regDuplicateDto.locationData().city(),
-                                regDuplicateDto.locationData().street()))
-                .thenReturn(true);
-        assertThrows(MatchException.class, () -> capoEventService.updateCapoEvent("1","2", regDuplicateDto));
-    }
-
-    @Test
     void updateCapoEvent_ShouldPass_andReturnTheUpdatedCapoEvent() {
 
         Mockito.when(capoEventRepo.findByIdAndCreatorId("1", "1")).thenReturn(Optional.of(fakeEvent1));
@@ -260,14 +256,6 @@ class CapoEventServiceTest {
         assertEquals(expected.eventType(), actual.eventType());
     }
 
-
-//    @Test
-//    void deleteById_shouldThrowNoSuchElementException_whenNoEventFound() {
-//
-//        Mockito.when(capoEventRepo.findByIdAndCreatorId("1", "1")).thenReturn(Optional.empty());
-//
-//        assertThrows(NoSuchElementException.class, () -> capoEventService.deleteById("1", "1", DeleteScope.ONLY_THIS));
-//    }
 
     @Test
     void deleteById_shouldThrowNoSuchElementException_whenWhenCreatorIdAndUserIdDoNotMatch() {

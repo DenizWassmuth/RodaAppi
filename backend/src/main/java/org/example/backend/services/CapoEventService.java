@@ -8,7 +8,11 @@ import org.example.backend.repositories.CapoEventRepository;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.UUID;
+
 
 @Service
 public class CapoEventService {
@@ -70,10 +74,8 @@ public class CapoEventService {
             throw new IllegalArgumentException("cannot create new event, as regDto is null");
         }
 
-        if (regDto.repRhythm() != RepetitionRhythmEnumType.ONCE) {
-            if (regDto.repUntil().isBefore(regDto.eventStart())) {
-                throw new IllegalArgumentException("cannot create new events, as first eventStart is after repetition cycle end ");
-            }
+        if (regDto.repRhythm() != RepetitionRhythmEnumType.ONCE && regDto.repUntil().isBefore(regDto.eventStart())) {
+            throw new IllegalArgumentException("cannot create new events, as first eventStart is after repetition cycle end ");
         }
 
         List<CapoEvent> capoEvents = new ArrayList<>();
@@ -143,11 +145,9 @@ public class CapoEventService {
                 .withEventTitle(updateDto.eventTitle())
                 .withEventDescription(updateDto.eventDescription())
                 .withThumbnail(updateDto.thumbnail())
-                .withLocationData(updateDto.locationData())
+                .withLocationData(updateDto.locationData()) // change to only street
                 .withEventStart(updateDto.eventStart())
-                .withEventEnd(updateDto.eventEnd())
-                .withEventType(updateDto.eventType())
-                .withRepRhythm(updateDto.repRhythm());
+                .withEventEnd(updateDto.eventEnd());
 
         return capoEventRepo.save(updatedEvent);
     }
