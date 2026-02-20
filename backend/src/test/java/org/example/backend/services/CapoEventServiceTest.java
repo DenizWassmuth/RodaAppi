@@ -234,9 +234,7 @@ class CapoEventServiceTest {
                 .withEventStart(regDto.eventStart())
                 .withEventEnd(regDto.eventEnd())
                 .withLocationData(regDto.locationData())
-                .withThumbnail(regDto.thumbnail())
-                .withRepRhythm(regDto.repRhythm())
-                .withEventType(regDto.eventType());
+                .withThumbnail(regDto.thumbnail());
 
         Mockito.when(capoEventRepo.save(expected)).thenReturn(expected);
 
