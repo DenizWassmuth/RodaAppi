@@ -236,7 +236,6 @@ class CapoEventServiceTest {
         assertThrows(IllegalArgumentException.class, () -> capoEventService.shiftLocalDateTime(start, RepetitionRhythmEnumType.CUSTOM));
     }
 
-
     @Test
     void updateCapoEvent_shouldThrowIllegalArgumentException_whenUserIdIsnUll() {
         assertThrows(IllegalArgumentException.class, () -> capoEventService.updateCapoEvent(null, fakeEvent1.id(), regDto));
