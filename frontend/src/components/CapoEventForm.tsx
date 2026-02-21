@@ -67,7 +67,8 @@ export default function CapoEventForm(props: Readonly<EventFormularProps>) {
                         </select>
                     </label>
 
-                    <label className="create-event__label"> Title
+                    <label className="create-event__label">
+                        <span>Title</span>
                         <input
                             className="create-event__input"
                             value={value.eventTitle}
@@ -77,7 +78,8 @@ export default function CapoEventForm(props: Readonly<EventFormularProps>) {
                         />
                     </label>
 
-                    <label className="create-event__label"> Description
+                    <label className="create-event__label">
+                        <span>Description</span>
                         <textarea
                             className="create-event__textarea"
                             value={value.eventDescription}
@@ -87,7 +89,8 @@ export default function CapoEventForm(props: Readonly<EventFormularProps>) {
                         />
                     </label>
 
-                    <label className="create-event__label"> Thumbnail URL
+                    <label className="create-event__label">
+                        <span>Thumbnail URL</span>
                         <input
                             className="create-event__input"
                             value={value.thumbnail}
@@ -99,8 +102,8 @@ export default function CapoEventForm(props: Readonly<EventFormularProps>) {
 
                 <fieldset className="create-event__fieldset">
                     <legend className="create-event__legend">Location</legend>
-
-                    <label className="create-event__label"> Country
+                    <label className="create-event__label">
+                        <span>Country</span>
                         <input
                             className="create-event__input"
                             value={value.locationData.country}
@@ -110,7 +113,8 @@ export default function CapoEventForm(props: Readonly<EventFormularProps>) {
                         />
                     </label>
 
-                    <label className="create-event__label"> State
+                    <label className="create-event__label">
+                        <span>State</span>
                         <input
                             className="create-event__input"
                             value={value.locationData.state}
@@ -120,7 +124,8 @@ export default function CapoEventForm(props: Readonly<EventFormularProps>) {
                         />
                     </label>
 
-                    <label className="create-event__label"> City
+                    <label className="create-event__label">
+                        <span>City</span>
                         <input
                             className="create-event__input"
                             value={value.locationData.city}
@@ -130,7 +135,8 @@ export default function CapoEventForm(props: Readonly<EventFormularProps>) {
                         />
                     </label>
 
-                    <label className="create-event__label"> Street
+                    <label className="create-event__label">
+                        <span>Street</span>
                         <input
                             className="create-event__input"
                             value={value.locationData.street}
@@ -138,7 +144,8 @@ export default function CapoEventForm(props: Readonly<EventFormularProps>) {
                         />
                     </label>
 
-                    <label className="create-event__label"> Street Number
+                    <label className="create-event__label">
+                        <span>Street Number</span>
                         <input
                             className="create-event__input"
                             value={value.locationData.streetNumber}
@@ -146,7 +153,8 @@ export default function CapoEventForm(props: Readonly<EventFormularProps>) {
                         />
                     </label>
 
-                    <label className="create-event__label"> Specifics
+                    <label className="create-event__label">
+                        <span>Specifics</span>
                         <input
                             className="create-event__input"
                             value={value.locationData.specifics}
@@ -159,7 +167,8 @@ export default function CapoEventForm(props: Readonly<EventFormularProps>) {
                 <fieldset className="create-event__fieldset">
                     <legend className="create-event__legend">Time</legend>
 
-                    <label className="create-event__label"> Event Start
+                    <label className="create-event__label">
+                        <span>Event Start</span>
                         <input
                             className="create-event__input"
                             type="datetime-local"
@@ -172,7 +181,8 @@ export default function CapoEventForm(props: Readonly<EventFormularProps>) {
                         />
                     </label>
 
-                    <label className="create-event__label"> Event End
+                    <label className="create-event__label">
+                        <span>Event End</span>
                         <input
                             className="create-event__input"
                             type="datetime-local"
@@ -184,7 +194,8 @@ export default function CapoEventForm(props: Readonly<EventFormularProps>) {
                         />
                     </label>
 
-                    <label className="create-event__label"> Repetition Rhythm
+                    <label className="create-event__label">
+                        <span>Repetition Rhythm</span>
                         <select
                             className="create-event__select"
                             value={value.repRhythm}
@@ -202,7 +213,8 @@ export default function CapoEventForm(props: Readonly<EventFormularProps>) {
                     </label>
 
                     { showRepUntil && (
-                        <label className="create-event__label" > repeat until
+                        <label className="create-event__label" >
+                            <span>repeat until</span>
                             <input
                                 className="create-event__input"
                                 type="datetime-local"
