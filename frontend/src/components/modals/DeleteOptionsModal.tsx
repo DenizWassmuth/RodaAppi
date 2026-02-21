@@ -11,7 +11,7 @@ type Props = {
     onCancel: () => void;
     onConfirm: () => void;
     partOfSeries: PartOfSeriesDto
-    //deleteScope?: DeleteScope;
+    deleteScope: DeleteScope;
     setDeleteScope: (scope: DeleteScope) => void;
 };
 
@@ -34,7 +34,7 @@ export default function DeleteOptionsModal(props: Readonly<Props>) {
                         <input
                             type="radio"
                             name="deleteScope"
-                            //checked={props.deleteScope === "ONLY_THIS"}
+                            checked={props.deleteScope === "ONLY_THIS"}
                             onChange={() => props.setDeleteScope("ONLY_THIS")}
                         />{" "}
                         this one
@@ -45,7 +45,7 @@ export default function DeleteOptionsModal(props: Readonly<Props>) {
                             <input
                                 type="radio"
                                 name="deleteScope"
-                                //checked={props.deleteScope === "ALL_IN_SERIES"}
+                                checked={props.deleteScope === "ALL_IN_SERIES"}
                                 onChange={() => props.setDeleteScope("ALL_IN_SERIES")}
                             />{" "}
                             all in this series
@@ -57,7 +57,7 @@ export default function DeleteOptionsModal(props: Readonly<Props>) {
                             <input
                                 type="radio"
                                 name="deleteScope"
-                                //checked={props.deleteScope === "BEFORE_THIS"}
+                                checked={props.deleteScope === "BEFORE_THIS"}
                                 onChange={() => props.setDeleteScope("BEFORE_THIS")}
                             />{" "}
                             this + all before (in this series)
@@ -69,7 +69,7 @@ export default function DeleteOptionsModal(props: Readonly<Props>) {
                             <input
                                 type="radio"
                                 name="deleteScope"
-                                //checked={props.deleteScope === "AFTER_THIS"}
+                                checked={props.deleteScope === "AFTER_THIS"}
                                 onChange={() => props.setDeleteScope("AFTER_THIS")}
                             />{" "}
                             this + all after (in this series)

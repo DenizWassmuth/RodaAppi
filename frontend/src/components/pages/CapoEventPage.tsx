@@ -88,10 +88,11 @@ export default function CapoEventPage(props:Readonly<EventPageProps>) {
                         <DeleteOptionsModal
                             open={deleteOption}
                             partOfSeries={partOfSeries}
+                            deleteScope={deleteScope}
                             setDeleteScope={setDeleteScope}
                             onConfirm={async () => {
                                 setDeleteOption(false);
-                                await handleDelete();
+                                handleDelete();
                             }}
                             onCancel={() => setDeleteOption(false)}
                         />

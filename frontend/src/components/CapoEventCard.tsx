@@ -83,6 +83,7 @@ export default function CapoEventCard(props: Readonly<EventCardProps>) {
             <DeleteOptionsModal
                 open={deleteOption}
                 partOfSeries={partOfSeries}
+                deleteScope={deleteScope}
                 setDeleteScope={setDeleteScope}
                 onConfirm={async () => {
                     setDeleteOption(false);
