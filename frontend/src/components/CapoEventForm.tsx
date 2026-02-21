@@ -1,4 +1,4 @@
-import { useState } from "react";
+import {useState} from "react";
 
 import "../styles/CreateCapoEventPage.css";
 import type {CapoEventEnumType, EventFormValue, RepetitionRhythmEnumType} from "../types/CapoEvent.ts";
@@ -8,6 +8,7 @@ type EventFormularProps = {
     submitText: string;
     initialValue: EventFormValue;
     onSubmit: (value: EventFormValue) => Promise<void>;
+    bEditMode: boolean;
 };
 
 export default function CapoEventForm(props: Readonly<EventFormularProps>) {
@@ -35,28 +36,31 @@ export default function CapoEventForm(props: Readonly<EventFormularProps>) {
         try {
             await props.onSubmit(value);
         } catch (e) {
-            setError("Submit failed. Check console / backend.");
+            setError(" Submit failed >>> " + e);
             console.error(e);
         }
     }
 
+    const showRepUntil = value.repRhythm !== "ONCE" && !props.bEditMode;
+
     return (
         <main className="create-event">
-            <h1 className="create-event__title">Create Capoeira Event</h1>
-
-            {error && <div className="create-event__alert create-event__alert--error">{error}</div>}
+            <h1 className="create-event__title">{props.submitText} Capoeira Event</h1>
 
             <form className="create-event__form" onSubmit={handleSubmit}>
                 <fieldset className="create-event__fieldset">
                     <legend className="create-event__legend">Basic</legend>
 
+                    {error && <div className="create-event__alert create-event__alert--error">{error}</div>}
+
                     <label className="create-event__label">
-                        * Event Type
+                        <span>Event Type</span>
                         <select
                             className="create-event__select"
                             value={value.eventType}
                             onChange={(e) => updateField("eventType", e.target.value as CapoEventEnumType)}
                             required={true}
+                            disabled={props.bEditMode}
                         >
                             <option value="RODA">RODA</option>
                             <option value="WORKSHOP">WORKSHOP</option>
@@ -64,7 +68,7 @@ export default function CapoEventForm(props: Readonly<EventFormularProps>) {
                     </label>
 
                     <label className="create-event__label">
-                        * Title
+                        <span>Title</span>
                         <input
                             className="create-event__input"
                             value={value.eventTitle}
@@ -75,7 +79,7 @@ export default function CapoEventForm(props: Readonly<EventFormularProps>) {
                     </label>
 
                     <label className="create-event__label">
-                        Description
+                        <span>Description</span>
                         <textarea
                             className="create-event__textarea"
                             value={value.eventDescription}
@@ -86,7 +90,7 @@ export default function CapoEventForm(props: Readonly<EventFormularProps>) {
                     </label>
 
                     <label className="create-event__label">
-                        Thumbnail URL
+                        <span>Thumbnail URL</span>
                         <input
                             className="create-event__input"
                             value={value.thumbnail}
@@ -98,39 +102,41 @@ export default function CapoEventForm(props: Readonly<EventFormularProps>) {
 
                 <fieldset className="create-event__fieldset">
                     <legend className="create-event__legend">Location</legend>
-
                     <label className="create-event__label">
-                        * Country
+                        <span>Country</span>
                         <input
                             className="create-event__input"
                             value={value.locationData.country}
                             onChange={(e) => updateLocationField("country", e.target.value)}
                             required={true}
+                            disabled={props.bEditMode}
                         />
                     </label>
 
                     <label className="create-event__label">
-                        * State
+                        <span>State</span>
                         <input
                             className="create-event__input"
                             value={value.locationData.state}
                             onChange={(e) => updateLocationField("state", e.target.value)}
                             required={true}
+                            disabled={props.bEditMode}
                         />
                     </label>
 
                     <label className="create-event__label">
-                        * City
+                        <span>City</span>
                         <input
                             className="create-event__input"
                             value={value.locationData.city}
                             onChange={(e) => updateLocationField("city", e.target.value)}
                             required={true}
+                            disabled={props.bEditMode}
                         />
                     </label>
 
                     <label className="create-event__label">
-                        Street
+                        <span>Street</span>
                         <input
                             className="create-event__input"
                             value={value.locationData.street}
@@ -139,7 +145,7 @@ export default function CapoEventForm(props: Readonly<EventFormularProps>) {
                     </label>
 
                     <label className="create-event__label">
-                        Street Number
+                        <span>Street Number</span>
                         <input
                             className="create-event__input"
                             value={value.locationData.streetNumber}
@@ -148,7 +154,7 @@ export default function CapoEventForm(props: Readonly<EventFormularProps>) {
                     </label>
 
                     <label className="create-event__label">
-                        Specifics
+                        <span>Specifics</span>
                         <input
                             className="create-event__input"
                             value={value.locationData.specifics}
@@ -162,7 +168,7 @@ export default function CapoEventForm(props: Readonly<EventFormularProps>) {
                     <legend className="create-event__legend">Time</legend>
 
                     <label className="create-event__label">
-                        * Event Start
+                        <span>Event Start</span>
                         <input
                             className="create-event__input"
                             type="datetime-local"
@@ -176,23 +182,26 @@ export default function CapoEventForm(props: Readonly<EventFormularProps>) {
                     </label>
 
                     <label className="create-event__label">
-                        Event End
+                        <span>Event End</span>
                         <input
                             className="create-event__input"
                             type="datetime-local"
                             value={value.eventEnd}
-                            onChange={(e) => updateField("eventEnd", e.target.value)}
+                            onChange={(e) => {
+                                updateField("eventEnd", e.target.value);
+                                updateField("repUntil", e.target.value)}}
                             placeholder={value.eventStart}
                         />
                     </label>
 
                     <label className="create-event__label">
-                        * Repetition Rhythm
+                        <span>Repetition Rhythm</span>
                         <select
                             className="create-event__select"
                             value={value.repRhythm}
                             onChange={(e) => updateField("repRhythm", e.target.value as RepetitionRhythmEnumType)}
                             required={true}
+                            disabled={props.bEditMode}
                         >
                             <option value="ONCE">ONCE</option>
                             <option value="DAILY">DAILY</option>
@@ -202,6 +211,18 @@ export default function CapoEventForm(props: Readonly<EventFormularProps>) {
                             <option value="CUSTOM">CUSTOM</option>
                         </select>
                     </label>
+
+                    { showRepUntil && (
+                        <label className="create-event__label" >
+                            <span>repeat until</span>
+                            <input
+                                className="create-event__input"
+                                type="datetime-local"
+                                value={value.repUntil}
+                                onChange={(e) => updateField("repUntil", e.target.value)}
+                            />
+                        </label>
+                    )}
                 </fieldset>
 
                 <button className="create-event__submit" type="submit">

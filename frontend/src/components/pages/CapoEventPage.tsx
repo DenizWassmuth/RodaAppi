@@ -1,10 +1,11 @@
 import {useNavigate, useParams} from "react-router-dom";
 import {useEffect, useState} from "react";
-import type {CapoEventType} from "../types/CapoEvent.ts";
+import type {CapoEventType, DeleteScope, PartOfSeriesDto} from "../../types/CapoEvent.ts";
 import axios from "axios";
-import "../styles/CapoEventPage.css"
-import type {AppUserType} from "../types/AppUser.ts";
-import {deleteCapoEvent} from "../utility/AxiosUtilities.ts";
+import "../../styles/CapoEventPage.css"
+import type {AppUserType} from "../../types/AppUser.ts";
+import {checkIfPartOfSeries, deleteCapoEvent} from "../../utility/AxiosUtilities.ts";
+import DeleteOptionsModal from "../modals/DeleteOptionsModal.tsx";
 
 type EventPageProps = {
     appUser: AppUserType
@@ -17,6 +18,11 @@ export default function CapoEventPage(props:Readonly<EventPageProps>) {
     const nav = useNavigate();
     const [capoEvent, setCapoEvent] = useState<CapoEventType>();
 
+    const [deleteOption, setDeleteOption] = useState(false);
+    const [deleteScope, setDeleteScope] = useState<DeleteScope>("ONLY_THIS");
+    const [partOfSeries, setPartOfSeries] = useState<PartOfSeriesDto>(null);
+
+
     const isLoggedIn = props.appUser !== null && props.appUser !== undefined;
     const eventIsValid = capoEvent !== undefined && capoEvent !== null;
     const eventIsCreatedByUser = isLoggedIn && eventIsValid && props.appUser.id === capoEvent?.creatorId;
@@ -28,25 +34,20 @@ export default function CapoEventPage(props:Readonly<EventPageProps>) {
 
     }, [id]);
 
-    async function deleteEvent(user:AppUserType | undefined | null, eventId:string | undefined) {
-        if (user === null || user === undefined) {
-            console.log("user === null or undefined, cannot proceed to delete event");
-            return;
-        }
+    function handleDelete() {
 
-        if (eventId === null || eventId === undefined){
-            console.log("eventId === null or undefined, cannot proceed to delete event");
-            return;
-        }
-
-        console.log("awaiting axios response for deleteEvent with eventId: ", eventId);
-
-       await deleteCapoEvent(user.id, eventId, props.fetchEvents, nav, "/");
+        deleteCapoEvent(props.appUser?.id, capoEvent, deleteScope, props.fetchEvents, nav, "/")
+            .then(() => {
+                setPartOfSeries(null);
+                setDeleteScope("ONLY_THIS");
+            })
+            .catch((error) => {
+                console.log("could not delete capoEvent through CapoEventPage: " + error.toString())
+            });
     }
 
-    function editEvent(id:string | undefined)
-    {
-        if (id === null || id === undefined){
+    function editEvent(id: string | undefined) {
+        if (id === null || id === undefined) {
             console.log("eventId === null or undefined, cannot move on to edit page");
             return;
         }
@@ -63,7 +64,7 @@ export default function CapoEventPage(props:Readonly<EventPageProps>) {
                 </div>
                 <div>
                     <div className="details">
-                        <p><b> {capoEvent?.eventType}</b></p>
+                        <p><b>{capoEvent?.eventType}</b></p>
                         <p><b>{capoEvent?.eventTitle}</b></p>
                         <p><b>{capoEvent?.eventDescription}</b></p>
                         <p><b>{capoEvent?.locationData.country}</b></p>
@@ -75,14 +76,27 @@ export default function CapoEventPage(props:Readonly<EventPageProps>) {
                         <p><b>{capoEvent?.eventEnd}</b></p>
 
                        <p>
-                           <button type={"button"} disabled={!eventIsCreatedByUser} hidden={!eventIsCreatedByUser}
-                                onClick={() => deleteEvent(props.appUser, capoEvent?.id)}>delete
+                           <button type={"button"} disabled={!eventIsCreatedByUser} hidden={!eventIsCreatedByUser} onClick={
+                               () => checkIfPartOfSeries(capoEvent, setPartOfSeries)
+                                    .then(() => setDeleteOption(true))
+                           }>delete
                            </button> {" "}
                            <button type={"button"} disabled={!eventIsCreatedByUser} hidden={!eventIsCreatedByUser}
                                    onClick={() => editEvent(capoEvent?.id)}>edit
                            </button>
                        </p>
-                </div>
+                        <DeleteOptionsModal
+                            open={deleteOption}
+                            partOfSeries={partOfSeries}
+                            deleteScope={deleteScope}
+                            setDeleteScope={setDeleteScope}
+                            onConfirm={async () => {
+                                setDeleteOption(false);
+                                handleDelete();
+                            }}
+                            onCancel={() => setDeleteOption(false)}
+                        />
+                    </div>
                 </div>
             </div>
         </article>

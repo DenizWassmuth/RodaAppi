@@ -5,5 +5,7 @@ export type PageProps = {
     user:AppUserType | null | undefined;
     events:CapoEventType[];
     fetchEvents: () => Promise<void>;
-    typeOfEvent: CapoEventEnumType
+    typeOfEvent: CapoEventEnumType;
+    pathToSet:string;
+    setCurrentPath: (path: string) => void;
 }

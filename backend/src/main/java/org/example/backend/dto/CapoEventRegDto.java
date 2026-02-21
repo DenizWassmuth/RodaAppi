@@ -18,5 +18,6 @@ public record CapoEventRegDto(
         LocalDateTime eventStart,
         LocalDateTime eventEnd,
         CapoEventEnumType eventType,
-        RepetitionRhythmEnumType repRhythm) {
+        RepetitionRhythmEnumType repRhythm,
+        LocalDateTime repUntil) {
 }

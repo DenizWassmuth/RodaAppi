@@ -91,3 +91,44 @@
     height: 22px;
     padding: 6px;
 }
+
+
+/* Optional: also dim the whole label when it contains a disabled input */
+.create-event__label:has(.create-event__input:disabled),
+.create-event__label:has(.create-event__textarea:disabled),
+.create-event__label:has(.create-event__select:disabled) {
+    opacity: 0.25;
+    cursor: not-allowed;
+}
+
+.create-event__input:disabled,
+.create-event__textarea:disabled,
+.create-event__select:disabled {
+    background: #0b0b0b;
+    border-color: #333;
+}
+
+/* 1) Required + enabled inputs should "pop" */
+.create-event__input:required:not(:disabled),
+.create-event__textarea:required:not(:disabled),
+.create-event__select:required:not(:disabled) {
+    border-width: 2px;
+    border-color: #f5c542;          /* highlight border */
+    box-shadow: 0 0 0 2px rgba(245, 197, 66, 0.25);
+}
+
+/* 2) Optional: make the label text slightly brighter when it contains a required+enabled field */
+.create-event__label:has(.create-event__input:required:not(:disabled)),
+.create-event__label:has(.create-event__textarea:required:not(:disabled)),
+.create-event__label:has(.create-event__select:required:not(:disabled)) {
+    color: #fff;
+}
+
+/* 3) Optional: add a " *" after the label text automatically when it contains a required+enabled field */
+.create-event__label:has(.create-event__input:required:not(:disabled))::before,
+.create-event__label:has(.create-event__textarea:required:not(:disabled))::before,
+.create-event__label:has(.create-event__select:required:not(:disabled))::before {
+    content: " *";
+    color: #f5c542;
+    font-weight: 700;
+}
