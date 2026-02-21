@@ -23,10 +23,12 @@ public interface CapoEventRepository extends MongoRepository<CapoEvent,String> {
 
     Optional<CapoEvent> findByIdAndCreatorId(String id, String creatorId);
 
+    boolean existsBySeriesIdAndIdNot(String seriesId, String excludeEventId);
+    boolean existsBySeriesIdAndOccurrenceIndexIsLessThan(String seriesId, int occurrenceIndex);
+    boolean existsBySeriesIdAndOccurrenceIndexIsGreaterThan(String seriesId, int occurrenceIndex);
+
     void deleteByIdAndCreatorId(String id, String creatorId);
-
     void deleteAllBySeriesId(String seriesId);
-
     void deleteAllBySeriesIdAndOccurrenceIndexIsLessThanEqual(String seriesId, int occurrenceIndex);
     void deleteAllBySeriesIdAndOccurrenceIndexIsGreaterThanEqual(String seriesId, int occurrenceIndex);
 

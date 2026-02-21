@@ -4,7 +4,6 @@ import "../../index.css"
 import type {PageProps} from "../../types/PageProps.ts";
 import type {CapoEventType} from "../../types/CapoEvent.ts";
 
-
 export default function PreviewPage(props: Readonly<PageProps>) {
 
     props.setCurrentPath(props.pathToSet);

@@ -1,6 +1,7 @@
 package org.example.backend.services;
 
 import org.example.backend.dto.CapoEventRegDto;
+import org.example.backend.dto.PartOfSeriesDto;
 import org.example.backend.enums.DeleteScope;
 import org.example.backend.enums.RepetitionRhythmEnumType;
 import org.example.backend.models.CapoEvent;
@@ -150,6 +151,19 @@ public class CapoEventService {
                 .withEventEnd(updateDto.eventEnd());
 
         return capoEventRepo.save(updatedEvent);
+    }
+
+    public PartOfSeriesDto getPartOfSeriesDto(String eventId, String seriesId, int occurrenceIndex){
+
+        if(occurrenceIndex < 0){
+            throw new IllegalArgumentException("cannot verify if event is part of series, as occurrenceIndex is < 0>");
+        }
+
+        return new PartOfSeriesDto(
+                capoEventRepo.existsBySeriesIdAndIdNot(seriesId, eventId),
+                capoEventRepo.existsBySeriesIdAndOccurrenceIndexIsLessThan(seriesId,occurrenceIndex ),
+                capoEventRepo.existsBySeriesIdAndOccurrenceIndexIsGreaterThan(seriesId, occurrenceIndex)
+        );
     }
 
     public boolean deleteById(String userId, String eventId, DeleteScope deleteScope){

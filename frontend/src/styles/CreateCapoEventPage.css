@@ -92,19 +92,13 @@
     padding: 6px;
 }
 
-/* Make disabled fields look "inactive" */
-.create-event__input:disabled,
-.create-event__textarea:disabled,
-.create-event__select:disabled {
-    opacity: 0.55;          /* less visible */
-    cursor: not-allowed;
-}
 
 /* Optional: also dim the whole label when it contains a disabled input */
 .create-event__label:has(.create-event__input:disabled),
 .create-event__label:has(.create-event__textarea:disabled),
 .create-event__label:has(.create-event__select:disabled) {
-    opacity: 0.75;
+    opacity: 0.25;
+    cursor: not-allowed;
 }
 
 .create-event__input:disabled,

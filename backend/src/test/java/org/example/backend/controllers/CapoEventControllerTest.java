@@ -467,4 +467,13 @@ class CapoEventControllerTest {
                         .with(oauth2Login()))
                 .andExpect(status().isNoContent());
     }
+
+    @Test
+    @WithMockUser
+    void getPartOfSeries_returnsStatusIsBadRequest_whenOccurrenceIndexIsNegativeValue() throws Exception {
+
+        mockMvc.perform(get("/api/capoevent/1/1/-1")
+                        .with(oauth2Login()))
+                .andExpect(status().isBadRequest());
+    }
 }

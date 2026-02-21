@@ -1,6 +1,8 @@
-import { useState } from "react";
+import {useState} from "react";
 import "../../styles/DeleteModal.css";
 import ConfirmModal from "./ConfirmModal.tsx";
+import type {PartOfSeriesDto} from "../../types/CapoEvent.ts";
+
 
 export type DeleteScope = "ONLY_THIS" | "ALL_IN_SERIES" | "BEFORE_THIS" | "AFTER_THIS";
 
@@ -8,14 +10,15 @@ type Props = {
     open: boolean;
     onCancel: () => void;
     onConfirm: () => void;
-    deleteScope?: DeleteScope;
-    setScope: (scope: DeleteScope) => void;
+    partOfSeries: PartOfSeriesDto
+    //deleteScope?: DeleteScope;
+    setDeleteScope: (scope: DeleteScope) => void;
 };
+
 
 export default function DeleteOptionsModal(props: Readonly<Props>) {
 
     const [confirmOpen, setConfirmOpen] = useState(false);
-    //const [scope, setScope] = useState<DeleteScope>(props.defaultScope ?? "ONLY_THIS");
 
     if (!props.open) return null;
 
@@ -23,50 +26,55 @@ export default function DeleteOptionsModal(props: Readonly<Props>) {
         <div
             className="modal__backdrop"
         >
-            <div className="modal__panel" onClick={(e) => e.stopPropagation()}>
-                <h3 className="modal__title">Delete which events?</h3>
-                <p className="modal__message">Choose what should be deleted.</p>
-
+            <div className="modal__panel">
+                <h3 className="modal__title">Delete</h3>
+                <p></p>
                 <div style={{ display: "grid", gap: 8, marginBottom: 16 }}>
                     <label>
                         <input
                             type="radio"
                             name="deleteScope"
-                            checked={props.deleteScope === "ONLY_THIS"}
-                            onChange={() => props.setScope("ONLY_THIS")}
+                            //checked={props.deleteScope === "ONLY_THIS"}
+                            onChange={() => props.setDeleteScope("ONLY_THIS")}
                         />{" "}
                         this one
                     </label>
 
-                    <label>
-                        <input
-                            type="radio"
-                            name="deleteScope"
-                            checked={props.deleteScope === "ALL_IN_SERIES"}
-                            onChange={() => props.setScope("ALL_IN_SERIES")}
-                        />{" "}
-                        all in this series
-                    </label>
+                    {props.partOfSeries?.isPartOfSeries &&
+                        <label>
+                            <input
+                                type="radio"
+                                name="deleteScope"
+                                //checked={props.deleteScope === "ALL_IN_SERIES"}
+                                onChange={() => props.setDeleteScope("ALL_IN_SERIES")}
+                            />{" "}
+                            all in this series
+                        </label>
+                    }
 
-                    <label>
-                        <input
-                            type="radio"
-                            name="deleteScope"
-                            checked={props.deleteScope === "BEFORE_THIS"}
-                            onChange={() => props.setScope("BEFORE_THIS")}
-                        />{" "}
-                       this + all before (in this series)
-                    </label>
+                    {props.partOfSeries?.hasBefore &&
+                        <label>
+                            <input
+                                type="radio"
+                                name="deleteScope"
+                                //checked={props.deleteScope === "BEFORE_THIS"}
+                                onChange={() => props.setDeleteScope("BEFORE_THIS")}
+                            />{" "}
+                            this + all before (in this series)
+                        </label>
+                    }
 
-                    <label>
-                        <input
-                            type="radio"
-                            name="deleteScope"
-                            checked={props.deleteScope === "AFTER_THIS"}
-                            onChange={() => props.setScope("AFTER_THIS")}
-                        />{" "}
-                        this + all after (in this series)
-                    </label>
+                    {props.partOfSeries?.hasAfter &&
+                        <label>
+                            <input
+                                type="radio"
+                                name="deleteScope"
+                                //checked={props.deleteScope === "AFTER_THIS"}
+                                onChange={() => props.setDeleteScope("AFTER_THIS")}
+                            />{" "}
+                            this + all after (in this series)
+                        </label>
+                    }
                 </div>
 
                 <div className="modal__actions">
@@ -96,9 +104,6 @@ export default function DeleteOptionsModal(props: Readonly<Props>) {
                     props.onConfirm();
                 }}
             />
-
         </div>
-
-
     );
 }

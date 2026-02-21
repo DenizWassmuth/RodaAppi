@@ -2,6 +2,7 @@ package org.example.backend.services;
 
 import org.example.backend.data.LocationData;
 import org.example.backend.dto.CapoEventRegDto;
+import org.example.backend.dto.PartOfSeriesDto;
 import org.example.backend.enums.CapoEventEnumType;
 import org.example.backend.enums.DeleteScope;
 import org.example.backend.enums.RepetitionRhythmEnumType;
@@ -342,5 +343,25 @@ class CapoEventServiceTest {
         boolean expected = capoEventService.deleteById("1", fakeEvent1.id(), DeleteScope.BEFORE_THIS);
 
         assertTrue(expected);
+    }
+
+
+
+    @Test
+    void getPartOfSeriesDto_shouldThrowIllegalArgumentException_whenOccurrenceIndexIsLessThanZero() {
+        assertThrows(IllegalArgumentException.class, () -> capoEventService.getPartOfSeriesDto("1", "1", -1));
+    }
+
+    @Test
+    void getPartOfSeriesDto_shouldPass_andReturnDtoMatchingTheGivenDto(){
+
+        Mockito.when(capoEventRepo.existsBySeriesIdAndIdNot("1", "1")).thenReturn(true);
+        Mockito.when(capoEventRepo.existsBySeriesIdAndOccurrenceIndexIsLessThan("1", 5)).thenReturn(false);
+        Mockito.when(capoEventRepo.existsBySeriesIdAndOccurrenceIndexIsGreaterThan("1", 5)).thenReturn(true);
+
+        PartOfSeriesDto expected = new PartOfSeriesDto(true, false, true);
+        PartOfSeriesDto actual = capoEventService.getPartOfSeriesDto("1", "1", 5);
+
+        assertEquals(expected, actual);
     }
 }

@@ -1,6 +1,7 @@
 package org.example.backend.controllers;
 
 import org.example.backend.dto.CapoEventRegDto;
+import org.example.backend.dto.PartOfSeriesDto;
 import org.example.backend.enums.DeleteScope;
 import org.example.backend.models.CapoEvent;
 import org.example.backend.services.CapoEventService;
@@ -68,6 +69,18 @@ public class CapoEventController {
             return ResponseEntity.status(HttpStatus.CONFLICT).build();
         }
 
+    }
+
+    @GetMapping("/{eventId}/{seriesId}/{occurrenceIndex}")
+    public ResponseEntity<PartOfSeriesDto> getPartOfSeries(@PathVariable String eventId, @PathVariable String seriesId, @PathVariable int occurrenceIndex) {
+
+        try{
+            PartOfSeriesDto dto = capoEventService.getPartOfSeriesDto(eventId,seriesId,occurrenceIndex);
+            return ResponseEntity.status(HttpStatus.OK).body(dto);
+        }
+        catch (IllegalArgumentException _){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
     }
 
     @DeleteMapping("/delete/{userId}/{eventId}")

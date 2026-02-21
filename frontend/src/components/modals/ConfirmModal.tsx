@@ -18,7 +18,7 @@ export default function ConfirmModal(props:Readonly<Props>) {
         <div
             className="modal__backdrop"
         >
-            <div className="modal__panel" onClick={(e) => e.stopPropagation()}>
+            <div className="modal__panel">
                 <h3 className="modal__title">{props.title}</h3>
                 <p className="modal__message">{props.message}</p>
 

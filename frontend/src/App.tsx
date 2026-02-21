@@ -11,14 +11,14 @@ import type {CapoEventType} from "./types/CapoEvent.ts";
 import CapoEventPage from "./components/pages/CapoEventPage.tsx";
 import PreviewPage from "./components/pages/PreviewPage.tsx";
 import CreateCapoEventPage from "./components/pages/CreateCapoEventPage.tsx";
-import EditCapoEventPage from "./components/pages/EditcapoEventPage.tsx";
+import EditCapoEventPage from "./components/pages/EditCapoEventPage.tsx";
 
 
 function App() {
 
     const [user, setUser] = useState<AppUserType>(null);
     const [capoEvents, setCapoEvents] = useState<CapoEventType[]>([]);
-    const [currentPath, setCurrentPath] = useState<string>("/");
+    const [currentPath, setCurrentPath] = useState<string>("");
 
     const loadUser = () => {
         axios.get("/api/auth")

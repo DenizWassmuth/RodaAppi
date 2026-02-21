@@ -11,7 +11,7 @@ export type LocationDataType = {
     specifics:string;
 };
 
-export type CapoEventType = {
+export type CapoEventType  = null | undefined | {
     id: string,
     creatorId: string,
     seriesId: string,
@@ -49,3 +49,9 @@ export type EventRegDto = {
 export type EventFormValue = Omit<EventRegDto, "userId">;
 
 export type DeleteScope = "ONLY_THIS" | "ALL_IN_SERIES" | "BEFORE_THIS" | "AFTER_THIS";
+
+export type PartOfSeriesDto = null | undefined | {
+    isPartOfSeries: boolean;
+    hasBefore: boolean;
+    hasAfter: boolean;
+}
