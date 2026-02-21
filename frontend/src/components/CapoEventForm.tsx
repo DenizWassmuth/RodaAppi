@@ -54,7 +54,7 @@ export default function CapoEventForm(props: Readonly<EventFormularProps>) {
                     {error && <div className="create-event__alert create-event__alert--error">{error}</div>}
 
                     <label className="create-event__label">
-                        Event Type
+                        <span>Event Type</span>
                         <select
                             className="create-event__select"
                             value={value.eventType}

@@ -39,10 +39,12 @@ export default function CreateCapoEventPage(props:Readonly<Props>) {
     const nav = useNavigate();
 
     async function submit(value: EventFormValue) {
-       if (!props.user?.id) throw new Error("Not logged in");
+       if (!props.user?.id){
+           throw new Error("Not logged in");
+       }
 
         const dto: EventRegDto = {
-            userId: String(props.user.id),
+            userId: String(props.user?.id),
             ...value,
         };
 
