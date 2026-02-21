@@ -302,13 +302,6 @@ class CapoEventServiceTest {
     }
 
     @Test
-    void deleteById_shouldThrowIllegalArgumentException_deleteScopeIsNotElementOfEnum() {
-        Mockito.when(capoEventRepo.findByIdAndCreatorId("1", "1")).thenReturn(Optional.of(fakeEvent1));
-
-        assertThrows(IllegalArgumentException.class, () -> capoEventService.deleteById("1","1",  DeleteScope.valueOf("NO_REAL_SCOPE")));
-    }
-
-    @Test
     void deleteById_shouldReturnTrue_whenEventIsDeleted_ONLY_THIS() {
         Mockito.when(capoEventRepo.findByIdAndCreatorId("1", "1")).thenReturn(Optional.of(fakeEvent1));
 
