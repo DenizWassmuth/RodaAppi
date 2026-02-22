@@ -338,8 +338,6 @@ class CapoEventServiceTest {
         assertTrue(expected);
     }
 
-
-
     @Test
     void getPartOfSeriesDto_shouldThrowIllegalArgumentException_whenOccurrenceIndexIsLessThanZero() {
         assertThrows(IllegalArgumentException.class, () -> capoEventService.getPartOfSeriesDto("1", "1", -1));
@@ -356,5 +354,10 @@ class CapoEventServiceTest {
         PartOfSeriesDto actual = capoEventService.getPartOfSeriesDto("1", "1", 5);
 
         assertEquals(expected, actual);
+    }
+
+    @Test
+    void eventAlreadyExists_shouldThrowIllegalArgumentException_whenRegDtoIsNull(){
+       assertThrows(IllegalArgumentException.class, ()-> capoEventService.eventAlreadyExists("1", null));
     }
 }

@@ -54,6 +54,22 @@ class CapoEventControllerTest {
             RepetitionRhythmEnumType.ONCE
     );
 
+    CapoEvent fakeEvent2 = new CapoEvent(
+            "2",
+            "1",
+            "1",
+            1,
+            "chiko",
+            "roda aberta",
+            "angola, regional, contemporanea",
+            "www.somepicture.com",
+            new LocationData("Germany", "Berlin", "Berlin", "Friedrichstr.", "244", "Hinterhof"),
+            LocalDateTime.of(2026,2,15, 19, 0, 0, 0),
+            LocalDateTime.of(2026,2,15, 23, 0, 0, 0),
+            CapoEventEnumType.RODA,
+            RepetitionRhythmEnumType.ONCE
+    );
+
     CapoEventRegDto fakeRegDto = new CapoEventRegDto(
             "1",
             "piru",
@@ -475,5 +491,20 @@ class CapoEventControllerTest {
         mockMvc.perform(get("/api/capoevent/1/1/-1")
                         .with(oauth2Login()))
                 .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @WithMockUser
+    void getPartOfSeries_returnsStatusIsOk() throws Exception {
+
+        capoEventRepo.save(fakeEvent1);
+        capoEventRepo.save(fakeEvent2);
+
+        mockMvc.perform(get("/api/capoevent/1/1/1")
+                        .with(oauth2Login()))
+                .andExpect(status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.isPartOfSeries").value(true))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.hasBefore").value(true))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.hasAfter").value(false));
     }
 }
