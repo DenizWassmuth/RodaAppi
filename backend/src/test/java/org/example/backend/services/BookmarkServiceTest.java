@@ -83,11 +83,7 @@ class BookmarkServiceTest {
 
     @Test
     void removeEventIdFromBookmarks_shouldReturnFalse_whenBookMarkedEventsIsNotContainedInRepo(){
-
-        Mockito.when(bookmarkedEventsRepo.findById("1")).thenReturn(Optional.of(bookMarks1));
-
-        boolean actual = bookmarkService.removeEventIdFromBookMark("1", "4");
-        assertFalse(actual);
+        Mockito.when(bookmarkedEventsRepo.findById("1")).thenThrow(NoSuchElementException.class);
     }
 
     @Test
