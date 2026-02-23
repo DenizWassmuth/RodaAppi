@@ -19,16 +19,16 @@ class BookmarkServiceTest {
     BookmarkService bookmarkService = new BookmarkService(bookmarkedEventsRepo);
 
     List<String> ids = new ArrayList<>(List.of("1", "2","3"));
-    BookMarkedEvents bookMark1 = new BookMarkedEvents("1", ids);
+    BookMarkedEvents bookMarks1 = new BookMarkedEvents("1", ids);
 
     @Test
     void getAllBookmarkedEventsFromUser_shouldReturnGivenList() {
 
-        List<String> expected = bookMark1.bookmarkedIds();
+        List<String> expected = bookMarks1.bookmarkedIds();
 
-        Mockito.when(bookmarkedEventsRepo.findById("1")).thenReturn(Optional.of(bookMark1));
+        Mockito.when(bookmarkedEventsRepo.findById("1")).thenReturn(Optional.of(bookMarks1));
 
-        List <String> actual = bookmarkService.getAllBookmarkedEventsFromUser(bookMark1.id());
+        List <String> actual = bookmarkService.getAllBookmarkedEventsFromUser(bookMarks1.id());
 
         assertNotNull(actual);
         assertEquals(expected.size(), actual.size());
@@ -40,7 +40,7 @@ class BookmarkServiceTest {
 
         Mockito.when(bookmarkedEventsRepo.findById("1")).thenReturn(Optional.empty());
 
-        assertThrows(NoSuchElementException.class, () -> bookmarkService.getAllBookmarkedEventsFromUser(bookMark1.id())) ;
+        assertThrows(NoSuchElementException.class, () -> bookmarkService.getAllBookmarkedEventsFromUser(bookMarks1.id())) ;
     }
 
     @Test
@@ -56,7 +56,7 @@ class BookmarkServiceTest {
     @Test
     void addEventIdToBookmarks_shouldReturnTrue_whenEventIdIsAlreadyContainedInBookMarks() {
 
-        Mockito.when(bookmarkedEventsRepo.findById("1")).thenReturn(Optional.of(bookMark1));
+        Mockito.when(bookmarkedEventsRepo.findById("1")).thenReturn(Optional.of(bookMarks1));
 
         assertThrows(MatchException.class, () -> bookmarkService.addEventIdToBookmarks("1", "1"));
 
@@ -65,7 +65,7 @@ class BookmarkServiceTest {
     @Test
     void addEventIdToBookmarks_shouldReturnTrue_whenEventIdIsAddedToBookMarks() {
 
-        Mockito.when(bookmarkedEventsRepo.findById("1")).thenReturn(Optional.of(bookMark1));
+        Mockito.when(bookmarkedEventsRepo.findById("1")).thenReturn(Optional.of(bookMarks1));
 
         boolean actual = bookmarkService.addEventIdToBookmarks("1", "4");
         assertTrue(actual);
@@ -84,7 +84,7 @@ class BookmarkServiceTest {
     @Test
     void removeEventIdFromBookmarks_shouldReturnFalse_whenBookMarkedEventsIsNotContainedInRepo(){
 
-        Mockito.when(bookmarkedEventsRepo.findById("1")).thenReturn(Optional.of(bookMark1));
+        Mockito.when(bookmarkedEventsRepo.findById("1")).thenReturn(Optional.of(bookMarks1));
 
         boolean actual = bookmarkService.removeEventIdFromBookMark("1", "4");
         assertFalse(actual);
@@ -93,9 +93,22 @@ class BookmarkServiceTest {
     @Test
     void removeEventIdFromBookmarks_shouldReturnTrue(){
 
-        Mockito.when(bookmarkedEventsRepo.findById("1")).thenReturn(Optional.of(bookMark1));
+        Mockito.when(bookmarkedEventsRepo.findById("1")).thenReturn(Optional.of(bookMarks1));
 
         boolean actual = bookmarkService.removeEventIdFromBookMark("1", "3");
+        assertTrue(actual);
+    }
+
+    @Test
+    void removeEventIdFromBookmarks_shouldReturnTrue_and_DeleteTheBookmarkContainerFromRepo(){
+
+        List<String> ids2 = new ArrayList<>(List.of("1"));
+        BookMarkedEvents bookMarks2 = new BookMarkedEvents("1", ids2);
+        Mockito.when(bookmarkedEventsRepo.findById("1")).thenReturn(Optional.of(bookMarks2));
+        boolean actual = bookmarkService.removeEventIdFromBookMark("1", "1");
+
+        Mockito.verify(bookmarkedEventsRepo, Mockito.times(1)).deleteById("1");
+
         assertTrue(actual);
     }
 }

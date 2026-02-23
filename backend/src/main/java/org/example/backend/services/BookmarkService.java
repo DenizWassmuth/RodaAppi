@@ -17,7 +17,6 @@ public class BookmarkService {
     }
 
     private BookMarkedEvents createBookmark(String userId){
-
         return bookmarkedEventsRepo.save(new BookMarkedEvents(userId, new ArrayList<>()));
     }
 
@@ -54,7 +53,11 @@ public class BookmarkService {
         }
 
         BookMarkedEvents bookmark = bookmarkedEventsRepo.findById(userId).orElseThrow(() -> new NoSuchElementException("no bookmarks found for user " + userId));
+        bookmark.bookmarkedIds().remove(eventId);
+        if (bookmark.bookmarkedIds().isEmpty()){
+            bookmarkedEventsRepo.deleteById(userId);
+        }
 
-       return bookmark.bookmarkedIds().remove(eventId);
+       return !bookmark.bookmarkedIds().contains(eventId);
     }
 }
