@@ -36,10 +36,9 @@ class BookmarkServiceTest {
     }
 
     @Test
-    void getAllBookmarkedEventsFromUser_shouldReturnEmptyList() {
+    void getAllBookmarkedEventsFromUser_shouldThrowNoSuchElementException() {
 
-        Mockito.when(bookmarkedEventsRepo.findById("1")).thenReturn(Optional.empty());
-
+        Mockito.when(bookmarkedEventsRepo.findById(bookMarks1.id())).thenReturn(Optional.empty());
         assertThrows(NoSuchElementException.class, () -> bookmarkService.getAllBookmarkedEventsFromUser(bookMarks1.id())) ;
     }
 
