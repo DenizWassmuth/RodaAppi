@@ -91,6 +91,7 @@ class BookmarkServiceTest {
         Mockito.when(bookmarkedEventsRepo.findById("1")).thenReturn(Optional.of(bookMarks1));
 
         boolean actual = bookmarkService.removeEventIdFromBookMark("1", "3");
+
         assertTrue(actual);
     }
 
@@ -100,10 +101,10 @@ class BookmarkServiceTest {
         List<String> ids2 = new ArrayList<>(List.of("1"));
         BookMarkedEvents bookMarks2 = new BookMarkedEvents("1", ids2);
         Mockito.when(bookmarkedEventsRepo.findById("1")).thenReturn(Optional.of(bookMarks2));
+
         boolean actual = bookmarkService.removeEventIdFromBookMark("1", "1");
 
         Mockito.verify(bookmarkedEventsRepo, Mockito.times(1)).deleteById("1");
-
         assertTrue(actual);
     }
 }
