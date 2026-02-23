@@ -38,12 +38,13 @@ class BookmarkServiceTest {
     @Test
     void getAllBookmarkedEventsFromUser_shouldThrowNoSuchElementException() {
 
-        Mockito.when(bookmarkedEventsRepo.findById(bookMarks1.id())).thenReturn(Optional.empty());
-        assertThrows(NoSuchElementException.class, () -> bookmarkService.getAllBookmarkedEventsFromUser(bookMarks1.id())) ;
+        Mockito.when(bookmarkedEventsRepo.findById("1")).thenReturn(Optional.empty());
+        String userId = bookMarks1.id();
+        assertThrows(NoSuchElementException.class, () -> bookmarkService.getAllBookmarkedEventsFromUser(userId)) ;
     }
 
     @Test
-    void addEventIdToBookmarks_shouldReturnFalse_whenUserIdIsNull() {
+    void addEventIdToBookmarks_shouldThrowIllegalArgumentException_whenUserIdIsNull() {
         assertThrows(IllegalArgumentException.class, () -> bookmarkService.addEventIdToBookmarks(null, "1"));
     }
 
@@ -58,7 +59,6 @@ class BookmarkServiceTest {
         Mockito.when(bookmarkedEventsRepo.findById("1")).thenReturn(Optional.of(bookMarks1));
 
         assertThrows(MatchException.class, () -> bookmarkService.addEventIdToBookmarks("1", "1"));
-
     }
 
     @Test
