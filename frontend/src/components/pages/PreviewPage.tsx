@@ -16,21 +16,24 @@ export default function PreviewPage(props: Readonly<PageProps>) {
                         props.typeOfEvent.match("NONE") && props.events
                             .map(capoEvent => (
                                 <CapoEventCard
-                                    key={capoEvent.id}
+                                    key={capoEvent?.id}
                                     capoEvent={capoEvent}
                                     userId={props.user?.id}
-                                    fetchEvents={props.fetchEvents}/>)
+                                    fetchEvents={props.fetchEvents}/>
+                                )
                             )
                     }
                     {
                         props.typeOfEvent.toString().length >= 0 && props.events
-                            .filter(capoEvent => capoEvent.eventType.match(props.typeOfEvent))
-                            .map((event: CapoEventType) => (
+                            .filter(capoEvent => capoEvent?.eventType.match(props.typeOfEvent))
+                            .map((filteredEvent: CapoEventType) => (
                                 <CapoEventCard
-                                    key={event.id}
-                                    capoEvent={event}
+                                    key={filteredEvent?.id}
+                                    capoEvent={filteredEvent}
                                     userId={props.user?.id}
-                                    fetchEvents={props.fetchEvents}/>))
+                                    fetchEvents={props.fetchEvents}/>
+                                )
+                            )
                     }
                 </div>
             </main>
