@@ -42,7 +42,7 @@ export default function EditCapoEventPage(props:Readonly<Props>) {
     };
 
     async function submit(value: EventFormValue) {
-        if (!props.user?.id){
+        if (!props.user){
             throw new Error("Not logged in");
         }
 
