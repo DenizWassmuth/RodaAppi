@@ -49,12 +49,12 @@ class BookmarkServiceTest {
     }
 
     @Test
-    void addEventIdToBookmarks_shouldReturnFalse_whenEventIdIsNull() {
+    void addEventIdToBookmarks_shouldThrowIllegalArgumentException_whenEventIdIsNull() {
         assertThrows(IllegalArgumentException.class, () -> bookmarkService.addEventIdToBookmarks("1", null));
     }
 
     @Test
-    void addEventIdToBookmarks_shouldReturnTrue_whenEventIdIsAlreadyContainedInBookMarks() {
+    void addEventIdToBookmarks_shouldThrowMatchException_whenEventIdIsAlreadyContainedInBookMarks() {
 
         Mockito.when(bookmarkedEventsRepo.findById("1")).thenReturn(Optional.of(bookMarks1));
 
@@ -77,13 +77,13 @@ class BookmarkServiceTest {
     }
 
     @Test
-    void removeEventIdFromBookmarks_shouldReturnFalse_whenEventIdIsNull() {
+    void removeEventIdFromBookmarks_shouldThrowIllegalArgumentException_whenEventIdIsNull() {
         assertThrows(IllegalArgumentException.class, () -> bookmarkService.removeEventIdFromBookMark("1", null));
     }
 
     @Test
-    void removeEventIdFromBookmarks_shouldReturnFalse_whenBookMarkedEventsIsNotContainedInRepo(){
-        Mockito.when(bookmarkedEventsRepo.findById("1")).thenThrow(NoSuchElementException.class);
+    void removeEventIdFromBookmarks_shouldThrowNoSuchElementException_whenBookMarkedEventsIsNotContainedInRepo(){
+        assertThrows(NoSuchElementException.class, () -> bookmarkService.removeEventIdFromBookMark("1", "1"));
     }
 
     @Test
