@@ -27,10 +27,6 @@ export type CapoEventType  = null | undefined | {
     repRhythm: RepetitionRhythmEnumType
 }
 
-export type CapoEventProps = {
-    capoEvent: CapoEventType;
-    setCapoEvent: (capoEvent: CapoEventType) => void;
-}
 
 export type EventRegDto = {
     userId: string,
