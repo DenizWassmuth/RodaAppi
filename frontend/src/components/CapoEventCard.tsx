@@ -17,10 +17,6 @@ export default function CapoEventCard(props: Readonly<EventCardProps>) {
     const eventIsValid = props.capoEvent !== undefined && props.capoEvent !== null;
     const isCreatedByUser = userIsValid && eventIsValid && props.user?.id === props.capoEvent.creatorId;
 
-    if(!eventIsValid) {
-        return null;
-    }
-
     function handleDelete() {
         const id: string | undefined = props.capoEvent?.id;
         if (!id) {
