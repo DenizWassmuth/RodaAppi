@@ -4,7 +4,7 @@ import org.example.backend.data.LocationData;
 import org.example.backend.dto.CapoEventRegDto;
 import org.example.backend.dto.PartOfSeriesDto;
 import org.example.backend.enums.CapoEventEnumType;
-import org.example.backend.enums.DeleteScope;
+import org.example.backend.enums.EditScope;
 import org.example.backend.enums.RepetitionRhythmEnumType;
 import org.example.backend.models.CapoEvent;
 import org.example.backend.repositories.CapoEventRepository;
@@ -298,14 +298,14 @@ class CapoEventServiceTest {
     void deleteById_shouldThrowNoSuchElementException_whenWhenCreatorIdAndUserIdDoNotMatch() {
         Mockito.when(capoEventRepo.findByIdAndCreatorId("1", "1")).thenReturn(Optional.of(fakeEvent1));
 
-        assertThrows(NoSuchElementException.class, () -> capoEventService.deleteById("2","1",  DeleteScope.ONLY_THIS));
+        assertThrows(NoSuchElementException.class, () -> capoEventService.deleteById("2","1",  EditScope.ONLY_THIS));
     }
 
     @Test
     void deleteById_shouldReturnTrue_whenEventIsDeleted_ONLY_THIS() {
         Mockito.when(capoEventRepo.findByIdAndCreatorId("1", "1")).thenReturn(Optional.of(fakeEvent1));
 
-        boolean expected = capoEventService.deleteById("1", fakeEvent1.id(), DeleteScope.ONLY_THIS);
+        boolean expected = capoEventService.deleteById("1", fakeEvent1.id(), EditScope.ONLY_THIS);
 
         assertTrue(expected);
     }
@@ -314,7 +314,7 @@ class CapoEventServiceTest {
     void deleteById_shouldReturnTrue_whenEventIsDeleted_ALL_IN_SERIES() {
         Mockito.when(capoEventRepo.findByIdAndCreatorId("1", "1")).thenReturn(Optional.of(fakeEvent1));
 
-        boolean expected = capoEventService.deleteById("1", fakeEvent1.id(), DeleteScope.ALL_IN_SERIES);
+        boolean expected = capoEventService.deleteById("1", fakeEvent1.id(), EditScope.ALL_IN_SERIES);
 
         assertTrue(expected);
     }
@@ -323,7 +323,7 @@ class CapoEventServiceTest {
     void deleteById_shouldReturnTrue_whenEventIsDeleted_After_THIS() {
         Mockito.when(capoEventRepo.findByIdAndCreatorId("1", "1")).thenReturn(Optional.of(fakeEvent1));
 
-        boolean expected = capoEventService.deleteById("1", fakeEvent1.id(), DeleteScope.AFTER_THIS);
+        boolean expected = capoEventService.deleteById("1", fakeEvent1.id(), EditScope.AFTER_THIS);
 
         assertTrue(expected);
     }
@@ -333,7 +333,7 @@ class CapoEventServiceTest {
     void deleteById_shouldReturnTrue_whenEventIsDeleted_BEFORE_THIS() {
         Mockito.when(capoEventRepo.findByIdAndCreatorId("1", "1")).thenReturn(Optional.of(fakeEvent1));
 
-        boolean expected = capoEventService.deleteById("1", fakeEvent1.id(), DeleteScope.BEFORE_THIS);
+        boolean expected = capoEventService.deleteById("1", fakeEvent1.id(), EditScope.BEFORE_THIS);
 
         assertTrue(expected);
     }

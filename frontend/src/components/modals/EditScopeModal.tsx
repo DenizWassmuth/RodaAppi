@@ -1,31 +1,26 @@
 import {useState} from "react";
 import "../../styles/DeleteModal.css";
 import ConfirmModal from "./ConfirmModal.tsx";
-import type {PartOfSeriesDto} from "../../types/CapoEvent.ts";
+import type {EditScope, PartOfSeriesDto} from "../../types/CapoEvent.ts";
 
-
-export type DeleteScope = "ONLY_THIS" | "ALL_IN_SERIES" | "BEFORE_THIS" | "AFTER_THIS";
 
 type Props = {
     open: boolean;
     onCancel: () => void;
     onConfirm: () => void;
     partOfSeries: PartOfSeriesDto
-    deleteScope: DeleteScope;
-    setDeleteScope: (scope: DeleteScope) => void;
+    editScope: EditScope;
+    setEditScope: (scope: EditScope) => void;
 };
 
-
-export default function DeleteOptionsModal(props: Readonly<Props>) {
+export default function EditScopeModal(props: Readonly<Props>) {
 
     const [confirmOpen, setConfirmOpen] = useState(false);
 
     if (!props.open) return null;
 
     return (
-        <div
-            className="modal__backdrop"
-        >
+        <div className="modal__backdrop">
             <div className="modal__panel">
                 <h3 className="modal__title">Delete</h3>
                 <p></p>
@@ -33,9 +28,9 @@ export default function DeleteOptionsModal(props: Readonly<Props>) {
                     <label>
                         <input
                             type="radio"
-                            name="deleteScope"
-                            checked={props.deleteScope === "ONLY_THIS"}
-                            onChange={() => props.setDeleteScope("ONLY_THIS")}
+                            name="editScope"
+                            checked={props.editScope === "ONLY_THIS"}
+                            onChange={() => props.setEditScope("ONLY_THIS")}
                         />{" "}
                         this one
                     </label>
@@ -44,9 +39,9 @@ export default function DeleteOptionsModal(props: Readonly<Props>) {
                         <label>
                             <input
                                 type="radio"
-                                name="deleteScope"
-                                checked={props.deleteScope === "ALL_IN_SERIES"}
-                                onChange={() => props.setDeleteScope("ALL_IN_SERIES")}
+                                name="editScope"
+                                checked={props.editScope === "ALL_IN_SERIES"}
+                                onChange={() => props.setEditScope("ALL_IN_SERIES")}
                             />{" "}
                             all in this series
                         </label>
@@ -56,9 +51,9 @@ export default function DeleteOptionsModal(props: Readonly<Props>) {
                         <label>
                             <input
                                 type="radio"
-                                name="deleteScope"
-                                checked={props.deleteScope === "BEFORE_THIS"}
-                                onChange={() => props.setDeleteScope("BEFORE_THIS")}
+                                name="editScope"
+                                checked={props.editScope === "BEFORE_THIS"}
+                                onChange={() => props.setEditScope("BEFORE_THIS")}
                             />{" "}
                             this + all before (in this series)
                         </label>
@@ -68,9 +63,9 @@ export default function DeleteOptionsModal(props: Readonly<Props>) {
                         <label>
                             <input
                                 type="radio"
-                                name="deleteScope"
-                                checked={props.deleteScope === "AFTER_THIS"}
-                                onChange={() => props.setDeleteScope("AFTER_THIS")}
+                                name="editScope"
+                                checked={props.editScope === "AFTER_THIS"}
+                                onChange={() => props.setEditScope("AFTER_THIS")}
                             />{" "}
                             this + all after (in this series)
                         </label>

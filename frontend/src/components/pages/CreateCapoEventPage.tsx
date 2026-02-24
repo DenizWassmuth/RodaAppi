@@ -9,7 +9,7 @@ import {useState} from "react";
 
 type Props = {
     user: AppUserType;
-    fetchEvents: () => Promise<void>;
+    fetchEvents: () => Promise<void | string>;
     onClosePath:string;
 
 };
@@ -82,6 +82,7 @@ export default function CreateCapoEventPage(props:Readonly<Props>) {
                             initialValue={empty}
                             onSubmit={submit}
                             bEditMode={false}
+                            partOfSeries={null}
                         />
                     </div>
                 </CreateAndEditModal>)

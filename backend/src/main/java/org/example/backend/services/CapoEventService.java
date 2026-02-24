@@ -2,7 +2,7 @@ package org.example.backend.services;
 
 import org.example.backend.dto.CapoEventRegDto;
 import org.example.backend.dto.PartOfSeriesDto;
-import org.example.backend.enums.DeleteScope;
+import org.example.backend.enums.EditScope;
 import org.example.backend.enums.RepetitionRhythmEnumType;
 import org.example.backend.models.CapoEvent;
 import org.example.backend.repositories.CapoEventRepository;
@@ -166,11 +166,11 @@ public class CapoEventService {
         );
     }
 
-    public boolean deleteById(String userId, String eventId, DeleteScope deleteScope){
+    public boolean deleteById(String userId, String eventId, EditScope editScope){
 
        CapoEvent foundEvent = capoEventRepo.findByIdAndCreatorId(eventId, userId).orElseThrow(() -> new NoSuchElementException("cannot delete event with userId:" + userId + " and eventId:" + eventId + ", as it was not found in db"));
 
-        switch (deleteScope) {
+        switch (editScope) {
             case ONLY_THIS -> capoEventRepo.deleteByIdAndCreatorId(eventId, userId);
             case ALL_IN_SERIES -> capoEventRepo.deleteAllBySeriesId(foundEvent.seriesId());
             case BEFORE_THIS -> capoEventRepo.deleteAllBySeriesIdAndOccurrenceIndexIsLessThanEqual(foundEvent.seriesId(), foundEvent.occurrenceIndex());

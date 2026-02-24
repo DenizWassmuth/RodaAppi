@@ -1,49 +1,37 @@
-import {Link, useLocation, useNavigate} from "react-router-dom";
-import type {CapoEventType, DeleteScope, PartOfSeriesDto} from "../types/CapoEvent.ts";
+import {Link} from "react-router-dom";
+import type {CapoEventType} from "../types/CapoEvent.ts";
 import "../styles/CapoEventCard.css"
 import "../index.css"
-import {deleteCapoEvent, checkIfPartOfSeries} from "../utility/AxiosUtilities.ts";
-import {useState} from "react";
-import DeleteOptionsModal from "./modals/DeleteOptionsModal.tsx";
+import type {AppUserType} from "../types/AppUser.ts";
 
 type EventCardProps = {
-    userId: string | undefined | null
+    user: AppUserType | undefined | null
     capoEvent: CapoEventType
-    fetchEvents: () => Promise<void>
+    onHandleEdit: (event: CapoEventType) => void;
+    onHandleDelete: (event: CapoEventType) => void;
 }
 
 export default function CapoEventCard(props: Readonly<EventCardProps>) {
 
-    const [deleteOption, setDeleteOption] = useState(false);
-    const [deleteScope, setDeleteScope] = useState<DeleteScope>("ONLY_THIS");
-    const [partOfSeries, setPartOfSeries] = useState<PartOfSeriesDto>(null);
-
-    const location = useLocation();
-    const nav = useNavigate();
-
+    const userIsValid = props.user !== null && props.user !== undefined;
     const eventIsValid = props.capoEvent !== undefined && props.capoEvent !== null;
-    const isCreatedByUser = eventIsValid && props.userId === props.capoEvent.creatorId;
+    const isCreatedByUser = userIsValid && eventIsValid && props.user?.id === props.capoEvent.creatorId;
 
     function handleDelete() {
-        deleteCapoEvent(props.userId, props.capoEvent, deleteScope, props.fetchEvents, nav, location.pathname)
-            .then(() => {
-                setPartOfSeries(null);
-                setDeleteScope("ONLY_THIS");
-            })
-            .catch((error) => {
-                console.log("could not delete capoEvent through CapoEventCard: " + error.toString())
-            });
+        const id: string | undefined = props.capoEvent?.id;
+        if (!id) {
+            console.log("capoEvent === null or undefined, cannot open delete modal");
+            return;
+        }
+        props.onHandleDelete(props.capoEvent); // open modal from parent
     }
 
     function handleEdit() {
-
-        const id: string | undefined = props.capoEvent?.id;
-        if (id === null || id === undefined) {
-            console.log("eventId === null or undefined, cannot move on to edit page");
+        if (!props.capoEvent) {
+            console.log("capoEvent === null or undefined, cannot open edit modal");
             return;
         }
-
-        nav("/edit/" + id);
+        props.onHandleEdit(props.capoEvent); // open modal from parent
     }
 
     const localDateTime : string | undefined = props.capoEvent?.eventStart;
@@ -65,32 +53,19 @@ export default function CapoEventCard(props: Readonly<EventCardProps>) {
                         <button type={"button"} hidden={!isCreatedByUser} disabled={!isCreatedByUser}
                                 onClick={(e) => {
                                     e.preventDefault();
-                                    checkIfPartOfSeries(props.capoEvent, setPartOfSeries)
-                                        .then(() => setDeleteOption(true));
+                                    handleDelete();
                                 }}>delete
                         </button>
                         {"   "}
-                        <button type={"button"} hidden={!isCreatedByUser} disabled={!isCreatedByUser}
-                                onClick={(e) => {
-                                    e.preventDefault();
-                                    handleEdit();
-                                }}>edit
+                        <button type="button" hidden={!isCreatedByUser} disabled={!isCreatedByUser} onClick={(e) => {
+                                e.preventDefault();
+                                handleEdit();
+                            }}>edit
                         </button>
                     </p>
                 </div>
             </div>
         </Link>
-            <DeleteOptionsModal
-                open={deleteOption}
-                partOfSeries={partOfSeries}
-                deleteScope={deleteScope}
-                setDeleteScope={setDeleteScope}
-                onConfirm={async () => {
-                    setDeleteOption(false);
-                    handleDelete();
-                }}
-                onCancel={() => setDeleteOption(false)}
-            />
         </div>
     )
 }

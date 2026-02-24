@@ -1,17 +1,18 @@
-import {useState} from "react";
+import {type FormEvent, useState} from "react";
 
 import "../styles/CreateCapoEventPage.css";
-import type {CapoEventEnumType, EventFormValue, RepetitionRhythmEnumType} from "../types/CapoEvent.ts";
+import type {CapoEventEnumType, EventFormValue, PartOfSeriesDto, RepetitionRhythmEnumType} from "../types/CapoEvent.ts";
 
 
-type EventFormularProps = {
+type EventFormProps = {
     submitText: string;
     initialValue: EventFormValue;
     onSubmit: (value: EventFormValue) => Promise<void>;
     bEditMode: boolean;
+    partOfSeries: PartOfSeriesDto
 };
 
-export default function CapoEventForm(props: Readonly<EventFormularProps>) {
+export default function CapoEventForm(props: Readonly<EventFormProps>) {
     const [value, setValue] = useState<EventFormValue>(props.initialValue);
     const [error, setError] = useState<string | null>(null);
 
@@ -29,7 +30,7 @@ export default function CapoEventForm(props: Readonly<EventFormularProps>) {
         }));
     }
 
-    async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    async function handleSubmit(e: FormEvent<HTMLFormElement>) {
         e.preventDefault();
         setError(null);
 
@@ -46,7 +47,6 @@ export default function CapoEventForm(props: Readonly<EventFormularProps>) {
     return (
         <main className="create-event">
             <h1 className="create-event__title">{props.submitText} Capoeira Event</h1>
-
             <form className="create-event__form" onSubmit={handleSubmit}>
                 <fieldset className="create-event__fieldset">
                     <legend className="create-event__legend">Basic</legend>

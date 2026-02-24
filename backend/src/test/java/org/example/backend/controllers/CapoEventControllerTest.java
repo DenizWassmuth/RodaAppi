@@ -3,7 +3,7 @@ package org.example.backend.controllers;
 import org.example.backend.data.LocationData;
 import org.example.backend.dto.CapoEventRegDto;
 import org.example.backend.enums.CapoEventEnumType;
-import org.example.backend.enums.DeleteScope;
+import org.example.backend.enums.EditScope;
 import org.example.backend.enums.RepetitionRhythmEnumType;
 import org.example.backend.models.CapoEvent;
 import org.example.backend.repositories.CapoEventRepository;
@@ -455,7 +455,7 @@ class CapoEventControllerTest {
         capoEventRepo.save(fakeEvent1); // has id 1
 
         mockMvc.perform(delete("/api/capoevent/delete/1/1")
-                        .param("deleteScope", DeleteScope.ALL_IN_SERIES.toString())
+                        .param("deleteScope", EditScope.ALL_IN_SERIES.toString())
                         .with(oauth2Login()))
                 .andExpect(status().isNoContent());
     }
@@ -467,7 +467,7 @@ class CapoEventControllerTest {
         capoEventRepo.save(fakeEvent1); // has id 1
 
         mockMvc.perform(delete("/api/capoevent/delete/1/1")
-                        .param("deleteScope", DeleteScope.AFTER_THIS.toString())
+                        .param("deleteScope", EditScope.AFTER_THIS.toString())
                         .with(oauth2Login()))
                 .andExpect(status().isNoContent());
     }
@@ -479,7 +479,7 @@ class CapoEventControllerTest {
         capoEventRepo.save(fakeEvent1); // has id 1
 
         mockMvc.perform(delete("/api/capoevent/delete/1/1")
-                        .param("deleteScope", DeleteScope.BEFORE_THIS.toString())
+                        .param("deleteScope", EditScope.BEFORE_THIS.toString())
                         .with(oauth2Login()))
                 .andExpect(status().isNoContent());
     }

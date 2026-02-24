@@ -1,15 +1,15 @@
 import {useNavigate, useParams} from "react-router-dom";
 import {useEffect, useState} from "react";
-import type {CapoEventType, DeleteScope, PartOfSeriesDto} from "../../types/CapoEvent.ts";
+import type {CapoEventType, EditScope, PartOfSeriesDto} from "../../types/CapoEvent.ts";
 import axios from "axios";
 import "../../styles/CapoEventPage.css"
 import type {AppUserType} from "../../types/AppUser.ts";
 import {checkIfPartOfSeries, deleteCapoEvent} from "../../utility/AxiosUtilities.ts";
-import DeleteOptionsModal from "../modals/DeleteOptionsModal.tsx";
+import EditScopeModal from "../modals/EditScopeModal.tsx";
 
 type EventPageProps = {
     appUser: AppUserType
-    fetchEvents:() => Promise<void>
+    fetchEvents:() => Promise<void | string>
 }
 
 export default function CapoEventPage(props:Readonly<EventPageProps>) {
@@ -19,7 +19,7 @@ export default function CapoEventPage(props:Readonly<EventPageProps>) {
     const [capoEvent, setCapoEvent] = useState<CapoEventType>();
 
     const [deleteOption, setDeleteOption] = useState(false);
-    const [deleteScope, setDeleteScope] = useState<DeleteScope>("ONLY_THIS");
+    const [deleteScope, setDeleteScope] = useState<EditScope>("ONLY_THIS");
     const [partOfSeries, setPartOfSeries] = useState<PartOfSeriesDto>(null);
 
 
@@ -85,7 +85,7 @@ export default function CapoEventPage(props:Readonly<EventPageProps>) {
                                    onClick={() => editEvent(capoEvent?.id)}>edit
                            </button>
                        </p>
-                        <DeleteOptionsModal
+                        <EditScopeModal
                             open={deleteOption}
                             partOfSeries={partOfSeries}
                             deleteScope={deleteScope}
