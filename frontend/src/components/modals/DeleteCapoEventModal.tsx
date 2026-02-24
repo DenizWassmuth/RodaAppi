@@ -42,6 +42,8 @@ export function DeleteCapoEventModal(props:Readonly<Props>){
                     props.onClose();
                     handleDelete();
                 }}
+                onConfirmTitle={"Delete"}
+                onConfirmMsg={"This cannot be undone."}
                 onCancel={() => props.onClose()}
             />
         </>

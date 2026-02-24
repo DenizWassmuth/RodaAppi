@@ -8,6 +8,8 @@ type Props = {
     open: boolean;
     onCancel: () => void;
     onConfirm: () => void;
+    onConfirmTitle:string;
+    onConfirmMsg:string;
     partOfSeries: PartOfSeriesDto
     editScope: EditScope;
     setEditScope: (scope: EditScope) => void;
@@ -80,18 +82,18 @@ export default function EditScopeModal(props: Readonly<Props>) {
                     <button
                         className="modal__btn modal__btn--danger"
                         type="button"
-                        onClick={() => setConfirmOpen(true) }
+                        onClick={() => setConfirmOpen(true)}
                     >
-                        Delete
+                        {props.onConfirmTitle}
                     </button>
                 </div>
             </div>
 
             <ConfirmModal
                 open={confirmOpen}
-                title="Delete event?"
-                message="This cannot be undone."
-                confirmText="Yes, delete"
+                title={props.onConfirmTitle + " event?"}
+                message={props.onConfirmMsg}
+                confirmText= {"Yes, " + props.onConfirmTitle}
                 cancelText="No"
                 onCancel={() => setConfirmOpen(false)}
                 onConfirm={async () => {

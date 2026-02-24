@@ -18,10 +18,10 @@ export type PageProps = {
 export default function PreviewPage(props: Readonly<PageProps>) {
 
     const [capoEvent, setCapoEvent] = useState<CapoEventType>(null);
+    const [bOpenModals, setOpenModals] = useState<boolean>(false);
     const [bOpenEdit, setOpenEdit] = useState(false);
     const [bOpenDelete, setOpenDelete] = useState(false);
     const [partOfSeries, setPartOfSeries] = useState<PartOfSeriesDto>(null);
-    const [bOpenModals, setOpenModals] = useState<boolean>(false);
 
     useEffect(() => {
         if (!capoEvent) {

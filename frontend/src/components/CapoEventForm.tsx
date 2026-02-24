@@ -1,20 +1,31 @@
 import {type FormEvent, useState} from "react";
 
 import "../styles/CreateCapoEventPage.css";
-import type {CapoEventEnumType, EventFormValue, PartOfSeriesDto, RepetitionRhythmEnumType} from "../types/CapoEvent.ts";
+import type {
+    CapoEventEnumType,
+    EditScope,
+    EventFormValue,
+    PartOfSeriesDto,
+    RepetitionRhythmEnumType
+} from "../types/CapoEvent.ts";
+import EditScopeModal from "./modals/EditScopeModal.tsx";
 
 
 type EventFormProps = {
     submitText: string;
     initialValue: EventFormValue;
-    onSubmit: (value: EventFormValue) => Promise<void>;
+    onSubmit: (value: EventFormValue, scope:EditScope | null) => Promise<void>;
     bEditMode: boolean;
     partOfSeries: PartOfSeriesDto
 };
 
 export default function CapoEventForm(props: Readonly<EventFormProps>) {
+
+    const [editScope, setEditScope] = useState<EditScope>("ONLY_THIS");
+
     const [value, setValue] = useState<EventFormValue>(props.initialValue);
     const [error, setError] = useState<string | null>(null);
+    const [bOpenEditScopeModal, setOpenEditScopeModal] = useState<boolean>(false);
 
     function updateField<K extends keyof EventFormValue>(key: K, v: EventFormValue[K]) {
         setValue((prev) => ({...prev, [key]: v}));
@@ -34,12 +45,13 @@ export default function CapoEventForm(props: Readonly<EventFormProps>) {
         e.preventDefault();
         setError(null);
 
-        try {
-            await props.onSubmit(value);
-        } catch (e) {
-            setError(" Submit failed >>> " + e);
-            console.error(e);
+        if (props.bEditMode) {
+            setOpenEditScopeModal(true);
+            return;
         }
+
+      props.onSubmit(value, null)
+          .catch((err: Error) => {console.log("SUBMIT FAILED: " + err)});
     }
 
     const showRepUntil = value.repRhythm !== "ONCE" && !props.bEditMode;
@@ -229,6 +241,19 @@ export default function CapoEventForm(props: Readonly<EventFormProps>) {
                     {props.submitText}
                 </button>
             </form>
+            { props.bEditMode && bOpenEditScopeModal && (
+                <EditScopeModal
+                    open={bOpenEditScopeModal}
+                    onCancel={() => setOpenEditScopeModal(false)}
+                    onConfirm={() => props.onSubmit(value, editScope)}
+                    onConfirmTitle={"Update"}
+                    onConfirmMsg={"Updating may cause overlaps with other events!!!"}
+                    partOfSeries={props.partOfSeries}
+                    editScope={editScope}
+                    setEditScope={setEditScope}
+                />
+            )}
+
         </main>
     );
 }

@@ -1,5 +1,5 @@
 import axios from "axios";
-import type {CapoEventType, EventFormValue, EventRegDto, PartOfSeriesDto} from "../../types/CapoEvent.ts";
+import type {CapoEventType, EditScope, EventFormValue, EventRegDto, PartOfSeriesDto} from "../../types/CapoEvent.ts";
 import type { AppUserType } from "../../types/AppUser.ts";
 import CapoEventForm from "../CapoEventForm.tsx";
 import CreateAndEditModal from "./Create&EditModal.tsx";
@@ -15,7 +15,7 @@ type EditModalProps = {
 
 export default function EditCapoEventModal(props:Readonly<EditModalProps>) {
 
-    async function update(value: EventFormValue) {
+    async function update(value: EventFormValue, scope: EditScope | null) {
         if (!props.user?.id) {
             throw new Error("Not logged in");
         }
@@ -29,7 +29,7 @@ export default function EditCapoEventModal(props:Readonly<EditModalProps>) {
             ...value,
         };
 
-        await axios.put(`/api/capoevent/update/${props.user.id}/${props.event.id}`, dto);
+        await axios.put(`/api/capoevent/update/${props.user.id}/${props.event.id}`, dto, {params: { editScope: scope },});
         await props.fetchEvents();
         props.onClose();
     }
@@ -48,18 +48,20 @@ export default function EditCapoEventModal(props:Readonly<EditModalProps>) {
         eventEnd: props.event.eventEnd,
         eventType: props.event.eventType,
         repRhythm: props.event.repRhythm,
-        repUntil: ""
+        repUntil: "",
+        editScope: "ONLY_THIS"
     } : {
         userName: "",
         eventTitle: "",
         eventDescription: "",
         thumbnail: "",
-        locationData: { country: "", state: "", city: "", street: "", streetNumber: "", specifics:"" }, // ✅ adjust to your type
+        locationData: { country: "", state: "", city: "", street: "", streetNumber: "", specifics:"" },
         eventStart: "",
         eventEnd: "",
         eventType: "RODA",
         repRhythm: "ONCE",
-        repUntil: ""
+        repUntil: "",
+        editScope: "ONLY_THIS"
     };
 
     return (
