@@ -49,7 +49,6 @@ export default function EditCapoEventModal(props:Readonly<EditModalProps>) {
         eventType: props.event.eventType,
         repRhythm: props.event.repRhythm,
         repUntil: "",
-        editScope: "ONLY_THIS"
     } : {
         userName: "",
         eventTitle: "",
@@ -61,7 +60,6 @@ export default function EditCapoEventModal(props:Readonly<EditModalProps>) {
         eventType: "RODA",
         repRhythm: "ONCE",
         repUntil: "",
-        editScope: "ONLY_THIS"
     };
 
     return (
