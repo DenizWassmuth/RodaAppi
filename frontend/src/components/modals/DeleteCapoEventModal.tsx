@@ -18,9 +18,9 @@ export function DeleteCapoEventModal(props:Readonly<Props>){
     const [editScope, setEditScope] = useState<EditScope>("ONLY_THIS");
 
     function handleDelete() {
-        deleteCapoEvent(props.user?.id, props.eventId, editScope, props.fetchEvents)
+        deleteCapoEvent(props.user?.id, props.eventId, editScope)
             .then(() => {
-                setEditScope("ONLY_THIS");
+                props.fetchEvents().then(() => setEditScope("ONLY_THIS"))
             })
             .catch((error) => {
                 console.log("could not delete capoEvent through CapoEventCard: " + error.toString())

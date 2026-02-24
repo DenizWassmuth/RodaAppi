@@ -7,7 +7,7 @@ export async function fetchAllCapoEvents() {
 
 const capoApi:string = `/api/capoevent`;
 
-export async function deleteCapoEvent(userId: string | undefined | null, eventId: string | undefined | null, editScope: EditScope, fetchEvents: () => Promise<void | string>) {
+export async function deleteCapoEvent(userId: string | undefined | null, eventId: string | undefined | null, editScope: EditScope) {
 
   if (eventId === null || eventId === undefined){
     console.log("eventId === null or undefined, cannot proceed to delete event");
@@ -22,8 +22,6 @@ export async function deleteCapoEvent(userId: string | undefined | null, eventId
   console.log("awaiting axios response for deleteEvent with id: ", eventId+ " and scope: ", editScope);
 
   await axios.delete(capoApi + `/delete/${userId}/${eventId}`, {params: { editScope: editScope },})
-      .then(() => fetchEvents())
-      //.then(() => nav(path))
       .catch(error => console.log(error + ", axios responded with error for deleteEvent with eventId: ", eventId));
 }
 
