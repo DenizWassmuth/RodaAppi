@@ -27,6 +27,10 @@ export function DeleteCapoEventModal(props:Readonly<Props>){
             });
     }
 
+    if(!props.bOpen){
+        return null;
+    }
+
     return (
         <>
             <EditScopeModal

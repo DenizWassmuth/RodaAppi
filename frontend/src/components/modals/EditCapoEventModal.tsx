@@ -34,7 +34,9 @@ export default function EditCapoEventModal(props:Readonly<EditModalProps>) {
         props.onClose();
     }
 
-    if (!props.bOpen) return null; // ✅ don’t mount UI if closed (performance)
+    if(!props.bOpen){
+        return null;
+    }
 
     const initial: EventFormValue = props.event ? {
         userName: props.event.creatorName,

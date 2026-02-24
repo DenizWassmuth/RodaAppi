@@ -30,6 +30,10 @@ export default function PreviewPage(props: Readonly<PageProps>) {
         checkIfPartOfSeries(capoEvent, setPartOfSeries).then(() => setOpenModals(true));
     }, [capoEvent])
 
+    if (props.events !== null && props.events !== undefined) {
+        return null;
+    }
+
     function openEditModal(event: CapoEventType) {
         setCapoEvent(event);
         setOpenEdit(true);
