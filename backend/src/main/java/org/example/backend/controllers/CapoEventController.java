@@ -1,5 +1,6 @@
 package org.example.backend.controllers;
 
+import lombok.extern.slf4j.Slf4j;
 import org.example.backend.dto.CapoEventRegDto;
 import org.example.backend.dto.PartOfSeriesDto;
 import org.example.backend.enums.EditScope;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.NoSuchElementException;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/capoevent")
 public class CapoEventController {
@@ -53,10 +55,10 @@ public class CapoEventController {
     }
 
     @PutMapping("/update/{userId}/{eventId}")
-    public ResponseEntity<CapoEvent> update(@PathVariable String userId, @PathVariable String eventId, @RequestBody CapoEventRegDto regDto) {
+    public ResponseEntity<CapoEvent> update(@PathVariable String userId, @PathVariable String eventId, @RequestBody CapoEventRegDto regDto, @RequestParam (defaultValue = "ONLY_THIS") EditScope editScope) {
 
         try{
-            CapoEvent updatedEvent = capoEventService.updateCapoEvent(userId, eventId, regDto);
+            CapoEvent updatedEvent = capoEventService.updateCapoEvent(userId, eventId, regDto, editScope);
             return ResponseEntity.status(HttpStatus.CREATED).body(updatedEvent);
         }
         catch (IllegalArgumentException _){
@@ -68,7 +70,6 @@ public class CapoEventController {
         catch(MatchException _){
             return ResponseEntity.status(HttpStatus.CONFLICT).build();
         }
-
     }
 
     @GetMapping("/{eventId}/{seriesId}/{occurrenceIndex}")

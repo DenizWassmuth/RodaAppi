@@ -29,17 +29,31 @@ function App() {
             .catch((error) => error + ": could not fetch capoEvents");
     }
 
+    async function getUsersBookMarks() {
+        if (!user) {
+            return;
+        }
+
+        //return await axios.get<CapoEventType[]>("/api/bookmarks")
+    }
+
     useEffect(() => {
         loadUser();
         fetchEvents().then();
     }, []);
+
+    useEffect(() => {
+
+
+
+    }, [capoEvents]);
 
   return (
       <>
           <header><Navbar user={user}/></header>
           <Routes>
               <Route path={"/"} element={<PreviewPage user={user} events={capoEvents} fetchEvents={fetchEvents} bIsLoginArea={false}/>}/>
-              <Route path={"/capoevent/:id"} element={<CapoEventPage appUser={user} fetchEvents={fetchEvents}/>}/>
+              <Route path={"/capoevent/:id"} element={<CapoEventPage user={user} fetchEvents={fetchEvents}/>}/>
 
               <Route element={<ProtectedRoute user={user}/> }>
                   <Route path={"/loggedin"} element={<PreviewPage user={user} events={capoEvents} fetchEvents={fetchEvents} bIsLoginArea={true} />}/>

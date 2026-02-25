@@ -5,7 +5,7 @@ import type {EditScope, PartOfSeriesDto} from "../../types/CapoEvent.ts";
 
 
 type Props = {
-    open: boolean;
+    bOpen: boolean;
     onCancel: () => void;
     onConfirm: () => void;
     onConfirmTitle:string;
@@ -17,14 +17,14 @@ type Props = {
 
 export default function EditScopeModal(props: Readonly<Props>) {
 
-    const [confirmOpen, setConfirmOpen] = useState(false);
+    const [bOpenConfirm, setConfirmOpen] = useState(false);
 
-    if (!props.open) return null;
+    if (!props.bOpen) return null;
 
     return (
         <div className="modal__backdrop">
             <div className="modal__panel">
-                <h3 className="modal__title">Delete</h3>
+                <h3 className="modal__title">{props.onConfirmTitle}</h3>
                 <p></p>
                 <div style={{ display: "grid", gap: 8, marginBottom: 16 }}>
                     <label>
@@ -90,13 +90,13 @@ export default function EditScopeModal(props: Readonly<Props>) {
             </div>
 
             <ConfirmModal
-                open={confirmOpen}
+                bOpen={bOpenConfirm}
                 title={props.onConfirmTitle + " event?"}
                 message={props.onConfirmMsg}
                 confirmText= {"Yes, " + props.onConfirmTitle}
                 cancelText="No"
                 onCancel={() => setConfirmOpen(false)}
-                onConfirm={async () => {
+                onConfirm={() => {
                     setConfirmOpen(false);
                     props.onConfirm();
                 }}

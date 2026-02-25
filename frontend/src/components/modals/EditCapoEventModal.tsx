@@ -29,9 +29,9 @@ export default function EditCapoEventModal(props:Readonly<EditModalProps>) {
             ...value,
         };
 
-        await axios.put(`/api/capoevent/update/${props.user.id}/${props.event.id}`, dto, {params: { editScope: scope },});
-        await props.fetchEvents();
-        props.onClose();
+        await axios.put(`/api/capoevent/update/${props.user.id}/${props.event.id}`, dto, {params: { editScope: scope },})
+            .then(response => {console.log(response.data)})
+            .finally(() => {props.fetchEvents(); props.onClose()});
     }
 
     if(!props.bOpen){

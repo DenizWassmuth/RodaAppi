@@ -27,7 +27,6 @@ export type CapoEventType  = null | undefined | {
     repRhythm: RepetitionRhythmEnumType
 }
 
-
 export type EventRegDto = {
     userId: string,
     userName: string | undefined | null,

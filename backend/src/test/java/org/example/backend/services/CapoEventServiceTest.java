@@ -238,28 +238,51 @@ class CapoEventServiceTest {
 
     @Test
     void updateCapoEvent_shouldThrowIllegalArgumentException_whenUserIdIsnUll() {
-        assertThrows(IllegalArgumentException.class, () -> capoEventService.updateCapoEvent(null, fakeEvent1.id(), regDto));
+        assertThrows(IllegalArgumentException.class,
+                () -> capoEventService.updateCapoEvent(null, fakeEvent1.id(), regDto, EditScope.ONLY_THIS));
     }
 
     @Test
     void updateCapoEvent_shouldThrowIllegalArgumentException_whenEventIdIsNull() {
-        assertThrows(IllegalArgumentException.class, () -> capoEventService.updateCapoEvent(fakeEvent1.creatorId(), null, regDto));
+        assertThrows(IllegalArgumentException.class,
+                () -> capoEventService.updateCapoEvent(fakeEvent1.creatorId(), null, regDto, EditScope.ONLY_THIS));
     }
 
     @Test
     void updateCapoEvent_shouldThrowIllegalArgumentException_whenDTOIsNull() {
-        assertThrows(IllegalArgumentException.class, () -> capoEventService.updateCapoEvent(fakeEvent1.creatorId(), fakeEvent1.id(), null));
+        assertThrows(IllegalArgumentException.class,
+                () -> capoEventService.updateCapoEvent(fakeEvent1.creatorId(), fakeEvent1.id(), null, EditScope.ONLY_THIS));
     }
 
     @Test
     void updateCapoEvent_shouldThrowIllegalArgumentException_whenNotFound() {
-        assertThrows(NoSuchElementException.class, () -> capoEventService.updateCapoEvent("1","2", regDto));
+        assertThrows(NoSuchElementException.class, () -> capoEventService.updateCapoEvent("1","2", regDto, EditScope.ONLY_THIS));
     }
 
     @Test
     void updateCapoEvent_shouldThrowMatchException_whenCreatorIdAndUserIdDoNotMatch() {
         Mockito.when(capoEventRepo.findById("1")).thenReturn(Optional.of(fakeEvent1)); // user id is 1
-        assertThrows(NoSuchElementException.class, () -> capoEventService.updateCapoEvent("2","1", regDto));
+        assertThrows(NoSuchElementException.class, () -> capoEventService.updateCapoEvent("2","1", regDto, EditScope.ONLY_THIS));
+    }
+
+    @Test
+    void updateCapoEvent_shouldThrowIllegalArgumentException_whenEndBeforeStart() {
+        CapoEventRegDto badDto = Mockito.mock(CapoEventRegDto.class);
+
+        Mockito.when(badDto.eventTitle()).thenReturn(regDto.eventTitle());
+        Mockito.when(badDto.eventDescription()).thenReturn(regDto.eventDescription());
+        Mockito.when(badDto.thumbnail()).thenReturn(regDto.thumbnail());
+        Mockito.when(badDto.locationData()).thenReturn(regDto.locationData());
+
+        // flip start with end
+        Mockito.when(badDto.eventStart()).thenReturn(regDto.eventEnd());
+        Mockito.when(badDto.eventEnd()).thenReturn(regDto.eventStart());
+
+        Mockito.when(capoEventRepo.findByIdAndCreatorId(fakeEvent1.id(), fakeEvent1.creatorId()))
+                .thenReturn(Optional.of(fakeEvent1));
+
+        assertThrows(IllegalArgumentException.class,
+                () -> capoEventService.updateCapoEvent(fakeEvent1.creatorId(), fakeEvent1.id(), badDto, EditScope.ONLY_THIS));
     }
 
     @Test
@@ -276,8 +299,9 @@ class CapoEventServiceTest {
                 .withThumbnail(regDto.thumbnail());
 
         Mockito.when(capoEventRepo.save(expected)).thenReturn(expected);
+        Mockito.when(capoEventRepo.findById("1")).thenReturn(Optional.of(expected));
 
-        CapoEvent actual = capoEventService.updateCapoEvent("1", "1", regDto);
+        CapoEvent actual = capoEventService.updateCapoEvent("1", "1", regDto, EditScope.ONLY_THIS);
 
         assertNotNull(actual);
         assertNotEquals(fakeEvent1, actual);

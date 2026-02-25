@@ -1,6 +1,6 @@
-import {type FormEvent, useState} from "react";
+import {type FormEvent, useMemo, useState} from "react";
 
-import "../styles/CreateCapoEventPage.css";
+import "../styles/CapoEventForm.css";
 import type {
     CapoEventEnumType,
     EditScope,
@@ -53,6 +53,21 @@ export default function CapoEventForm(props: Readonly<EventFormProps>) {
       props.onSubmit(value, null)
           .catch((err: Error) => {console.log("SUBMIT FAILED: " + err)});
     }
+
+    // Every line commented.
+    function nowAsDateTimeLocal(): string { // Helper to format current time for datetime-local input.
+        const d = new Date(); // Current date/time in browser timezone.
+        d.setSeconds(0, 0); // Remove seconds/ms because datetime-local usually uses minutes.
+        const pad = (n: number) => String(n).padStart(2, "0"); // Zero-pad helper.
+        const yyyy = d.getFullYear(); // Year.
+        const mm = pad(d.getMonth() + 1); // Month (0-based).
+        const dd = pad(d.getDate()); // Day.
+        const hh = pad(d.getHours()); // Hour.
+        const min = pad(d.getMinutes()); // Minute.
+        return `${yyyy}-${mm}-${dd}T${hh}:${min}`; // Format required by datetime-local.
+    }
+
+    const minStart = useMemo(() => nowAsDateTimeLocal(), []); // Compute once on mount.
 
     const showRepUntil = value.repRhythm !== "ONCE" && !props.bEditMode;
 
@@ -184,10 +199,14 @@ export default function CapoEventForm(props: Readonly<EventFormProps>) {
                         <input
                             className="create-event__input"
                             type="datetime-local"
+                            min={minStart}
                             value={value.eventStart}
                             onChange={(e) => {
                                 updateField("eventStart", e.target.value);
-                                updateField("eventEnd", e.target.value)
+                                updateField("eventEnd", e.target.value);
+                                updateField("repUntil", e.target.value);
+                                console.log(e.target.value);
+                                console.log(value.eventStart);
                             }}
                             required={true}
                         />
@@ -198,10 +217,12 @@ export default function CapoEventForm(props: Readonly<EventFormProps>) {
                         <input
                             className="create-event__input"
                             type="datetime-local"
+                            min={value.eventStart || minStart}
                             value={value.eventEnd}
                             onChange={(e) => {
                                 updateField("eventEnd", e.target.value);
-                                updateField("repUntil", e.target.value)}}
+                                updateField("repUntil", e.target.value);
+                            }}
                             placeholder={value.eventStart}
                         />
                     </label>
@@ -230,6 +251,7 @@ export default function CapoEventForm(props: Readonly<EventFormProps>) {
                             <input
                                 className="create-event__input"
                                 type="datetime-local"
+                                min = {value.eventEnd || value.eventEnd || minStart}
                                 value={value.repUntil}
                                 onChange={(e) => updateField("repUntil", e.target.value)}
                             />
@@ -243,7 +265,7 @@ export default function CapoEventForm(props: Readonly<EventFormProps>) {
             </form>
             { props.bEditMode && bOpenEditScopeModal && (
                 <EditScopeModal
-                    open={bOpenEditScopeModal}
+                    bOpen={bOpenEditScopeModal}
                     onCancel={() => setOpenEditScopeModal(false)}
                     onConfirm={() => props.onSubmit(value, editScope)}
                     onConfirmTitle={"Update"}

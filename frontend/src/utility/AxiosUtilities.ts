@@ -22,6 +22,7 @@ export async function deleteCapoEvent(userId: string | undefined | null, eventId
   console.log("awaiting axios response for deleteEvent with id: ", eventId+ " and scope: ", editScope);
 
   await axios.delete(capoApi + `/delete/${userId}/${eventId}`, {params: { editScope: editScope },})
+      .then((response) => {console.log(response)})
       .catch(error => console.log(error + ", axios responded with error for deleteEvent with eventId: ", eventId));
 }
 

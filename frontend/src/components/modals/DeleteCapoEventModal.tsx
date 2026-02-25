@@ -34,7 +34,7 @@ export function DeleteCapoEventModal(props:Readonly<Props>){
     return (
         <>
             <EditScopeModal
-                open={props.bOpen}
+                bOpen={props.bOpen}
                 partOfSeries={props.partOfSeries}
                 editScope={editScope}
                 setEditScope={setEditScope}
