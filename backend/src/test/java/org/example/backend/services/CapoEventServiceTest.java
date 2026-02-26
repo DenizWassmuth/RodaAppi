@@ -245,13 +245,13 @@ class CapoEventServiceTest {
     @Test
     void updateCapoEvent_shouldThrowIllegalArgumentException_whenEventIdIsNull() {
         assertThrows(IllegalArgumentException.class,
-                () -> capoEventService.updateCapoEvent(fakeEvent1.creatorId(), null, regDto, EditScope.ONLY_THIS));
+                () -> capoEventService.updateCapoEvent("1", null, regDto, EditScope.ONLY_THIS));
     }
 
     @Test
     void updateCapoEvent_shouldThrowIllegalArgumentException_whenDTOIsNull() {
         assertThrows(IllegalArgumentException.class,
-                () -> capoEventService.updateCapoEvent(fakeEvent1.creatorId(), fakeEvent1.id(), null, EditScope.ONLY_THIS));
+                () -> capoEventService.updateCapoEvent("1", fakeEvent1.id(), null, EditScope.ONLY_THIS));
     }
 
     @Test
