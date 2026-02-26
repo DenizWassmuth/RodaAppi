@@ -1,19 +1,17 @@
 package org.example.backend.services;
-import org.example.backend.models.BookMarkedEvents;
-import org.example.backend.repositories.BookmarkedEventsRepository;
+import org.example.backend.models.BookmarkContainer;
+import org.example.backend.repositories.BookmarkContainerRepository;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.NoSuchElementException;
+import java.util.*;
 
 
 @Service
 public class BookmarkService {
 
-    BookmarkedEventsRepository bookmarkedEventsRepo;
-    public BookmarkService(BookmarkedEventsRepository bookmarkedEventsRepo) {
-        this.bookmarkedEventsRepo = bookmarkedEventsRepo;
+    BookmarkContainerRepository bookmarkContainerRepo;
+    public BookmarkService(BookmarkContainerRepository bookmarkContainerRepo) {
+        this.bookmarkContainerRepo = bookmarkContainerRepo;
     }
 
     void validateIds(String userId, String eventId){
@@ -22,13 +20,13 @@ public class BookmarkService {
         }
     }
 
-    private BookMarkedEvents createBookmark(String userId){
-        return bookmarkedEventsRepo.save(new BookMarkedEvents(userId, new ArrayList<>()));
+    private BookmarkContainer createBookmark(String userId){
+        return bookmarkContainerRepo.save(new BookmarkContainer(userId, new ArrayList<>()));
     }
 
     public List<String> getAllBookmarkedEventsFromUser(String userId){
 
-        BookMarkedEvents bookMark = bookmarkedEventsRepo.findById(userId).orElse(null);
+        BookmarkContainer bookMark = bookmarkContainerRepo.findById(userId).orElse(null);
         if(bookMark == null){
             return new ArrayList<>();
         }
@@ -39,7 +37,7 @@ public class BookmarkService {
 
         validateIds(userId, eventId);
 
-        BookMarkedEvents bookmark = bookmarkedEventsRepo.findById(userId).orElse(null);
+        BookmarkContainer bookmark = bookmarkContainerRepo.findById(userId).orElse(null);
         if (bookmark == null){
             bookmark = createBookmark(userId);
         }
@@ -49,21 +47,26 @@ public class BookmarkService {
         }
 
         bookmark.bookmarkedIds().add(eventId);
-        bookmarkedEventsRepo.save(bookmark);
+        bookmarkContainerRepo.save(bookmark);
         return bookmark.bookmarkedIds().contains(eventId);
     }
 
-    public boolean removeEventIdFromBookMark(String userId, String eventId) {
+    public boolean removeEventIdFromBookmark(String userId, String eventId) {
 
         validateIds(userId, eventId);
 
-        BookMarkedEvents bookmark = bookmarkedEventsRepo.findById(userId).orElseThrow(() -> new NoSuchElementException("no bookmarks found for user " + userId));
+        BookmarkContainer bookmark = bookmarkContainerRepo.findById(userId).orElseThrow(() -> new NoSuchElementException("no bookmarks found for user " + userId));
 
         bookmark.bookmarkedIds().remove(eventId);
         if (bookmark.bookmarkedIds().isEmpty()) {
-            bookmarkedEventsRepo.deleteById(userId);
+            bookmarkContainerRepo.deleteById(userId);
+        }
+        else {
+            bookmarkContainerRepo.save(bookmark);
         }
 
         return !bookmark.bookmarkedIds().contains(eventId);
     }
+
+
 }

@@ -24,7 +24,8 @@ import static org.mockito.ArgumentMatchers.any;
 class CapoEventServiceTest {
 
     CapoEventRepository capoEventRepo = Mockito.mock(CapoEventRepository.class);
-    CapoEventService capoEventService = new CapoEventService(capoEventRepo);
+    BookmarkCleanupService bookmarkCleanupService = Mockito.mock(BookmarkCleanupService.class);
+    CapoEventService capoEventService = new CapoEventService(capoEventRepo, bookmarkCleanupService);
 
     CapoEvent fakeEvent1 = new CapoEvent(
             "1",

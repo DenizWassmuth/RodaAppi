@@ -8,6 +8,7 @@ import org.example.backend.models.CapoEvent;
 import org.example.backend.repositories.CapoEventRepository;
 import org.springframework.stereotype.Service;
 
+import java.awt.print.Book;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -20,8 +21,12 @@ import java.util.UUID;
 public class CapoEventService {
 
     private final CapoEventRepository capoEventRepo;
-    public CapoEventService(CapoEventRepository repo) {
+    private final BookmarkCleanupService bookmarkCleanupService;
+
+    public CapoEventService(CapoEventRepository repo, BookmarkCleanupService bookmarkCleanupService) {
+
         this.capoEventRepo = repo;
+        this.bookmarkCleanupService = bookmarkCleanupService;
     }
 
     String createId(){
@@ -208,6 +213,19 @@ public class CapoEventService {
 
        CapoEvent foundEvent = capoEventRepo.findByIdAndCreatorId(eventId, userId).orElseThrow(() -> new NoSuchElementException("cannot delete event with userId:" + userId + " and eventId:" + eventId + ", as it was not found in db"));
 
+        List<String> eventIds = switch (editScope) {
+            case ONLY_THIS -> List.of(foundEvent.id());
+            case ALL_IN_SERIES ->
+                    capoEventRepo.findAllBySeriesId(foundEvent.seriesId())
+                            .stream().map(CapoEvent::id).toList();
+            case BEFORE_THIS ->
+                    capoEventRepo.findAllBySeriesIdAndOccurrenceIndexIsLessThanEqual(foundEvent.seriesId(), foundEvent.occurrenceIndex())
+                            .stream().map(CapoEvent::id).toList();
+            case AFTER_THIS ->
+                    capoEventRepo.findAllBySeriesIdAndOccurrenceIndexIsGreaterThanEqual(foundEvent.seriesId(), foundEvent.occurrenceIndex())
+                            .stream().map(CapoEvent::id).toList();
+        };
+
         switch (editScope) {
             case ONLY_THIS -> capoEventRepo.deleteByIdAndCreatorId(eventId, userId);
             case ALL_IN_SERIES -> capoEventRepo.deleteAllBySeriesId(foundEvent.seriesId());
@@ -215,6 +233,8 @@ public class CapoEventService {
             case AFTER_THIS -> capoEventRepo.deleteAllBySeriesIdAndOccurrenceIndexIsGreaterThanEqual(foundEvent.seriesId(), foundEvent.occurrenceIndex());
             default -> throw new IllegalArgumentException("cannot delete event with id:" + eventId + ", as editScope is no known enum value");
         }
+
+        bookmarkCleanupService.removeEventIdsFromAllBookmarkLists(eventIds);
 
         return !capoEventRepo.existsById(eventId);
     }

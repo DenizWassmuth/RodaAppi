@@ -8,5 +8,5 @@ import java.util.List;
 
 @With
 // id will be equal to the owners id
-public record BookMarkedEvents(@Id String id, List<String> bookmarkedIds) {
+public record BookmarkContainer(@Id String id, List<String> bookmarkedIds) {
 }

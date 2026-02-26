@@ -46,7 +46,7 @@ public class BookmarkController {
     public ResponseEntity<Boolean> deleteBookmark(@PathVariable String userId, @PathVariable String eventId) {
 
         try{
-           boolean bRemoved =  bookmarkService.removeEventIdFromBookMark(userId, eventId);
+           boolean bRemoved =  bookmarkService.removeEventIdFromBookmark(userId, eventId);
            return ResponseEntity.status(HttpStatus.OK).body(bRemoved);
         }
         catch(IllegalArgumentException _){
