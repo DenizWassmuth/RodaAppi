@@ -15,59 +15,59 @@ type Props = {
     setEditScope: (scope: EditScope) => void;
 };
 
-export default function EditScopeModal(props: Readonly<Props>) {
+export default function EditScopeModal({bOpen, onCancel, onConfirm, onConfirmTitle, onConfirmMsg, partOfSeries, editScope, setEditScope}: Readonly<Props>) {
 
     const [bOpenConfirm, setConfirmOpen] = useState(false);
 
-    if (!props.bOpen) return null;
+    if (!bOpen) return null;
 
     return (
         <div className="modal__backdrop">
             <div className="modal__panel">
-                <h3 className="modal__title">{props.onConfirmTitle}</h3>
+                <h3 className="modal__title">{onConfirmTitle}</h3>
                 <p></p>
                 <div style={{ display: "grid", gap: 8, marginBottom: 16 }}>
                     <label>
                         <input
                             type="radio"
                             name="editScope"
-                            checked={props.editScope === "ONLY_THIS"}
-                            onChange={() => props.setEditScope("ONLY_THIS")}
+                            checked={editScope === "ONLY_THIS"}
+                            onChange={() => setEditScope("ONLY_THIS")}
                         />{" "}
                         this one
                     </label>
 
-                    {props.partOfSeries?.isPartOfSeries &&
+                    {partOfSeries?.isPartOfSeries &&
                         <label>
                             <input
                                 type="radio"
                                 name="editScope"
-                                checked={props.editScope === "ALL_IN_SERIES"}
-                                onChange={() => props.setEditScope("ALL_IN_SERIES")}
+                                checked={editScope === "ALL_IN_SERIES"}
+                                onChange={() => setEditScope("ALL_IN_SERIES")}
                             />{" "}
                             all in this series
                         </label>
                     }
 
-                    {props.partOfSeries?.hasBefore &&
+                    {partOfSeries?.hasBefore &&
                         <label>
                             <input
                                 type="radio"
                                 name="editScope"
-                                checked={props.editScope === "BEFORE_THIS"}
-                                onChange={() => props.setEditScope("BEFORE_THIS")}
+                                checked={editScope === "BEFORE_THIS"}
+                                onChange={() => setEditScope("BEFORE_THIS")}
                             />{" "}
                             this + all before (in this series)
                         </label>
                     }
 
-                    {props.partOfSeries?.hasAfter &&
+                    {partOfSeries?.hasAfter &&
                         <label>
                             <input
                                 type="radio"
                                 name="editScope"
-                                checked={props.editScope === "AFTER_THIS"}
-                                onChange={() => props.setEditScope("AFTER_THIS")}
+                                checked={editScope === "AFTER_THIS"}
+                                onChange={() => setEditScope("AFTER_THIS")}
                             />{" "}
                             this + all after (in this series)
                         </label>
@@ -75,7 +75,7 @@ export default function EditScopeModal(props: Readonly<Props>) {
                 </div>
 
                 <div className="modal__actions">
-                    <button className="modal__btn" type="button" onClick={props.onCancel}>
+                    <button className="modal__btn" type="button" onClick={onCancel}>
                         Cancel
                     </button>
 
@@ -84,21 +84,21 @@ export default function EditScopeModal(props: Readonly<Props>) {
                         type="button"
                         onClick={() => setConfirmOpen(true)}
                     >
-                        {props.onConfirmTitle}
+                        {onConfirmTitle}
                     </button>
                 </div>
             </div>
 
             <ConfirmModal
                 bOpen={bOpenConfirm}
-                title={props.onConfirmTitle + " event?"}
-                message={props.onConfirmMsg}
-                confirmText= {"Yes, " + props.onConfirmTitle}
+                title={onConfirmTitle + " event?"}
+                message={onConfirmMsg}
+                confirmText= {"Yes, " + onConfirmTitle}
                 cancelText="No"
                 onCancel={() => setConfirmOpen(false)}
                 onConfirm={() => {
                     setConfirmOpen(false);
-                    props.onConfirm();
+                    onConfirm();
                 }}
             />
         </div>

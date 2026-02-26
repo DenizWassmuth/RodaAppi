@@ -77,7 +77,7 @@ export default function EditCapoEventModal(props:Readonly<EditModalProps>) {
                             <CapoEventForm
                                 submitText="Update"
                                 initialValue={initial}
-                                onSubmit={update}
+                                submit={update}
                                 bEditMode={true}
                                 partOfSeries={props.partOfSeries}
                             />

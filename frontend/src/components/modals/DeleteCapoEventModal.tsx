@@ -13,38 +13,38 @@ type Props = {
     partOfSeries: PartOfSeriesDto;
 }
 
-export function DeleteCapoEventModal(props:Readonly<Props>){
+export function DeleteCapoEventModal({bOpen, eventId, user, partOfSeries, onClose, fetchEvents}:Readonly<Props>){
 
     const [editScope, setEditScope] = useState<EditScope>("ONLY_THIS");
 
     function handleDelete() {
-        deleteCapoEvent(props.user?.id, props.eventId, editScope)
+        deleteCapoEvent(user?.id, eventId, editScope)
             .then(() => {
-                props.fetchEvents().then(() => setEditScope("ONLY_THIS"))
+                fetchEvents().then(() => setEditScope("ONLY_THIS"))
             })
             .catch((error) => {
                 console.log("could not delete capoEvent through CapoEventCard: " + error.toString())
             });
     }
 
-    if(!props.bOpen){
+    if(!bOpen){
         return null;
     }
 
     return (
         <>
             <EditScopeModal
-                bOpen={props.bOpen}
-                partOfSeries={props.partOfSeries}
+                bOpen={bOpen}
+                partOfSeries={partOfSeries}
                 editScope={editScope}
                 setEditScope={setEditScope}
                 onConfirm={async () => {
-                    props.onClose();
+                    onClose();
                     handleDelete();
                 }}
                 onConfirmTitle={"Delete"}
                 onConfirmMsg={"This cannot be undone."}
-                onCancel={() => props.onClose()}
+                onCancel={() => onClose()}
             />
         </>
     )

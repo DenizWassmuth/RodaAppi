@@ -14,16 +14,16 @@ import EditScopeModal from "./modals/EditScopeModal.tsx";
 type EventFormProps = {
     submitText: string;
     initialValue: EventFormValue;
-    onSubmit: (value: EventFormValue, scope:EditScope | null) => Promise<void>;
+    submit: (value: EventFormValue, scope:EditScope | null) => Promise<void>;
     bEditMode: boolean;
     partOfSeries: PartOfSeriesDto
 };
 
-export default function CapoEventForm(props: Readonly<EventFormProps>) {
+export default function CapoEventForm({submitText, initialValue, submit, bEditMode, partOfSeries}: Readonly<EventFormProps>) {
 
     const [editScope, setEditScope] = useState<EditScope>("ONLY_THIS");
 
-    const [value, setValue] = useState<EventFormValue>(props.initialValue);
+    const [value, setValue] = useState<EventFormValue>(initialValue);
     const [error, setError] = useState<string | null>(null);
     const [bOpenEditScopeModal, setOpenEditScopeModal] = useState<boolean>(false);
 
@@ -45,12 +45,12 @@ export default function CapoEventForm(props: Readonly<EventFormProps>) {
         e.preventDefault();
         setError(null);
 
-        if (props.bEditMode) {
+        if (bEditMode) {
             setOpenEditScopeModal(true);
             return;
         }
 
-      props.onSubmit(value, null)
+      submit(value, null)
           .catch((err: Error) => {console.log("SUBMIT FAILED: " + err)});
     }
 
@@ -69,11 +69,11 @@ export default function CapoEventForm(props: Readonly<EventFormProps>) {
 
     const minStart = useMemo(() => nowAsDateTimeLocal(), []); // Compute once on mount.
 
-    const showRepUntil = value.repRhythm !== "ONCE" && !props.bEditMode;
+    const showRepUntil = value.repRhythm !== "ONCE" && !bEditMode;
 
     return (
         <main className="create-event">
-            <h1 className="create-event__title">{props.submitText} Capoeira Event</h1>
+            <h1 className="create-event__title">{submitText} Capoeira Event</h1>
             <form className="create-event__form" onSubmit={handleSubmit}>
                 <fieldset className="create-event__fieldset">
                     <legend className="create-event__legend">Basic</legend>
@@ -87,7 +87,7 @@ export default function CapoEventForm(props: Readonly<EventFormProps>) {
                             value={value.eventType}
                             onChange={(e) => updateField("eventType", e.target.value as CapoEventEnumType)}
                             required={true}
-                            disabled={props.bEditMode}
+                            disabled={bEditMode}
                         >
                             <option value="RODA">RODA</option>
                             <option value="WORKSHOP">WORKSHOP</option>
@@ -136,7 +136,7 @@ export default function CapoEventForm(props: Readonly<EventFormProps>) {
                             value={value.locationData.country}
                             onChange={(e) => updateLocationField("country", e.target.value)}
                             required={true}
-                            disabled={props.bEditMode}
+                            disabled={bEditMode}
                         />
                     </label>
 
@@ -147,7 +147,7 @@ export default function CapoEventForm(props: Readonly<EventFormProps>) {
                             value={value.locationData.state}
                             onChange={(e) => updateLocationField("state", e.target.value)}
                             required={true}
-                            disabled={props.bEditMode}
+                            disabled={bEditMode}
                         />
                     </label>
 
@@ -158,7 +158,7 @@ export default function CapoEventForm(props: Readonly<EventFormProps>) {
                             value={value.locationData.city}
                             onChange={(e) => updateLocationField("city", e.target.value)}
                             required={true}
-                            disabled={props.bEditMode}
+                            disabled={bEditMode}
                         />
                     </label>
 
@@ -234,7 +234,7 @@ export default function CapoEventForm(props: Readonly<EventFormProps>) {
                             value={value.repRhythm}
                             onChange={(e) => updateField("repRhythm", e.target.value as RepetitionRhythmEnumType)}
                             required={true}
-                            disabled={props.bEditMode}
+                            disabled={bEditMode}
                         >
                             <option value="ONCE">ONCE</option>
                             <option value="DAILY">DAILY</option>
@@ -260,17 +260,17 @@ export default function CapoEventForm(props: Readonly<EventFormProps>) {
                 </fieldset>
 
                 <button className="create-event__submit" type="submit">
-                    {props.submitText}
+                    {submitText}
                 </button>
             </form>
-            { props.bEditMode && bOpenEditScopeModal && (
+            {bEditMode && bOpenEditScopeModal && (
                 <EditScopeModal
                     bOpen={bOpenEditScopeModal}
                     onCancel={() => setOpenEditScopeModal(false)}
-                    onConfirm={() => props.onSubmit(value, editScope)}
+                    onConfirm={() => submit(value, editScope)}
                     onConfirmTitle={"Update"}
                     onConfirmMsg={"Updating may cause overlaps with other events!!!"}
-                    partOfSeries={props.partOfSeries}
+                    partOfSeries={partOfSeries}
                     editScope={editScope}
                     setEditScope={setEditScope}
                 />
