@@ -204,6 +204,8 @@ public class CapoEventService {
 
     public boolean deleteById(String userId, String eventId, EditScope editScope){
 
+        // @TODO handle bookmarks when event gets deleted
+
        CapoEvent foundEvent = capoEventRepo.findByIdAndCreatorId(eventId, userId).orElseThrow(() -> new NoSuchElementException("cannot delete event with userId:" + userId + " and eventId:" + eventId + ", as it was not found in db"));
 
         switch (editScope) {

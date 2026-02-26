@@ -18,9 +18,10 @@ export default function CapoEventCard({ user, capoEvent, bookmarks, onHandleEdit
 
     const bUserIsValid = user !== null && user !== undefined;
     const bEventIsValid = capoEvent !== undefined && capoEvent !== null;
-    const bIsCreatedByUser = bUserIsValid && bEventIsValid && user?.id === capoEvent.creatorId;
-    const bShowBookMarkButton = bUserIsValid && bEventIsValid;
-    const bIsBookmarkedByUser = bShowBookMarkButton && bookmarks !== null && bookmarks.includes(capoEvent?.id)
+    const bShowButtons = bUserIsValid && bEventIsValid;
+    const bIsCreatedByUser = bShowButtons && user?.id === capoEvent.creatorId;
+    const bBookmarksNotNull =  bookmarks !== null;
+    const bIsBookmarkedByUser = bShowButtons && bBookmarksNotNull && bookmarks.includes(capoEvent?.id)
 
     function handleDelete() {
         if (!capoEvent) {
@@ -79,7 +80,7 @@ export default function CapoEventCard({ user, capoEvent, bookmarks, onHandleEdit
                                     }}>edit
                             </button>
                             {"   "}
-                            <button type="button" hidden={!bShowBookMarkButton} disabled={!bShowBookMarkButton}
+                            <button type="button" hidden={!bShowButtons} disabled={!bShowButtons}
                                     onClick={(e) => {
                                         e.preventDefault();
                                         handleBookmarking()

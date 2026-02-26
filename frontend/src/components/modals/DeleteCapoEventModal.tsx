@@ -32,20 +32,19 @@ export function DeleteCapoEventModal({bOpen, eventId, user, partOfSeries, onClos
     }
 
     return (
-        <>
-            <EditScopeModal
-                bOpen={bOpen}
-                partOfSeries={partOfSeries}
-                editScope={editScope}
-                setEditScope={setEditScope}
-                onConfirm={async () => {
-                    onClose();
-                    handleDelete();
-                }}
-                onConfirmTitle={"Delete"}
-                onConfirmMsg={"This cannot be undone."}
-                onCancel={() => onClose()}
-            />
-        </>
+        <EditScopeModal
+            bOpen={bOpen}
+            partOfSeries={partOfSeries}
+            editScope={editScope}
+            setEditScope={setEditScope}
+            onConfirm={async () => {
+                onClose();
+                handleDelete();
+            }}
+            onConfirmTitle={"Delete"}
+            onConfirmMsg={"This cannot be undone."}
+            onCancel={() => onClose()}
+        />
+
     )
 }

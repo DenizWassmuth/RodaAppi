@@ -19,13 +19,26 @@ type EventFormProps = {
     partOfSeries: PartOfSeriesDto
 };
 
+// Every line commented.
+function nowAsDateTimeLocal(): string { // Helper to format current time for datetime-local input.
+    const d = new Date(); // Current date/time in browser timezone.
+    d.setSeconds(0, 0); // Remove seconds/ms because datetime-local usually uses minutes.
+    const pad = (n: number) => String(n).padStart(2, "0"); // Zero-pad helper.
+    const yyyy = d.getFullYear(); // Year.
+    const mm = pad(d.getMonth() + 1); // Month (0-based).
+    const dd = pad(d.getDate()); // Day.
+    const hh = pad(d.getHours()); // Hour.
+    const min = pad(d.getMinutes()); // Minute.
+    return `${yyyy}-${mm}-${dd}T${hh}:${min}`; // Format required by datetime-local.
+}
+
 export default function CapoEventForm({submitText, initialValue, submit, bEditMode, partOfSeries}: Readonly<EventFormProps>) {
 
     const [editScope, setEditScope] = useState<EditScope>("ONLY_THIS");
 
     const [value, setValue] = useState<EventFormValue>(initialValue);
     const [error, setError] = useState<string | null>(null);
-    const [bOpenEditScopeModal, setOpenEditScopeModal] = useState<boolean>(false);
+    const [openEditScopeModal, setOpenEditScopeModal] = useState<boolean>(false);
 
     function updateField<K extends keyof EventFormValue>(key: K, v: EventFormValue[K]) {
         setValue((prev) => ({...prev, [key]: v}));
@@ -54,18 +67,7 @@ export default function CapoEventForm({submitText, initialValue, submit, bEditMo
           .catch((err: Error) => {console.log("SUBMIT FAILED: " + err)});
     }
 
-    // Every line commented.
-    function nowAsDateTimeLocal(): string { // Helper to format current time for datetime-local input.
-        const d = new Date(); // Current date/time in browser timezone.
-        d.setSeconds(0, 0); // Remove seconds/ms because datetime-local usually uses minutes.
-        const pad = (n: number) => String(n).padStart(2, "0"); // Zero-pad helper.
-        const yyyy = d.getFullYear(); // Year.
-        const mm = pad(d.getMonth() + 1); // Month (0-based).
-        const dd = pad(d.getDate()); // Day.
-        const hh = pad(d.getHours()); // Hour.
-        const min = pad(d.getMinutes()); // Minute.
-        return `${yyyy}-${mm}-${dd}T${hh}:${min}`; // Format required by datetime-local.
-    }
+
 
     const minStart = useMemo(() => nowAsDateTimeLocal(), []); // Compute once on mount.
 
@@ -251,7 +253,7 @@ export default function CapoEventForm({submitText, initialValue, submit, bEditMo
                             <input
                                 className="create-event__input"
                                 type="datetime-local"
-                                min = {value.eventEnd || value.eventEnd || minStart}
+                                min = {value.eventStart|| value.eventEnd || minStart}
                                 value={value.repUntil}
                                 onChange={(e) => updateField("repUntil", e.target.value)}
                             />
@@ -263,9 +265,9 @@ export default function CapoEventForm({submitText, initialValue, submit, bEditMo
                     {submitText}
                 </button>
             </form>
-            {bEditMode && bOpenEditScopeModal && (
+            {bEditMode && openEditScopeModal && (
                 <EditScopeModal
-                    bOpen={bOpenEditScopeModal}
+                    bOpen={openEditScopeModal}
                     onCancel={() => setOpenEditScopeModal(false)}
                     onConfirm={() => submit(value, editScope)}
                     onConfirmTitle={"Update"}

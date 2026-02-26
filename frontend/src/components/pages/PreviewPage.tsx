@@ -19,8 +19,8 @@ type PageProps = {
 export default function PreviewPage({user, bIsLoginArea, events, fetchEvents, bookmarks}: Readonly<PageProps>) {
 
     const [capoEvent, setCapoEvent] = useState<CapoEventType>(null);
-    const [bOpenEdit, setOpenEdit] = useState(false);
-    const [bOpenDelete, setOpenDelete] = useState(false);
+    const [openEdit, setOpenEdit] = useState(false);
+    const [openDelete, setOpenDelete] = useState(false);
     const [partOfSeries, setPartOfSeries] = useState<PartOfSeriesDto>(null);
 
     useEffect(() => {
@@ -85,9 +85,9 @@ export default function PreviewPage({user, bIsLoginArea, events, fetchEvents, bo
 
             { (
                 <>
-                    {user && bOpenEdit && (
+                    {user && openEdit && (
                         <EditCapoEventModal
-                            bOpen={bOpenEdit}
+                            bOpen={openEdit}
                             event={capoEvent}
                             partOfSeries={partOfSeries}
                             user={user}
@@ -95,9 +95,9 @@ export default function PreviewPage({user, bIsLoginArea, events, fetchEvents, bo
                             onClose={closeEditModal}
                         />
                     )}
-                    {user && bOpenDelete && (
+                    {user && openDelete && (
                         <DeleteCapoEventModal
-                            bOpen={bOpenDelete}
+                            bOpen={openDelete}
                             eventId={capoEvent?.id}
                             partOfSeries={partOfSeries}
                             user={user}

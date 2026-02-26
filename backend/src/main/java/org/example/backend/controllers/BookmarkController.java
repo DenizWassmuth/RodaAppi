@@ -21,14 +21,9 @@ public class BookmarkController {
     @GetMapping("/{id}")
     public ResponseEntity<List<String>> getBookmarksFromUser(@PathVariable String id) {
 
-        try {
-            List<String> bookmarks = bookmarkService.getAllBookmarkedEventsFromUser(id);
-            return ResponseEntity.status(HttpStatus.OK).body(bookmarks);
+        List<String> bookmarks = bookmarkService.getAllBookmarkedEventsFromUser(id);
+        return ResponseEntity.status(HttpStatus.OK).body(bookmarks);
 
-        } catch (NoSuchElementException _ ) {
-
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-        }
     }
 
     @PutMapping("/{userId}/{eventId}")
@@ -55,6 +50,9 @@ public class BookmarkController {
         }
         catch(IllegalArgumentException _){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        }
+        catch (NoSuchElementException _) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
     }
 }

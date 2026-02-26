@@ -17,7 +17,7 @@ type Props = {
 
 export default function EditScopeModal({bOpen, onCancel, onConfirm, onConfirmTitle, onConfirmMsg, partOfSeries, editScope, setEditScope}: Readonly<Props>) {
 
-    const [bOpenConfirm, setConfirmOpen] = useState(false);
+    const [openConfirm, setOpenConfirm] = useState(false);
 
     if (!bOpen) return null;
 
@@ -82,7 +82,7 @@ export default function EditScopeModal({bOpen, onCancel, onConfirm, onConfirmTit
                     <button
                         className="modal__btn modal__btn--danger"
                         type="button"
-                        onClick={() => setConfirmOpen(true)}
+                        onClick={() => setOpenConfirm(true)}
                     >
                         {onConfirmTitle}
                     </button>
@@ -90,14 +90,14 @@ export default function EditScopeModal({bOpen, onCancel, onConfirm, onConfirmTit
             </div>
 
             <ConfirmModal
-                bOpen={bOpenConfirm}
+                bOpen={openConfirm}
                 title={onConfirmTitle + " event?"}
                 message={onConfirmMsg}
                 confirmText= {"Yes, " + onConfirmTitle}
                 cancelText="No"
-                onCancel={() => setConfirmOpen(false)}
+                onCancel={() => setOpenConfirm(false)}
                 onConfirm={() => {
-                    setConfirmOpen(false);
+                    setOpenConfirm(false);
                     onConfirm();
                 }}
             />
