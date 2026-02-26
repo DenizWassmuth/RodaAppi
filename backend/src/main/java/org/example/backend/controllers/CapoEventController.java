@@ -1,6 +1,5 @@
 package org.example.backend.controllers;
 
-import lombok.extern.slf4j.Slf4j;
 import org.example.backend.dto.CapoEventRegDto;
 import org.example.backend.dto.PartOfSeriesDto;
 import org.example.backend.enums.EditScope;

@@ -11,7 +11,7 @@ type EventPageProps = {
     fetchEvents:() => Promise<void | string>
 }
 
-export default function CapoEventPage(props: Readonly<EventPageProps>) {
+export default function CapoEventPage({user, fetchEvents}: Readonly<EventPageProps>) {
 
     const { id } = useParams();
     const nav = useNavigate();
@@ -21,16 +21,16 @@ export default function CapoEventPage(props: Readonly<EventPageProps>) {
     const [deleteScope, setDeleteScope] = useState<EditScope>("ONLY_THIS");
     const [partOfSeries, setPartOfSeries] = useState<PartOfSeriesDto>(null);
 
-    const isLoggedIn = props.user !== null && props.user !== undefined;
+    const isLoggedIn = user !== null && user !== undefined;
     const eventIsValid = capoEvent !== undefined && capoEvent !== null;
-    const eventIsCreatedByUser = isLoggedIn && eventIsValid && props.user.id === capoEvent?.creatorId;
+    const eventIsCreatedByUser = isLoggedIn && eventIsValid && user.id === capoEvent?.creatorId;
 
     useEffect(() => {
         axios.get("/api/capoevent/" + id).then((r) => setCapoEvent(r.data));
     }, [id]);
 
     function handleDelete() {
-        deleteCapoEvent(props.user?.id, capoEvent?.id, deleteScope)
+        deleteCapoEvent(user?.id, capoEvent?.id, deleteScope)
             .then(() => {
                 setPartOfSeries(null);
                 setDeleteScope("ONLY_THIS");

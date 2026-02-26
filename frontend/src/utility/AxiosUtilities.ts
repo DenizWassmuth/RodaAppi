@@ -26,7 +26,7 @@ export async function deleteCapoEvent(userId: string | undefined | null, eventId
       .catch(error => console.log(error + ", axios responded with error for deleteEvent with eventId: ", eventId));
 }
 
-export async function checkIfPartOfSeries(capoEvent:CapoEventType,setPartOfSeries:(partOfSeries: PartOfSeriesDto) => void) {
+export async function checkIfPartOfSeries(capoEvent: CapoEventType, setPartOfSeries: (partOfSeries: PartOfSeriesDto) => void) {
 
   if (capoEvent === null) {
     console.log("cannot check if event is part of series, as event is not valid");
@@ -35,7 +35,29 @@ export async function checkIfPartOfSeries(capoEvent:CapoEventType,setPartOfSerie
 
   await axios.get(capoApi + `/${capoEvent?.id}/${capoEvent?.seriesId}/${capoEvent?.occurrenceIndex}`)
       .then((response) => {
-        setPartOfSeries(response.data); console.log(response.data);
+        setPartOfSeries(response.data);
+        console.log(response.data);
       })
       .catch(error => console.log("axios responded with error for checkIfPartOfSeries: " + error));
 }
+
+export async function bookmarkEvents(userId:string | undefined | null, eventId: string | undefined, isBookmarkedByUser:boolean) {
+
+  if (!isBookmarkedByUser) {
+    await axios.put(`/api/bookmarks/${userId}/${eventId}`)
+        .then((response) => {
+          console.log("event was added to bookmarks " + response.data);
+        })
+        .catch((error) => {
+          console.log(error)
+        });
+
+    return;
+  }
+
+    await axios.delete(`/api/bookmarks/${userId}/${eventId}`)
+        .then((response) => {
+          console.log("event was removed from bookmarks " + response.data);
+        })
+
+  }

@@ -8,17 +8,17 @@ import type {CapoEventType, PartOfSeriesDto} from "../../types/CapoEvent.ts";
 import {DeleteCapoEventModal} from "../modals/DeleteCapoEventModal.tsx";
 import {checkIfPartOfSeries} from "../../utility/AxiosUtilities.ts";
 
-export type PageProps = {
+type PageProps = {
     user:AppUserType | null | undefined;
     bIsLoginArea: boolean;
     events:CapoEventType[];
     fetchEvents: () => Promise<void | string>;
+    bookmarks:string[] | null;
 }
 
-export default function PreviewPage(props: Readonly<PageProps>) {
+export default function PreviewPage({user, bIsLoginArea, events, fetchEvents, bookmarks}: Readonly<PageProps>) {
 
     const [capoEvent, setCapoEvent] = useState<CapoEventType>(null);
-    const [bOpenModals, setOpenModals] = useState<boolean>(false);
     const [bOpenEdit, setOpenEdit] = useState(false);
     const [bOpenDelete, setOpenDelete] = useState(false);
     const [partOfSeries, setPartOfSeries] = useState<PartOfSeriesDto>(null);
@@ -27,7 +27,10 @@ export default function PreviewPage(props: Readonly<PageProps>) {
         if (!capoEvent) {
             return;
         }
-        checkIfPartOfSeries(capoEvent, setPartOfSeries).then(() => setOpenModals(true));
+
+        checkIfPartOfSeries(capoEvent, setPartOfSeries)
+            .then();
+
     }, [capoEvent])
 
     function openEditModal(event: CapoEventType) {
@@ -37,7 +40,6 @@ export default function PreviewPage(props: Readonly<PageProps>) {
 
     function closeEditModal() {
         setOpenEdit(false);
-        setOpenModals(false)
         setCapoEvent(null);
         setPartOfSeries(null);
     }
@@ -49,15 +51,14 @@ export default function PreviewPage(props: Readonly<PageProps>) {
 
     function closeDeleteModal() {
         setOpenDelete(false);
-        setOpenModals(false)
         setCapoEvent(null);
         setPartOfSeries(null);
     }
 
-    let eventsToMap = props.events;
-    if (props.user && props.bIsLoginArea){
-       eventsToMap = props.events
-           .filter((capoEvent) => capoEvent?.creatorId === props.user?.id);
+    let eventsToMap = events;
+    if (user && bIsLoginArea){
+       eventsToMap = events
+           .filter((capoEvent) => capoEvent?.creatorId === user?.id);
     }
 
     return (
@@ -70,37 +71,45 @@ export default function PreviewPage(props: Readonly<PageProps>) {
                                     <CapoEventCard
                                         key={capoEvent?.id}
                                         capoEvent={capoEvent}
-                                        user={props.user}
+                                        user={user}
                                         onHandleEdit={openEditModal}
-                                        onHandleDelete={openDeleteModal} />
+                                        onHandleDelete={openDeleteModal}
+                                        bookmarks={bookmarks}
+                                        fetchEvents={fetchEvents}
+                                    />
                                 )
                             )
                     }
                 </div>
             </main>
 
-            {bOpenModals && (
+            { (
                 <>
-                    {props.user && bOpenEdit && (
+                    {user && bOpenEdit && (
                         <EditCapoEventModal
                             bOpen={bOpenEdit}
                             event={capoEvent}
                             partOfSeries={partOfSeries}
-                            user={props.user}
-                            fetchEvents={props.fetchEvents}
+                            user={user}
+                            fetchEvents={fetchEvents}
                             onClose={closeEditModal}
                         />
                     )}
-                    {props.user && bOpenDelete && (
+                    {user && bOpenDelete && (
                         <DeleteCapoEventModal
                             bOpen={bOpenDelete}
                             eventId={capoEvent?.id}
                             partOfSeries={partOfSeries}
-                            user={props.user}
-                            fetchEvents={props.fetchEvents}
+                            user={user}
+                            fetchEvents={fetchEvents}
                             onClose={closeDeleteModal}
                         />
                     )}
+                    {/*user && bOpenDelete && (
+                        <CapoEventPage
+                            user={user}
+                            fetchEvents={fetchEvents} />
+                    )*/}
                 </>
             )}
         </div>
