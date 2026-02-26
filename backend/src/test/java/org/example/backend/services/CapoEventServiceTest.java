@@ -282,7 +282,7 @@ class CapoEventServiceTest {
                 .thenReturn(Optional.of(fakeEvent1));
 
         assertThrows(IllegalArgumentException.class,
-                () -> capoEventService.updateCapoEvent(fakeEvent1.creatorId(), fakeEvent1.id(), badDto, EditScope.ONLY_THIS));
+                () -> capoEventService.updateCapoEvent("1", "1", badDto, EditScope.ONLY_THIS));
     }
 
     @Test
