@@ -1,6 +1,8 @@
 package org.example.backend.controllers;
 
 import org.example.backend.dto.CapoEventRegDto;
+import org.example.backend.dto.PartOfSeriesDto;
+import org.example.backend.enums.DeleteScope;
 import org.example.backend.models.CapoEvent;
 import org.example.backend.services.CapoEventService;
 import org.springframework.http.HttpStatus;
@@ -8,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @RestController
 @RequestMapping("/api/capoevent")
@@ -36,23 +39,63 @@ public class CapoEventController {
 
     @PostMapping()
     public ResponseEntity<CapoEvent> create(@RequestBody CapoEventRegDto regDto) {
-        CapoEvent newEvent = capoEventService.createCapoEvent(regDto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(newEvent);
+
+        try{
+            CapoEvent newEvent = capoEventService.createCapoEvent(regDto);
+            return ResponseEntity.status(HttpStatus.CREATED).body(newEvent);
+        }
+        catch (IllegalArgumentException _){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
+        catch(MatchException _){
+            return ResponseEntity.status(HttpStatus.CONFLICT).build();
+        }
     }
 
     @PutMapping("/update/{userId}/{eventId}")
     public ResponseEntity<CapoEvent> update(@PathVariable String userId, @PathVariable String eventId, @RequestBody CapoEventRegDto regDto) {
-        CapoEvent updatedEvent = capoEventService.updateCapoEvent(userId, eventId, regDto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(updatedEvent);
+
+        try{
+            CapoEvent updatedEvent = capoEventService.updateCapoEvent(userId, eventId, regDto);
+            return ResponseEntity.status(HttpStatus.CREATED).body(updatedEvent);
+        }
+        catch (IllegalArgumentException _){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
+        catch(NoSuchElementException _){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+        catch(MatchException _){
+            return ResponseEntity.status(HttpStatus.CONFLICT).build();
+        }
+
+    }
+
+    @GetMapping("/{eventId}/{seriesId}/{occurrenceIndex}")
+    public ResponseEntity<PartOfSeriesDto> getPartOfSeries(@PathVariable String eventId, @PathVariable String seriesId, @PathVariable int occurrenceIndex) {
+
+        try{
+            PartOfSeriesDto dto = capoEventService.getPartOfSeriesDto(eventId,seriesId,occurrenceIndex);
+            return ResponseEntity.status(HttpStatus.OK).body(dto);
+        }
+        catch (IllegalArgumentException _){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
     }
 
     @DeleteMapping("/delete/{userId}/{eventId}")
-    public ResponseEntity<Boolean> deleteById(@PathVariable String userId, @PathVariable String eventId) {
+    public ResponseEntity<Void> deleteById(@PathVariable String userId, @PathVariable String eventId, @RequestParam (defaultValue = "ONLY_THIS") DeleteScope deleteScope) {
 
-        if (capoEventService.deleteById(userId, eventId)) {
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        try {
+            capoEventService.deleteById(userId, eventId, deleteScope) ;
+        }
+        catch (NoSuchElementException _) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+        catch(IllegalArgumentException _){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
 
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 }

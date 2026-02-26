@@ -11,18 +11,20 @@ export type LocationDataType = {
     specifics:string;
 };
 
-export type CapoEventType = {
+export type CapoEventType  = null | undefined | {
     id: string,
     creatorId: string,
+    seriesId: string,
+    occurrenceIndex: number,
     creatorName: string,
     eventTitle: string,
     eventDescription: string,
-    thumbnail: string;
-    locationData: LocationDataType;
-    eventStart: string;
-    eventEnd: string;
-    eventType: CapoEventEnumType;
-    repRhythm: RepetitionRhythmEnumType;
+    thumbnail: string,
+    locationData: LocationDataType,
+    eventStart: string,
+    eventEnd: string,
+    eventType: CapoEventEnumType,
+    repRhythm: RepetitionRhythmEnumType
 }
 
 export type CapoEventProps = {
@@ -40,7 +42,16 @@ export type EventRegDto = {
     eventStart: string,
     eventEnd: string,
     eventType: CapoEventEnumType,
-    repRhythm: RepetitionRhythmEnumType
+    repRhythm: RepetitionRhythmEnumType,
+    repUntil: string
 }
 
 export type EventFormValue = Omit<EventRegDto, "userId">;
+
+export type DeleteScope = "ONLY_THIS" | "ALL_IN_SERIES" | "BEFORE_THIS" | "AFTER_THIS";
+
+export type PartOfSeriesDto = null | undefined | {
+    isPartOfSeries: boolean;
+    hasBefore: boolean;
+    hasAfter: boolean;
+}

@@ -1,13 +1,19 @@
 package org.example.backend.services;
 
 import org.example.backend.dto.CapoEventRegDto;
+import org.example.backend.dto.PartOfSeriesDto;
+import org.example.backend.enums.DeleteScope;
+import org.example.backend.enums.RepetitionRhythmEnumType;
 import org.example.backend.models.CapoEvent;
 import org.example.backend.repositories.CapoEventRepository;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.UUID;
+
 
 @Service
 public class CapoEventService {
@@ -19,6 +25,36 @@ public class CapoEventService {
 
     String createId(){
         return UUID.randomUUID().toString();
+    }
+
+    boolean eventAlreadyExists(String idToExclude, CapoEventRegDto regDto){
+
+        if (regDto == null){
+            throw new IllegalArgumentException("event cannot be null if it is to be compared to existing events");
+        }
+
+        return capoEventRepo
+                .existsByIdNotAndEventStartAndLocationDataCountryAndLocationDataStateAndLocationDataCityAndLocationDataStreet(
+                        idToExclude,
+                        regDto.eventStart(),
+                        regDto.locationData().country(),
+                        regDto.locationData().state(),
+                        regDto.locationData().city(),
+                        regDto.locationData().street()
+        );
+    }
+
+    LocalDateTime shiftLocalDateTime(LocalDateTime toShift, RepetitionRhythmEnumType rhythm) {
+
+        return switch (rhythm) {
+            case DAILY -> toShift.plusDays(1);
+            case WEEKLY -> toShift.plusWeeks(1);
+            case MONTHLY -> toShift.plusMonths(1);
+            case QUARTERLY -> toShift.plusMonths(3);
+            case YEARLY -> toShift.plusYears(1);
+            case CUSTOM -> throw new IllegalArgumentException("CUSTOM needs extra fields (interval/days)");
+            case ONCE -> toShift;
+        };
     }
 
     public List<CapoEvent> getAll(){
@@ -36,72 +72,111 @@ public class CapoEventService {
     public CapoEvent createCapoEvent(CapoEventRegDto regDto){
 
         if (regDto == null) {
-            throw new IllegalArgumentException("regDto is null");
+            throw new IllegalArgumentException("cannot create new event, as regDto is null");
         }
 
-        CapoEvent newEvent = new CapoEvent(
-                createId(),
-                regDto.userId(),
-                regDto.userName(),
-                regDto.eventTitle(),
-                regDto.eventDescription(),
-                regDto.thumbnail(),
-                regDto.locationData(),
-                regDto.eventStart(),
-                regDto.eventEnd(),
-                regDto.eventType(),
-                regDto.repRhythm()
-        );
+        if (regDto.repRhythm() != RepetitionRhythmEnumType.ONCE && regDto.repUntil().isBefore(regDto.eventStart())) {
+            throw new IllegalArgumentException("cannot create new events, as first eventStart is after repetition cycle end ");
+        }
 
-        // TODO: compare if same event already exists
-        return capoEventRepo.save(newEvent);
+        List<CapoEvent> capoEvents = new ArrayList<>();
+
+        String seriesId = createId();
+        int index = 0;
+
+        LocalDateTime startDate = regDto.eventStart();
+        LocalDateTime endDate = regDto.eventEnd();
+
+        while(regDto.repRhythm() == RepetitionRhythmEnumType.ONCE || startDate.isBefore(regDto.repUntil())){
+
+            if (eventAlreadyExists(null, regDto)) {
+                throw new MatchException("cannot create new event, event already exists", new Throwable());
+            }
+
+            capoEvents.add(new CapoEvent(
+                    createId(),
+                    regDto.userId(),
+                    seriesId,
+                    index,
+                    regDto.userName(),
+                    regDto.eventTitle(),
+                    regDto.eventDescription(),
+                    regDto.thumbnail(),
+                    regDto.locationData(),
+                    startDate,
+                    endDate,
+                    regDto.eventType(),
+                    regDto.repRhythm()
+            ));
+
+            if(regDto.repRhythm() == RepetitionRhythmEnumType.ONCE){
+                break;
+            }
+
+            startDate = shiftLocalDateTime(startDate, regDto.repRhythm());
+            endDate = shiftLocalDateTime(endDate, regDto.repRhythm());
+            index++;
+        }
+
+        capoEventRepo.saveAll(capoEvents);
+        return capoEvents.getFirst();
     }
 
     public CapoEvent updateCapoEvent(String userId, String eventId, CapoEventRegDto updateDto) {
 
         if(userId == null){
-            throw new IllegalArgumentException("userId is null");
+            throw new IllegalArgumentException("cannot update event, as userId is null");
         }
 
         if (eventId == null) {
-            throw new IllegalArgumentException("eventId is null");
+            throw new IllegalArgumentException("cannot update event, as eventId is null");
         }
 
         if (updateDto == null) {
-            throw new IllegalArgumentException("updateDto is null");
+            throw new IllegalArgumentException("cannot update event, as updateDto is null");
         }
 
-       CapoEvent refEvent = capoEventRepo.findById(eventId).orElseThrow(() -> new NoSuchElementException("id not found"));
-
-        if (!refEvent.creatorId().equals(userId)) {
-            throw new MatchException("userId does not match creatorId", new Throwable());
+        if (eventAlreadyExists(eventId,updateDto)) {
+            throw new MatchException("cannot create new event, event already exists", new Throwable());
         }
+
+       CapoEvent refEvent = capoEventRepo.findByIdAndCreatorId(eventId, userId).orElseThrow(() -> new NoSuchElementException("cannot update event with id:" + eventId + ", as it was not found in db"));
 
         CapoEvent updatedEvent = refEvent
                 .withEventTitle(updateDto.eventTitle())
                 .withEventDescription(updateDto.eventDescription())
                 .withThumbnail(updateDto.thumbnail())
-                .withLocationData(updateDto.locationData())
+                .withLocationData(updateDto.locationData()) // change to only street
                 .withEventStart(updateDto.eventStart())
-                .withEventEnd(updateDto.eventEnd())
-                .withEventType(updateDto.eventType())
-                .withRepRhythm(updateDto.repRhythm());
+                .withEventEnd(updateDto.eventEnd());
 
         return capoEventRepo.save(updatedEvent);
     }
 
-    public boolean deleteById(String userId, String eventId){
+    public PartOfSeriesDto getPartOfSeriesDto(String eventId, String seriesId, int occurrenceIndex){
 
-       CapoEvent foundEvent = capoEventRepo.findById(eventId).orElse(null);
-        if(foundEvent == null){
-            return false;
+        if(occurrenceIndex < 0){
+            throw new IllegalArgumentException("cannot verify if event is part of series, as occurrenceIndex is < 0>");
         }
 
-        if(!foundEvent.creatorId().equals(userId)){
-           return false;
+        return new PartOfSeriesDto(
+                capoEventRepo.existsBySeriesIdAndIdNot(seriesId, eventId),
+                capoEventRepo.existsBySeriesIdAndOccurrenceIndexIsLessThan(seriesId,occurrenceIndex ),
+                capoEventRepo.existsBySeriesIdAndOccurrenceIndexIsGreaterThan(seriesId, occurrenceIndex)
+        );
+    }
+
+    public boolean deleteById(String userId, String eventId, DeleteScope deleteScope){
+
+       CapoEvent foundEvent = capoEventRepo.findByIdAndCreatorId(eventId, userId).orElseThrow(() -> new NoSuchElementException("cannot delete event with userId:" + userId + " and eventId:" + eventId + ", as it was not found in db"));
+
+        switch (deleteScope) {
+            case ONLY_THIS -> capoEventRepo.deleteByIdAndCreatorId(eventId, userId);
+            case ALL_IN_SERIES -> capoEventRepo.deleteAllBySeriesId(foundEvent.seriesId());
+            case BEFORE_THIS -> capoEventRepo.deleteAllBySeriesIdAndOccurrenceIndexIsLessThanEqual(foundEvent.seriesId(), foundEvent.occurrenceIndex());
+            case AFTER_THIS -> capoEventRepo.deleteAllBySeriesIdAndOccurrenceIndexIsGreaterThanEqual(foundEvent.seriesId(), foundEvent.occurrenceIndex());
         }
 
-        capoEventRepo.deleteById(eventId);
         return !capoEventRepo.existsById(eventId);
     }
 }

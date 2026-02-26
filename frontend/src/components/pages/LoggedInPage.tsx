@@ -1,12 +1,15 @@
-import CapoEventCard from "./CapoEventCard.tsx";
-import "../styles/CapoEventCard.css"
-import "../index.css"
-import type {PageProps} from "../types/PreviewPageProps.ts";
+import CapoEventCard from "../CapoEventCard.tsx";
+import "../../styles/CapoEventCard.css"
+import "../../index.css"
+import type {PageProps} from "../../types/PageProps.ts";
+
 
 export default function LoggedInPage(props:Readonly<PageProps>) {
 
     const filteredEvents = props.user ?
-        props.events.filter((capoEvent) => capoEvent.creatorId === props.user?.id) : [];
+        props.events.filter((capoEvent) => capoEvent?.creatorId === props.user?.id) : [];
+
+    props.setCurrentPath(props.pathToSet);
 
     return (
         <div>
@@ -14,7 +17,7 @@ export default function LoggedInPage(props:Readonly<PageProps>) {
                 <div className="events_row">
                     {filteredEvents.length === 0 ?
                         (<p>No events found</p>) : (filteredEvents.map((filteredEvent) => <CapoEventCard
-                                key={filteredEvent.id}
+                                key={filteredEvent?.id}
                                 capoEvent={filteredEvent}
                                 userId={props.user?.id}
                                 fetchEvents={props.fetchEvents}/>)
