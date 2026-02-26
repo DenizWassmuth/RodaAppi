@@ -12,7 +12,6 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-
 class BookmarkServiceTest {
 
     BookmarkedEventsRepository bookmarkedEventsRepo = Mockito.mock(BookmarkedEventsRepository.class);
@@ -40,7 +39,10 @@ class BookmarkServiceTest {
 
         Mockito.when(bookmarkedEventsRepo.findById("1")).thenReturn(Optional.empty());
         String userId = bookMarks1.id();
-        assertThrows(NoSuchElementException.class, () -> bookmarkService.getAllBookmarkedEventsFromUser(userId)) ;
+        List<String> bookMarks = bookmarkService.getAllBookmarkedEventsFromUser(userId);
+
+        assertNotNull(bookMarks);
+        assertEquals(0, bookMarks.size());
     }
 
     @Test
