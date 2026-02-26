@@ -4,27 +4,25 @@ import type {ReactNode} from "react";
 
 type Props = {
     open: boolean;
-    title?: string;
+    title: string;
     onClose: () => void;
     children: ReactNode;
 };
 
-export default function CreateAndEditModal(props: Readonly<Props>) {
+export default function CreateAndEditModal({open, title, onClose, children}: Readonly<Props>) {
 
-    if (!props.open) return null;
+    if (!open) return null;
 
     return (
-        <div
-            className="modal__backdrop"
-        >
+        <div className="modal__backdrop">
             <div className="modal__panel">
                 <div className="modal__header">
-                    {props.title && <h2 className="modal__title">{props.title}</h2>}
-                    <button className="modal__close" type="button" onClick={props.onClose}>
+                    {title && <h2 className="modal__title">{title}</h2>}
+                    <button className="modal__close" type="button" onClick={onClose}>
                         ✕
                     </button>
                 </div>
-                <div className="modal__content">{props.children}</div>
+                <div className="modal__content">{children}</div>
             </div>
         </div>
     );

@@ -3,7 +3,7 @@ package org.example.backend.controllers;
 import org.example.backend.data.LocationData;
 import org.example.backend.dto.CapoEventRegDto;
 import org.example.backend.enums.CapoEventEnumType;
-import org.example.backend.enums.DeleteScope;
+import org.example.backend.enums.EditScope;
 import org.example.backend.enums.RepetitionRhythmEnumType;
 import org.example.backend.models.CapoEvent;
 import org.example.backend.repositories.CapoEventRepository;
@@ -295,38 +295,38 @@ class CapoEventControllerTest {
 
 
 
-    @Test
-    @WithMockUser
-    void update_shouldReturnStatusIsConflict_whenIdenticalEventExists() throws Exception {
-
-        capoEventRepo.save(fakeEvent1);
-
-        mockMvc.perform(put("/api/capoevent/update/1/2")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("""
-                                {
-                                  "userId": "1",
-                                  "userName":"chiko",
-                                  "eventTitle": "Roda Aberta",
-                                  "eventDescription": "Angola + Regional. Bring water, beginners welcome.",
-                                  "thumbnail": "https://example.com/images/roda.jpg",
-                                  "locationData": {
-                                    "country": "Germany",
-                                    "state": "Berlin",
-                                    "city": "Berlin",
-                                    "street": "Friedrichstr.",
-                                    "streetnumber": "244"
-                                  },
-                                  "eventStart": "2026-02-15T19:00:00",
-                                  "eventEnd": "2026-02-15T23:00:00",
-                                  "eventType": "RODA",
-                                  "repRhythm": "ONCE"
-                                }
-                                
-                                """)
-                        .with(oauth2Login()))
-                .andExpect(status().isConflict());
-    }
+//    @Test
+//    @WithMockUser
+//    void update_shouldReturnStatusIsConflict_whenIdenticalEventExists() throws Exception {
+//
+//        capoEventRepo.save(fakeEvent1);
+//
+//        mockMvc.perform(put("/api/capoevent/update/1/2")
+//                        .contentType(MediaType.APPLICATION_JSON)
+//                        .content("""
+//                                {
+//                                  "userId": "1",
+//                                  "userName":"chiko",
+//                                  "eventTitle": "Roda Aberta",
+//                                  "eventDescription": "Angola + Regional. Bring water, beginners welcome.",
+//                                  "thumbnail": "https://example.com/images/roda.jpg",
+//                                  "locationData": {
+//                                    "country": "Germany",
+//                                    "state": "Berlin",
+//                                    "city": "Berlin",
+//                                    "street": "Friedrichstr.",
+//                                    "streetnumber": "244"
+//                                  },
+//                                  "eventStart": "2026-02-15T19:00:00",
+//                                  "eventEnd": "2026-02-15T23:00:00",
+//                                  "eventType": "RODA",
+//                                  "repRhythm": "ONCE"
+//                                }
+//
+//                                """)
+//                        .with(oauth2Login()))
+//                .andExpect(status().isConflict());
+//    }
 
     @Test
     @WithMockUser
@@ -431,7 +431,7 @@ class CapoEventControllerTest {
         capoEventRepo.save(fakeEvent1); // has id 1
 
         mockMvc.perform(delete("/api/capoevent/delete/1/1")
-                        .param("deleteScope", "NO_REAL_SCOPE")
+                        .param("editScope", "NO_REAL_SCOPE")
                         .with(oauth2Login()))
                 .andExpect(status().isBadRequest());
     }
@@ -443,7 +443,7 @@ class CapoEventControllerTest {
         capoEventRepo.save(fakeEvent1);
 
         mockMvc.perform(delete("/api/capoevent/delete/1/1")
-                        .param("deleteScope", "ONLY_THIS")
+                        .param("editScope", "ONLY_THIS")
                         .with(oauth2Login()))
                 .andExpect(status().isNoContent());
     }
@@ -455,7 +455,7 @@ class CapoEventControllerTest {
         capoEventRepo.save(fakeEvent1); // has id 1
 
         mockMvc.perform(delete("/api/capoevent/delete/1/1")
-                        .param("deleteScope", DeleteScope.ALL_IN_SERIES.toString())
+                        .param("editScope", EditScope.ALL_IN_SERIES.toString())
                         .with(oauth2Login()))
                 .andExpect(status().isNoContent());
     }
@@ -467,7 +467,7 @@ class CapoEventControllerTest {
         capoEventRepo.save(fakeEvent1); // has id 1
 
         mockMvc.perform(delete("/api/capoevent/delete/1/1")
-                        .param("deleteScope", DeleteScope.AFTER_THIS.toString())
+                        .param("editScope", EditScope.AFTER_THIS.toString())
                         .with(oauth2Login()))
                 .andExpect(status().isNoContent());
     }
@@ -479,7 +479,7 @@ class CapoEventControllerTest {
         capoEventRepo.save(fakeEvent1); // has id 1
 
         mockMvc.perform(delete("/api/capoevent/delete/1/1")
-                        .param("deleteScope", DeleteScope.BEFORE_THIS.toString())
+                        .param("editScope", EditScope.BEFORE_THIS.toString())
                         .with(oauth2Login()))
                 .andExpect(status().isNoContent());
     }

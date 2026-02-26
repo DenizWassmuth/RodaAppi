@@ -16,21 +16,28 @@ public class BookmarkService {
         this.bookmarkedEventsRepo = bookmarkedEventsRepo;
     }
 
+    void validateIds(String userId, String eventId){
+        if (userId == null || eventId == null){
+            throw new IllegalArgumentException("cannot access bookmarks if userId is null or eventId is null");
+        }
+    }
+
     private BookMarkedEvents createBookmark(String userId){
         return bookmarkedEventsRepo.save(new BookMarkedEvents(userId, new ArrayList<>()));
     }
 
-    List<String> getAllBookmarkedEventsFromUser(String userId){
+    public List<String> getAllBookmarkedEventsFromUser(String userId){
 
-        BookMarkedEvents bookMark = bookmarkedEventsRepo.findById(userId).orElseThrow(() -> new NoSuchElementException("no bookmarks found for user " + userId));
+        BookMarkedEvents bookMark = bookmarkedEventsRepo.findById(userId).orElse(null);
+        if(bookMark == null){
+            return new ArrayList<>();
+        }
         return bookMark.bookmarkedIds();
     }
 
     public boolean addEventIdToBookmarks(String userId, String eventId){
 
-        if (userId == null || eventId == null){
-            throw new IllegalArgumentException("cannot access bookmarks if userId is null or eventId is null");
-        }
+        validateIds(userId, eventId);
 
         BookMarkedEvents bookmark = bookmarkedEventsRepo.findById(userId).orElse(null);
         if (bookmark == null){
@@ -46,18 +53,17 @@ public class BookmarkService {
         return bookmark.bookmarkedIds().contains(eventId);
     }
 
-    public boolean removeEventIdFromBookMark(String userId, String eventId){
+    public boolean removeEventIdFromBookMark(String userId, String eventId) {
 
-        if (userId == null || eventId == null){
-            throw new IllegalArgumentException("cannot access bookmarks if userId is null or eventId is null");
-        }
+        validateIds(userId, eventId);
 
         BookMarkedEvents bookmark = bookmarkedEventsRepo.findById(userId).orElseThrow(() -> new NoSuchElementException("no bookmarks found for user " + userId));
+
         bookmark.bookmarkedIds().remove(eventId);
-        if (bookmark.bookmarkedIds().isEmpty()){
+        if (bookmark.bookmarkedIds().isEmpty()) {
             bookmarkedEventsRepo.deleteById(userId);
         }
 
-       return !bookmark.bookmarkedIds().contains(eventId);
+        return !bookmark.bookmarkedIds().contains(eventId);
     }
 }

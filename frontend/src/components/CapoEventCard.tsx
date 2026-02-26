@@ -1,52 +1,55 @@
-import {Link, useLocation, useNavigate} from "react-router-dom";
-import type {CapoEventType, DeleteScope, PartOfSeriesDto} from "../types/CapoEvent.ts";
+import {Link} from "react-router-dom";
+import type {CapoEventType} from "../types/CapoEvent.ts";
 import "../styles/CapoEventCard.css"
 import "../index.css"
-import {deleteCapoEvent, checkIfPartOfSeries} from "../utility/AxiosUtilities.ts";
-import {useState} from "react";
-import DeleteOptionsModal from "./modals/DeleteOptionsModal.tsx";
+import type {AppUserType} from "../types/AppUser.ts";
+import {bookmarkEvents} from "../utility/AxiosUtilities.ts";
 
 type EventCardProps = {
-    userId: string | undefined | null
+    user: AppUserType | undefined | null
     capoEvent: CapoEventType
-    fetchEvents: () => Promise<void>
+    onHandleEdit: (event: CapoEventType) => void;
+    onHandleDelete: (event: CapoEventType) => void;
+    bookmarks:string[] | null;
+    fetchEvents: () => Promise<void | string>;
 }
 
-export default function CapoEventCard(props: Readonly<EventCardProps>) {
+export default function CapoEventCard({ user, capoEvent, bookmarks, onHandleEdit, onHandleDelete, fetchEvents}: Readonly<EventCardProps>) {
 
-    const [deleteOption, setDeleteOption] = useState(false);
-    const [deleteScope, setDeleteScope] = useState<DeleteScope>("ONLY_THIS");
-    const [partOfSeries, setPartOfSeries] = useState<PartOfSeriesDto>(null);
-
-    const location = useLocation();
-    const nav = useNavigate();
-
-    const eventIsValid = props.capoEvent !== undefined && props.capoEvent !== null;
-    const isCreatedByUser = eventIsValid && props.userId === props.capoEvent.creatorId;
+    const bUserIsValid = user !== null && user !== undefined;
+    const bEventIsValid = capoEvent !== undefined && capoEvent !== null;
+    const bIsCreatedByUser = bUserIsValid && bEventIsValid && user?.id === capoEvent.creatorId;
+    const bShowBookMarkButton = bUserIsValid && bEventIsValid;
+    const bIsBookmarkedByUser = bShowBookMarkButton && bookmarks !== null && bookmarks.includes(capoEvent?.id)
 
     function handleDelete() {
-        deleteCapoEvent(props.userId, props.capoEvent, deleteScope, props.fetchEvents, nav, location.pathname)
-            .then(() => {
-                setPartOfSeries(null);
-                setDeleteScope("ONLY_THIS");
-            })
-            .catch((error) => {
-                console.log("could not delete capoEvent through CapoEventCard: " + error.toString())
-            });
+        if (!capoEvent) {
+            console.log("capoEvent === null or undefined, cannot open delete modal");
+            return;
+        }
+        onHandleDelete(capoEvent); // open modal from parent
     }
 
     function handleEdit() {
+        if (!capoEvent) {
+            console.log("capoEvent === null or undefined, cannot open edit modal");
+            return;
+        }
+        onHandleEdit(capoEvent); // open modal from parent
+    }
 
-        const id: string | undefined = props.capoEvent?.id;
-        if (id === null || id === undefined) {
-            console.log("eventId === null or undefined, cannot move on to edit page");
+  function handleBookmarking() {
+
+        if (!capoEvent) {
+            console.log("capoEvent === null or undefined, cannot handle bookmarks");
             return;
         }
 
-        nav("/edit/" + id);
+        bookmarkEvents(user?.id, capoEvent?.id, bIsBookmarkedByUser)
+            .then(() => fetchEvents());
     }
 
-    const localDateTime : string | undefined = props.capoEvent?.eventStart;
+    const localDateTime : string | undefined = capoEvent?.eventStart;
     let [date , timeWithRest] = "";
     if (localDateTime !== null && localDateTime !== undefined) {
         [date, timeWithRest] = localDateTime.split("T");
@@ -55,42 +58,37 @@ export default function CapoEventCard(props: Readonly<EventCardProps>) {
 
     return (
         <div>
-        <Link className="card_link" to={`/capoevent/${props.capoEvent?.id}`}>
-            <div className="event_card" style={{backgroundImage: `url(${props.capoEvent?.thumbnail})`}}>
-                <div className="event_info">
-                    <h3>{props.capoEvent?.eventTitle}</h3>
-                    <p>{props.capoEvent?.eventType} · {props.capoEvent?.locationData.city} · {date} · {time} </p>
-                    <p>{props.capoEvent?.creatorName}</p>
-                    <p>
-                        <button type={"button"} hidden={!isCreatedByUser} disabled={!isCreatedByUser}
-                                onClick={(e) => {
-                                    e.preventDefault();
-                                    checkIfPartOfSeries(props.capoEvent, setPartOfSeries)
-                                        .then(() => setDeleteOption(true));
-                                }}>delete
-                        </button>
-                        {"   "}
-                        <button type={"button"} hidden={!isCreatedByUser} disabled={!isCreatedByUser}
-                                onClick={(e) => {
-                                    e.preventDefault();
-                                    handleEdit();
-                                }}>edit
-                        </button>
-                    </p>
+            <Link className="card_link" to={`/capoevent/${capoEvent?.id}`}>
+                <div className="event_card" style={{backgroundImage: `url(${capoEvent?.thumbnail})`}}>
+                    <div className="event_info">
+                        <h3>{capoEvent?.eventTitle}</h3>
+                        <p>{capoEvent?.eventType} · {capoEvent?.locationData.city} · {date} · {time} </p>
+                        <p>{capoEvent?.creatorName}</p>
+                        <p>
+                            <button type={"button"} hidden={!bIsCreatedByUser} disabled={!bIsCreatedByUser}
+                                    onClick={(e) => {
+                                        e.preventDefault();
+                                        handleDelete();
+                                    }}>delete
+                            </button>
+                            {"   "}
+                            <button type="button" hidden={!bIsCreatedByUser} disabled={!bIsCreatedByUser}
+                                    onClick={(e) => {
+                                        e.preventDefault();
+                                        handleEdit();
+                                    }}>edit
+                            </button>
+                            {"   "}
+                            <button type="button" hidden={!bShowBookMarkButton} disabled={!bShowBookMarkButton}
+                                    onClick={(e) => {
+                                        e.preventDefault();
+                                        handleBookmarking()
+                                    }}>{bIsBookmarkedByUser ? "★" : "☆"}
+                            </button>
+                        </p>
+                    </div>
                 </div>
-            </div>
-        </Link>
-            <DeleteOptionsModal
-                open={deleteOption}
-                partOfSeries={partOfSeries}
-                deleteScope={deleteScope}
-                setDeleteScope={setDeleteScope}
-                onConfirm={async () => {
-                    setDeleteOption(false);
-                    handleDelete();
-                }}
-                onCancel={() => setDeleteOption(false)}
-            />
+            </Link>
         </div>
     )
 }
