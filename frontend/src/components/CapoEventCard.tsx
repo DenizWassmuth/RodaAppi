@@ -66,7 +66,13 @@ export default function CapoEventCard({ user, capoEvent, bookmarks, onHandleEdit
 
     return (
         <div>
-            <input  className="event_card" type={"button"} onClick={handleOpenDetails}>
+            <div className="event_card" role="button" tabIndex={0} onClick={handleOpenDetails} onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                        e.preventDefault();
+                        handleOpenDetails();
+                    }
+                }
+            }>
                 <div style={{backgroundImage: `url(${capoEvent?.thumbnail})`}}>
                     <div className="event_info">
                         <h3>{capoEvent?.eventTitle}</h3>
@@ -96,7 +102,7 @@ export default function CapoEventCard({ user, capoEvent, bookmarks, onHandleEdit
                         </p>
                     </div>
                 </div>
-            </input>
+            </div>
         </div>
     )
 }
