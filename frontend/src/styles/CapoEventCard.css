@@ -18,6 +18,7 @@
 
 .event_card > * {
     min-width: 0;
+    cursor: pointer;
 }
 
 .event_info h3 {

@@ -9,14 +9,14 @@ import {useState} from "react";
 
 type Props = {
     user: AppUserType;
-    fetchEvents: () => Promise<void>;
+    fetchEvents: () => Promise<void | string>;
     onClosePath:string;
 
 };
 
-export default function CreateCapoEventPage(props:Readonly<Props>) {
+export default function CreateCapoEventPage({user, fetchEvents, onClosePath}:Readonly<Props>) {
     const empty: EventFormValue = {
-        userName:props.user?.username,
+        userName:user?.username,
         eventTitle: "",
         eventDescription: "",
         thumbnail: "",
@@ -39,28 +39,28 @@ export default function CreateCapoEventPage(props:Readonly<Props>) {
     const nav = useNavigate();
 
     async function submit(value: EventFormValue) {
-       if (!props.user?.id){
+       if (!user?.id){
            throw new Error("Not logged in");
        }
 
         const dto: EventRegDto = {
-            userId: String(props.user?.id),
+            userId: String(user?.id),
             ...value,
         };
 
         setOpenFormModal(false);
 
         await axios.post("/api/capoevent", dto)
-            .then(() => props.fetchEvents()
+            .then(() => fetchEvents()
                 .then(() => nav("/loggedin")));
     }
 
     function onClose(){
         setOpenFormModal(false);
-        nav(props.onClosePath)
+        nav(onClosePath)
     }
 
-    const isLoggedIn = props.user !== null && props.user !== undefined;
+    const isLoggedIn = user !== null && user !== undefined;
 
     if (!openFormModal) {
         return null;
@@ -75,13 +75,14 @@ export default function CreateCapoEventPage(props:Readonly<Props>) {
             )}
 
             {isLoggedIn && openFormModal && (
-                <CreateAndEditModal title={""} open={openFormModal} onClose={() => onClose()} >
+                <CreateAndEditModal title={""} open={openFormModal} onClose={() => onClose()}>
                     <div>
                         <CapoEventForm
                             submitText="Create"
                             initialValue={empty}
-                            onSubmit={submit}
+                            submit={submit}
                             bEditMode={false}
+                            partOfSeries={null}
                         />
                     </div>
                 </CreateAndEditModal>)

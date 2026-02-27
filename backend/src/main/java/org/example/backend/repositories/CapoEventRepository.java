@@ -10,6 +10,7 @@ import java.util.Optional;
 
 @Repository
 public interface CapoEventRepository extends MongoRepository<CapoEvent,String> {
+
     List<CapoEvent> findAllByCreatorId(String creatorId);
 
     boolean existsByIdNotAndEventStartAndLocationDataCountryAndLocationDataStateAndLocationDataCityAndLocationDataStreet(
@@ -23,6 +24,10 @@ public interface CapoEventRepository extends MongoRepository<CapoEvent,String> {
 
     Optional<CapoEvent> findByIdAndCreatorId(String id, String creatorId);
 
+    List<CapoEvent> findAllBySeriesId(String seriesId);
+    List<CapoEvent> findAllBySeriesIdAndOccurrenceIndexIsLessThanEqual(String seriesId, int occurrenceIndex);
+    List<CapoEvent> findAllBySeriesIdAndOccurrenceIndexIsGreaterThanEqual(String seriesId, int occurrenceIndex);
+
     boolean existsBySeriesIdAndIdNot(String seriesId, String excludeEventId);
     boolean existsBySeriesIdAndOccurrenceIndexIsLessThan(String seriesId, int occurrenceIndex);
     boolean existsBySeriesIdAndOccurrenceIndexIsGreaterThan(String seriesId, int occurrenceIndex);
@@ -31,5 +36,4 @@ public interface CapoEventRepository extends MongoRepository<CapoEvent,String> {
     void deleteAllBySeriesId(String seriesId);
     void deleteAllBySeriesIdAndOccurrenceIndexIsLessThanEqual(String seriesId, int occurrenceIndex);
     void deleteAllBySeriesIdAndOccurrenceIndexIsGreaterThanEqual(String seriesId, int occurrenceIndex);
-
 }

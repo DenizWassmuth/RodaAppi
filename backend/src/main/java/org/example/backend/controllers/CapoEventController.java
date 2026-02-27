@@ -2,7 +2,7 @@ package org.example.backend.controllers;
 
 import org.example.backend.dto.CapoEventRegDto;
 import org.example.backend.dto.PartOfSeriesDto;
-import org.example.backend.enums.DeleteScope;
+import org.example.backend.enums.EditScope;
 import org.example.backend.models.CapoEvent;
 import org.example.backend.services.CapoEventService;
 import org.springframework.http.HttpStatus;
@@ -53,10 +53,10 @@ public class CapoEventController {
     }
 
     @PutMapping("/update/{userId}/{eventId}")
-    public ResponseEntity<CapoEvent> update(@PathVariable String userId, @PathVariable String eventId, @RequestBody CapoEventRegDto regDto) {
+    public ResponseEntity<CapoEvent> update(@PathVariable String userId, @PathVariable String eventId, @RequestBody CapoEventRegDto regDto, @RequestParam (defaultValue = "ONLY_THIS") EditScope editScope) {
 
         try{
-            CapoEvent updatedEvent = capoEventService.updateCapoEvent(userId, eventId, regDto);
+            CapoEvent updatedEvent = capoEventService.updateCapoEvent(userId, eventId, regDto, editScope);
             return ResponseEntity.status(HttpStatus.CREATED).body(updatedEvent);
         }
         catch (IllegalArgumentException _){
@@ -68,7 +68,6 @@ public class CapoEventController {
         catch(MatchException _){
             return ResponseEntity.status(HttpStatus.CONFLICT).build();
         }
-
     }
 
     @GetMapping("/{eventId}/{seriesId}/{occurrenceIndex}")
@@ -84,10 +83,10 @@ public class CapoEventController {
     }
 
     @DeleteMapping("/delete/{userId}/{eventId}")
-    public ResponseEntity<Void> deleteById(@PathVariable String userId, @PathVariable String eventId, @RequestParam (defaultValue = "ONLY_THIS") DeleteScope deleteScope) {
+    public ResponseEntity<Void> deleteById(@PathVariable String userId, @PathVariable String eventId, @RequestParam (defaultValue = "ONLY_THIS") EditScope editScope) {
 
         try {
-            capoEventService.deleteById(userId, eventId, deleteScope) ;
+            capoEventService.deleteById(userId, eventId, editScope) ;
         }
         catch (NoSuchElementException _) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();

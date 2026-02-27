@@ -1,7 +1,7 @@
 package org.example.backend.services;
 
-import org.example.backend.models.BookMarkedEvents;
-import org.example.backend.repositories.BookmarkedEventsRepository;
+import org.example.backend.models.BookmarkContainer;
+import org.example.backend.repositories.BookmarkContainerRepository;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
@@ -12,14 +12,13 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-
 class BookmarkServiceTest {
 
-    BookmarkedEventsRepository bookmarkedEventsRepo = Mockito.mock(BookmarkedEventsRepository.class);
+    BookmarkContainerRepository bookmarkedEventsRepo = Mockito.mock(BookmarkContainerRepository.class);
     BookmarkService bookmarkService = new BookmarkService(bookmarkedEventsRepo);
 
     List<String> ids = new ArrayList<>(List.of("1", "2","3"));
-    BookMarkedEvents bookMarks1 = new BookMarkedEvents("1", ids);
+    BookmarkContainer bookMarks1 = new BookmarkContainer("1", ids);
 
     @Test
     void getAllBookmarkedEventsFromUser_shouldReturnGivenList() {
@@ -40,7 +39,10 @@ class BookmarkServiceTest {
 
         Mockito.when(bookmarkedEventsRepo.findById("1")).thenReturn(Optional.empty());
         String userId = bookMarks1.id();
-        assertThrows(NoSuchElementException.class, () -> bookmarkService.getAllBookmarkedEventsFromUser(userId)) ;
+        List<String> bookMarks = bookmarkService.getAllBookmarkedEventsFromUser(userId);
+
+        assertNotNull(bookMarks);
+        assertEquals(0, bookMarks.size());
     }
 
     @Test
@@ -72,17 +74,17 @@ class BookmarkServiceTest {
 
     @Test
     void removeEventIdFromBookmarks_shouldReturnFalse_whenUserIdIsNull() {
-        assertThrows(IllegalArgumentException.class, () -> bookmarkService.removeEventIdFromBookMark(null, "1"));
+        assertThrows(IllegalArgumentException.class, () -> bookmarkService.removeEventIdFromBookmark(null, "1"));
     }
 
     @Test
     void removeEventIdFromBookmarks_shouldThrowIllegalArgumentException_whenEventIdIsNull() {
-        assertThrows(IllegalArgumentException.class, () -> bookmarkService.removeEventIdFromBookMark("1", null));
+        assertThrows(IllegalArgumentException.class, () -> bookmarkService.removeEventIdFromBookmark("1", null));
     }
 
     @Test
     void removeEventIdFromBookmarks_shouldThrowNoSuchElementException_whenBookMarkedEventsIsNotContainedInRepo(){
-        assertThrows(NoSuchElementException.class, () -> bookmarkService.removeEventIdFromBookMark("1", "1"));
+        assertThrows(NoSuchElementException.class, () -> bookmarkService.removeEventIdFromBookmark("1", "1"));
     }
 
     @Test
@@ -90,7 +92,7 @@ class BookmarkServiceTest {
 
         Mockito.when(bookmarkedEventsRepo.findById("1")).thenReturn(Optional.of(bookMarks1));
 
-        boolean actual = bookmarkService.removeEventIdFromBookMark("1", "3");
+        boolean actual = bookmarkService.removeEventIdFromBookmark("1", "3");
 
         assertTrue(actual);
     }
@@ -99,10 +101,10 @@ class BookmarkServiceTest {
     void removeEventIdFromBookmarks_shouldReturnTrue_and_DeleteTheBookmarkContainerFromRepo(){
 
         List<String> ids2 = new ArrayList<>(List.of("1"));
-        BookMarkedEvents bookMarks2 = new BookMarkedEvents("1", ids2);
+        BookmarkContainer bookMarks2 = new BookmarkContainer("1", ids2);
         Mockito.when(bookmarkedEventsRepo.findById("1")).thenReturn(Optional.of(bookMarks2));
 
-        boolean actual = bookmarkService.removeEventIdFromBookMark("1", "1");
+        boolean actual = bookmarkService.removeEventIdFromBookmark("1", "1");
 
         Mockito.verify(bookmarkedEventsRepo, Mockito.times(1)).deleteById("1");
         assertTrue(actual);

@@ -27,11 +27,6 @@ export type CapoEventType  = null | undefined | {
     repRhythm: RepetitionRhythmEnumType
 }
 
-export type CapoEventProps = {
-    capoEvent: CapoEventType;
-    setCapoEvent: (capoEvent: CapoEventType) => void;
-}
-
 export type EventRegDto = {
     userId: string,
     userName: string | undefined | null,
@@ -48,7 +43,7 @@ export type EventRegDto = {
 
 export type EventFormValue = Omit<EventRegDto, "userId">;
 
-export type DeleteScope = "ONLY_THIS" | "ALL_IN_SERIES" | "BEFORE_THIS" | "AFTER_THIS";
+export type EditScope = "ONLY_THIS" | "ALL_IN_SERIES" | "BEFORE_THIS" | "AFTER_THIS";
 
 export type PartOfSeriesDto = null | undefined | {
     isPartOfSeries: boolean;

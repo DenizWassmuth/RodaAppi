@@ -33,10 +33,6 @@ export default function Navbar(props:Readonly<NavBarProps>) {
         <div className="navbar_div">
             <button className="navbar_btn" type={"button"}
                     onClick={() => goTo("/")}>Home</button>
-            <button className="navbar_btn" type={"button"}
-                    onClick={() => goTo("/rodas")}>Rodas</button>
-            <button className="navbar_btn" type={"button"}
-                    onClick={() => goTo("/workshops")}>Workshops</button>
             <button className="navbar_btn" type={"button"} hidden={isLoggedIn} disabled={isLoggedIn}
                     onClick={login}>Login
             </button>
