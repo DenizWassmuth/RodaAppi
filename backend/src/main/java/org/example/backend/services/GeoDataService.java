@@ -1,8 +1,12 @@
 package org.example.backend.services;
 
 
+import org.example.backend.data.CityData;
 import org.example.backend.data.CountryData;
+import org.example.backend.data.StateData;
+import org.example.backend.dto.CityDto;
 import org.example.backend.dto.CountryDto;
+import org.example.backend.dto.StateDto;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 
@@ -33,5 +37,40 @@ public class GeoDataService {
         }
 
         return Arrays.stream(countries).map((c)-> new CountryDto(c.name(),c.isoCode())).toList();
+    }
+
+    public List<StateDto> getStatesFromCountryIsoCode(String countryCode) {
+
+        StateData[] states = restClient.get()
+                .uri(uriBuilder -> uriBuilder
+                        .path("/states-by-countrycode")
+                        .queryParam("countrycode", countryCode)
+                        .build())
+                .retrieve()
+                .body(StateData[].class);
+
+        if (states == null) {
+            return new ArrayList<>();
+        }
+
+        return Arrays.stream(states).map((s)-> new StateDto(s.name(),s.isoCode())).toList();
+    }
+
+    public List<CityDto> getCitiesFromStateIsoCode(String countryCode, String stateCode) {
+
+        CityData[] cities = restClient.get()
+                .uri(uriBuilder -> uriBuilder
+                        .path("/cities-by-countrycode-and-statecode")
+                        .queryParam("countrycode", countryCode)
+                        .queryParam("statecode", stateCode)
+                        .build())
+                .retrieve()
+                .body(CityData[].class);
+
+        if (cities == null) {
+            return new ArrayList<>();
+        }
+
+        return Arrays.stream(cities).map((c)-> new CityDto(c.name())).toList();
     }
 }
