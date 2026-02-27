@@ -75,7 +75,7 @@ export default function CreateCapoEventPage({user, fetchEvents, onClosePath}:Rea
             )}
 
             {isLoggedIn && openFormModal && (
-                <CreateAndEditModal title={""} open={openFormModal} onClose={() => onClose()} >
+                <CreateAndEditModal title={""} open={openFormModal} onClose={() => onClose()}>
                     <div>
                         <CapoEventForm
                             submitText="Create"

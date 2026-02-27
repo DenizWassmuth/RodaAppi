@@ -82,7 +82,7 @@ export default function EditScopeModal({bOpen, onCancel, onConfirm, onConfirmTit
                     <button
                         className="modal__btn modal__btn--danger"
                         type="button"
-                        onClick={() => setOpenConfirm(true)}
+                        onClick={(e) => {e.preventDefault(); setOpenConfirm(true)}}
                     >
                         {onConfirmTitle}
                     </button>

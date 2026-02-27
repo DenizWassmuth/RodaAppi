@@ -8,46 +8,50 @@ type EditModalProps = {
     bOpen: boolean;
     user: AppUserType | null;
     event: CapoEventType;
+    setCapoEvent: (capoEvent: CapoEventType) => void;
     partOfSeries: PartOfSeriesDto;
     fetchEvents: () => Promise<void | string>;
     onClose: () => void;
 };
 
-export default function EditCapoEventModal(props:Readonly<EditModalProps>) {
+export default function EditCapoEventModal({bOpen, user, event, setCapoEvent, partOfSeries, fetchEvents, onClose}:Readonly<EditModalProps>) {
+
+    if(!bOpen){
+        return null;
+    }
 
     async function update(value: EventFormValue, scope: EditScope | null) {
-        if (!props.user?.id) {
+        if (!user?.id) {
             throw new Error("Not logged in");
         }
 
-        if (!props.event) {
+        if (!event) {
             throw new Error("Missing eventId");
         }
 
         const dto: EventRegDto = {
-            userId: String(props.user.id),
+            userId: String(user.id),
             ...value,
         };
 
-        await axios.put(`/api/capoevent/update/${props.user.id}/${props.event.id}`, dto, {params: { editScope: scope },})
-            .then(response => {console.log(response.data)})
-            .finally(() => {props.fetchEvents(); props.onClose()});
+        await axios.put(`/api/capoevent/update/${user.id}/${event.id}`, dto, {params: { editScope: scope },})
+            .then(response => {console.log(response.data); setCapoEvent(response.data); })
+            .catch(error => {
+                console.log("could not update event: ", error);
+                console.log(error)})
+            .finally(() => {fetchEvents(); onClose()});
     }
 
-    if(!props.bOpen){
-        return null;
-    }
-
-    const initial: EventFormValue = props.event ? {
-        userName: props.event.creatorName,
-        eventTitle: props.event.eventTitle,
-        eventDescription: props.event.eventDescription,
-        thumbnail: props.event.thumbnail,
-        locationData: props.event.locationData,
-        eventStart: props.event.eventStart,
-        eventEnd: props.event.eventEnd,
-        eventType: props.event.eventType,
-        repRhythm: props.event.repRhythm,
+    const initial: EventFormValue = event ? {
+        userName: event.creatorName,
+        eventTitle: event.eventTitle,
+        eventDescription: event.eventDescription,
+        thumbnail: event.thumbnail,
+        locationData: event.locationData,
+        eventStart: event.eventStart,
+        eventEnd: event.eventEnd,
+        eventType: event.eventType,
+        repRhythm: event.repRhythm,
         repUntil: "",
     } : {
         userName: "",
@@ -64,22 +68,21 @@ export default function EditCapoEventModal(props:Readonly<EditModalProps>) {
 
     return (
         <>
-            {props.bOpen &&
+            {bOpen &&
                 <CreateAndEditModal
                     title={"Edit Event"}
-                    open={props.bOpen}
-                    onClose={props.onClose}
+                    open={bOpen}
+                    onClose={onClose}
                 >
                     <div>
-                        {!props.event && <p style={{color: "white"}}>Loading...</p>}
-
-                        {props.event && (
+                        {!event && <p style={{color: "white"}}>Loading...</p>}
+                        {event && (
                             <CapoEventForm
                                 submitText="Update"
                                 initialValue={initial}
                                 submit={update}
                                 bEditMode={true}
-                                partOfSeries={props.partOfSeries}
+                                partOfSeries={partOfSeries}
                             />
                         )}
                     </div>

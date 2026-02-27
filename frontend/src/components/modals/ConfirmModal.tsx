@@ -28,7 +28,8 @@ export default function ConfirmModal({bOpen, title, message, confirmText, cancel
                         {cancelText ?? "Cancel"}
                     </button>
 
-                    <button className="modal__btn modal__btn--danger" type="button" onClick={onConfirm}>
+                    <button className="modal__btn modal__btn--danger" type="button" onClick={(e) => {
+                        e.preventDefault(); onConfirm()}}>
                         {confirmText ?? "Delete"}
                     </button>
                 </div>

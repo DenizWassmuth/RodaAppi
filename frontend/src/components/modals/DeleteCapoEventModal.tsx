@@ -9,7 +9,7 @@ type Props = {
     eventId: string | null | undefined;
     user: AppUserType | undefined | null
     fetchEvents: () => Promise<void | string>
-    onClose: () => void;
+    onClose: (bCancel:boolean) => void;
     partOfSeries: PartOfSeriesDto;
 }
 
@@ -17,18 +17,19 @@ export function DeleteCapoEventModal({bOpen, eventId, user, partOfSeries, onClos
 
     const [editScope, setEditScope] = useState<EditScope>("ONLY_THIS");
 
-    function handleDelete() {
-        deleteCapoEvent(user?.id, eventId, editScope)
-            .then(() => {
-                fetchEvents().then(() => setEditScope("ONLY_THIS"))
-            })
-            .catch((error) => {
-                console.log("could not delete capoEvent through CapoEventCard: " + error.toString())
-            });
-    }
-
     if(!bOpen){
         return null;
+    }
+
+    function handleDelete() {
+        deleteCapoEvent(user?.id, eventId, editScope)
+            .catch((error) => {
+                console.log("could not delete capoEvent through CapoEventCard: " + error.toString())
+            })
+            .finally(() => {
+                fetchEvents()
+                    .then(() => setEditScope("ONLY_THIS"))
+            .then(() => onClose(false))});
     }
 
     return (
@@ -38,12 +39,11 @@ export function DeleteCapoEventModal({bOpen, eventId, user, partOfSeries, onClos
             editScope={editScope}
             setEditScope={setEditScope}
             onConfirm={async () => {
-                onClose();
                 handleDelete();
             }}
             onConfirmTitle={"Delete"}
             onConfirmMsg={"This cannot be undone."}
-            onCancel={() => onClose()}
+            onCancel={() => onClose(true)}
         />
 
     )

@@ -142,12 +142,20 @@ public class CapoEventService {
             throw new IllegalArgumentException("cannot update event, as updateDto is null");
         }
 
+        LocalDateTime newStart = updateDto.eventStart();
+        LocalDateTime newEnd = updateDto.eventEnd();
+
+        if (newEnd.isBefore(newStart)) {
+            throw new IllegalArgumentException("cannot update event times because end is before start");
+        }
+
 //        if (eventAlreadyExists(eventId, updateDto)) {
 //            throw new MatchException("cannot create new event, event already exists", new Throwable());
 //        }
 
         CapoEvent eventToUpdate = capoEventRepo.findByIdAndCreatorId(eventId, userId).
                 orElseThrow(() -> new NoSuchElementException("cannot update event with id:" + eventId + ", as it was not found in db"));
+
 
         String seriesId = eventToUpdate.seriesId();
         int index = eventToUpdate.occurrenceIndex();
@@ -168,28 +176,23 @@ public class CapoEventService {
         LocalDateTime origStart = eventToUpdate.eventStart();
         LocalDateTime origEnd = eventToUpdate.eventEnd();
 
-        LocalDateTime newStart = updateDto.eventStart();
-        LocalDateTime newEnd = updateDto.eventEnd();
-
-        if (newEnd.isBefore(newStart)) {
-            throw new IllegalArgumentException("cannot update event times because end is before start");
-        }
-
         Duration startShift = Duration.between(origStart, newStart);
         Duration endShift = Duration.between(origEnd, newEnd);
 
+        List<CapoEvent> updatedCapoEvents = new ArrayList<>();
+
         for (CapoEvent refEvent : capoEvents) {
 
-            CapoEvent updatedEvent = refEvent
+            updatedCapoEvents.add(refEvent
                     .withEventTitle(updateDto.eventTitle())
                     .withEventDescription(updateDto.eventDescription())
                     .withThumbnail(updateDto.thumbnail())
                     .withLocationData(updateDto.locationData()) // TODO: change to only street
                     .withEventStart(refEvent.eventStart().plus(startShift))
-                    .withEventEnd(refEvent.eventEnd().plus(endShift));
-
-            capoEventRepo.save(updatedEvent);
+                    .withEventEnd(refEvent.eventEnd().plus(endShift)));
         }
+
+        capoEventRepo.saveAll(updatedCapoEvents);
 
         return capoEventRepo.findById(eventId).orElseThrow(() -> new NoSuchElementException("cannot find event with id:" + eventId));
     }
@@ -208,8 +211,6 @@ public class CapoEventService {
     }
 
     public boolean deleteById(String userId, String eventId, EditScope editScope){
-
-        // @TODO handle bookmarks when event gets deleted
 
        CapoEvent foundEvent = capoEventRepo.findByIdAndCreatorId(eventId, userId).orElseThrow(() -> new NoSuchElementException("cannot delete event with userId:" + userId + " and eventId:" + eventId + ", as it was not found in db"));
 

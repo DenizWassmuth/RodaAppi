@@ -19,7 +19,6 @@ type EventFormProps = {
     partOfSeries: PartOfSeriesDto
 };
 
-// Every line commented.
 function nowAsDateTimeLocal(): string { // Helper to format current time for datetime-local input.
     const d = new Date(); // Current date/time in browser timezone.
     d.setSeconds(0, 0); // Remove seconds/ms because datetime-local usually uses minutes.
@@ -32,7 +31,7 @@ function nowAsDateTimeLocal(): string { // Helper to format current time for dat
     return `${yyyy}-${mm}-${dd}T${hh}:${min}`; // Format required by datetime-local.
 }
 
-export default function CapoEventForm({submitText, initialValue, submit, bEditMode, partOfSeries}: Readonly<EventFormProps>) {
+export default function CapoEventForm({initialValue, submitText, submit, bEditMode, partOfSeries}: Readonly<EventFormProps>) {
 
     const [editScope, setEditScope] = useState<EditScope>("ONLY_THIS");
 
@@ -66,8 +65,6 @@ export default function CapoEventForm({submitText, initialValue, submit, bEditMo
       submit(value, null)
           .catch((err: Error) => {console.log("SUBMIT FAILED: " + err)});
     }
-
-
 
     const minStart = useMemo(() => nowAsDateTimeLocal(), []); // Compute once on mount.
 

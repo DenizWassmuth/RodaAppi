@@ -7,6 +7,8 @@ import type {AppUserType} from "../../types/AppUser.ts";
 import type {CapoEventType, PartOfSeriesDto} from "../../types/CapoEvent.ts";
 import {DeleteCapoEventModal} from "../modals/DeleteCapoEventModal.tsx";
 import {checkIfPartOfSeries} from "../../utility/AxiosUtilities.ts";
+import CapoEventDetailsCard from "./CapoEventDetailsCard.tsx";
+import CreateAndEditModal from "../modals/Create&EditModal.tsx";
 
 type PageProps = {
     user:AppUserType | null | undefined;
@@ -21,6 +23,7 @@ export default function PreviewPage({user, bIsLoginArea, events, fetchEvents, bo
     const [capoEvent, setCapoEvent] = useState<CapoEventType>(null);
     const [openEdit, setOpenEdit] = useState(false);
     const [openDelete, setOpenDelete] = useState(false);
+    const [openDetails, setOpenDetails] = useState(false);
     const [partOfSeries, setPartOfSeries] = useState<PartOfSeriesDto>(null);
 
     useEffect(() => {
@@ -36,10 +39,16 @@ export default function PreviewPage({user, bIsLoginArea, events, fetchEvents, bo
     function openEditModal(event: CapoEventType) {
         setCapoEvent(event);
         setOpenEdit(true);
+        setOpenDelete(false);
     }
 
     function closeEditModal() {
         setOpenEdit(false);
+
+        if (openDetails) {
+            return;
+        }
+
         setCapoEvent(null);
         setPartOfSeries(null);
     }
@@ -49,9 +58,24 @@ export default function PreviewPage({user, bIsLoginArea, events, fetchEvents, bo
         setOpenDelete(true);
     }
 
-    function closeDeleteModal() {
+    function closeDeleteModal(bCancel:boolean) {
         setOpenDelete(false);
+
+        if (openDetails && bCancel) {
+            return;
+        }
+
+       closeDetailsPage();
+    }
+
+    function openDetailsPage(event: CapoEventType) {
+        setCapoEvent(event);
+        setOpenDetails(true);
+    }
+
+    function closeDetailsPage() {
         setCapoEvent(null);
+        setOpenDetails(false);
         setPartOfSeries(null);
     }
 
@@ -76,6 +100,7 @@ export default function PreviewPage({user, bIsLoginArea, events, fetchEvents, bo
                                         onHandleDelete={openDeleteModal}
                                         bookmarks={bookmarks}
                                         fetchEvents={fetchEvents}
+                                        openDetailsPage={openDetailsPage}
                                     />
                                 )
                             )
@@ -85,17 +110,31 @@ export default function PreviewPage({user, bIsLoginArea, events, fetchEvents, bo
 
             { (
                 <>
+                    {capoEvent && openDetails && (
+                    <CreateAndEditModal title={""} open={openDetails} onClose={() => closeDetailsPage()}>
+                        <CapoEventDetailsCard
+                            bOpen={openDetails}
+                            user={user}
+                            partOfSeries={partOfSeries}
+                            capoEvent={capoEvent}
+                            onClose={closeDetailsPage}
+                            onEdit={() => openEditModal(capoEvent)}
+                            onDelete={() => openDeleteModal(capoEvent)}
+                        />
+                    </CreateAndEditModal>)
+                }
                     {user && openEdit && (
                         <EditCapoEventModal
                             bOpen={openEdit}
                             event={capoEvent}
+                            setCapoEvent={setCapoEvent}
                             partOfSeries={partOfSeries}
                             user={user}
                             fetchEvents={fetchEvents}
                             onClose={closeEditModal}
                         />
                     )}
-                    {user && openDelete && (
+                    {user && openDelete && partOfSeries && (
                         <DeleteCapoEventModal
                             bOpen={openDelete}
                             eventId={capoEvent?.id}
@@ -105,11 +144,7 @@ export default function PreviewPage({user, bIsLoginArea, events, fetchEvents, bo
                             onClose={closeDeleteModal}
                         />
                     )}
-                    {/*user && bOpenDelete && (
-                        <CapoEventPage
-                            user={user}
-                            fetchEvents={fetchEvents} />
-                    )*/}
+
                 </>
             )}
         </div>

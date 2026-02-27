@@ -7,7 +7,6 @@ import ProtectedRoute from "./components/ProtectedRoute.tsx";
 import axios from "axios";
 import type {AppUserType} from "./types/AppUser.ts";
 import type {CapoEventType} from "./types/CapoEvent.ts";
-import CapoEventPage from "./components/pages/CapoEventPage.tsx";
 import PreviewPage from "./components/pages/PreviewPage.tsx";
 import CreateCapoEventPage from "./components/pages/CreateCapoEventPage.tsx";
 
@@ -65,13 +64,12 @@ function App() {
 
     }, [capoEvents]);
 
-
   return (
       <>
           <header><Navbar user={user}/></header>
           <Routes>
               <Route path={"/"} element={<PreviewPage user={user} events={capoEvents} fetchEvents={fetchEvents} bIsLoginArea={false} bookmarks={bookmarks}/>}/>
-              <Route path={"/capoevent/:id"} element={<CapoEventPage user={user} fetchEvents={fetchEvents} />}/>
+              {/*} <Route path={"/capoevent/:id"} element={<CapoEventDetailsCard user={user} fetchEvents={fetchEvents} />}/> */}
 
               <Route element={<ProtectedRoute user={user}/> }>
                   <Route path={"/loggedin"} element={<PreviewPage user={user} events={capoEvents} fetchEvents={fetchEvents} bIsLoginArea={true} bookmarks={bookmarks} />}/>

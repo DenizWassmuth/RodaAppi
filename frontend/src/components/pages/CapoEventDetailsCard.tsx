@@ -1,55 +1,37 @@
-import {useNavigate, useParams} from "react-router-dom";
-import {useEffect, useState} from "react";
-import type {CapoEventType, EditScope, PartOfSeriesDto} from "../../types/CapoEvent.ts";
-import axios from "axios";
+
+import type {CapoEventType, PartOfSeriesDto} from "../../types/CapoEvent.ts";
 import "../../styles/CapoEventPage.css"
 import type {AppUserType} from "../../types/AppUser.ts";
-import {checkIfPartOfSeries, deleteCapoEvent} from "../../utility/AxiosUtilities.ts";
 
 type EventPageProps = {
-    user: AppUserType
-    fetchEvents:() => Promise<void | string>
+    bOpen: boolean;
+    user: AppUserType;
+    capoEvent: CapoEventType;
+    partOfSeries: PartOfSeriesDto;
+    onEdit: () => void;
+    onDelete: () => void;
 }
 
-export default function CapoEventPage({user, fetchEvents}: Readonly<EventPageProps>) {
-
-    const { id } = useParams();
-    const nav = useNavigate();
-    const [capoEvent, setCapoEvent] = useState<CapoEventType>();
-
-    const [deleteOption, setDeleteOption] = useState(false);
-    const [deleteScope, setDeleteScope] = useState<EditScope>("ONLY_THIS");
-    const [partOfSeries, setPartOfSeries] = useState<PartOfSeriesDto>(null);
+export default function CapoEventDetailsCard({bOpen ,user, capoEvent, onEdit, onDelete}: Readonly<EventPageProps>) {
 
     const isLoggedIn = user !== null && user !== undefined;
     const eventIsValid = capoEvent !== undefined && capoEvent !== null;
     const eventIsCreatedByUser = isLoggedIn && eventIsValid && user.id === capoEvent?.creatorId;
 
-    useEffect(() => {
-        axios.get("/api/capoevent/" + id).then((r) => setCapoEvent(r.data));
-    }, [id]);
+    if (!bOpen) {
+        return null;
+    }
 
     function handleDelete() {
-        deleteCapoEvent(user?.id, capoEvent?.id, deleteScope)
-            .then(() => {
-                setPartOfSeries(null);
-                setDeleteScope("ONLY_THIS");
-            })
-            .catch((error) => {
-                console.log("could not delete capoEvent through CapoEventPage: " + error.toString());
-            });
+        onDelete();
     }
 
-    function editEvent(eventId: string | undefined) {
-        if (!eventId) {
-            console.log("eventId === null or undefined, cannot move on to edit page");
-            return;
-        }
-        nav("/edit/" + eventId);
+    function handleEdit() {
+        onEdit();
     }
 
-    const start = capoEvent?.eventStart ? capoEvent.eventStart.replace("T", " ") : "";
-    const end = capoEvent?.eventEnd ? capoEvent.eventEnd.replace("T", " ") : "";
+    const start = capoEvent?.eventStart.replace("T", " ");
+    const end = capoEvent?.eventEnd.replace("T", " ");
 
     if (!capoEvent) return <p style={{ color: "white" }}>Loading...</p>;
 
@@ -67,7 +49,6 @@ export default function CapoEventPage({user, fetchEvents}: Readonly<EventPagePro
 
             <section className="capo-detail__grid">
                 <fieldset className="create-event__fieldset">
-                    <legend className="create-event__legend">Basic</legend>
 
                     <div className="capo-detail__row">
                         <span className="capo-detail__label">Title</span>
@@ -141,9 +122,7 @@ export default function CapoEventPage({user, fetchEvents}: Readonly<EventPagePro
                                 className="create-event__submit capo-detail__btn"
                                 type="button"
                                 disabled={!eventIsCreatedByUser}
-                                onClick={() =>
-                                    checkIfPartOfSeries(capoEvent, setPartOfSeries).then(() => setDeleteOption(true))
-                                }
+                                onClick={handleDelete}
                             >
                                 delete
                             </button>
@@ -152,30 +131,14 @@ export default function CapoEventPage({user, fetchEvents}: Readonly<EventPagePro
                                 className="create-event__submit capo-detail__btn"
                                 type="button"
                                 disabled={!eventIsCreatedByUser}
-                                onClick={() => editEvent(capoEvent?.id)}
+                                onClick={handleEdit}
                             >
                                 edit
                             </button>
                         </div>
                     </fieldset>
                 }
-
             </section>
-
-            {/* You already have deleteOption/partOfSeries/deleteScope states; wire your modal here if needed */}
-            {/* Example:
-            <DeleteOptionsModal
-                open={deleteOption}
-                partOfSeries={partOfSeries}
-                deleteScope={deleteScope}
-                setDeleteScope={setDeleteScope}
-                onConfirm={async () => {
-                    setDeleteOption(false);
-                    handleDelete();
-                }}
-                onCancel={() => setDeleteOption(false)}
-            />
-            */}
         </main>
     );
 }

@@ -1,4 +1,3 @@
-import {Link} from "react-router-dom";
 import type {CapoEventType} from "../types/CapoEvent.ts";
 import "../styles/CapoEventCard.css"
 import "../index.css"
@@ -8,13 +7,14 @@ import {bookmarkEvents} from "../utility/AxiosUtilities.ts";
 type EventCardProps = {
     user: AppUserType | undefined | null
     capoEvent: CapoEventType
+    bookmarks:string[] | null;
     onHandleEdit: (event: CapoEventType) => void;
     onHandleDelete: (event: CapoEventType) => void;
-    bookmarks:string[] | null;
     fetchEvents: () => Promise<void | string>;
+    openDetailsPage: (event:CapoEventType) => void;
 }
 
-export default function CapoEventCard({ user, capoEvent, bookmarks, onHandleEdit, onHandleDelete, fetchEvents}: Readonly<EventCardProps>) {
+export default function CapoEventCard({ user, capoEvent, bookmarks, onHandleEdit, onHandleDelete, fetchEvents, openDetailsPage}: Readonly<EventCardProps>) {
 
     const bUserIsValid = user !== null && user !== undefined;
     const bEventIsValid = capoEvent !== undefined && capoEvent !== null;
@@ -40,15 +40,22 @@ export default function CapoEventCard({ user, capoEvent, bookmarks, onHandleEdit
     }
 
   function handleBookmarking() {
-
         if (!capoEvent) {
             console.log("capoEvent === null or undefined, cannot handle bookmarks");
             return;
         }
-
         bookmarkEvents(user?.id, capoEvent?.id, bIsBookmarkedByUser)
             .then(() => fetchEvents());
     }
+
+    function handleOpenDetails() {
+        openDetailsPage(capoEvent);
+    }
+
+    const preventCardClick = (e: React.MouseEvent) => {
+        e.preventDefault();
+        e.stopPropagation();
+    };
 
     const localDateTime : string | undefined = capoEvent?.eventStart;
     let [date , timeWithRest] = "";
@@ -59,8 +66,8 @@ export default function CapoEventCard({ user, capoEvent, bookmarks, onHandleEdit
 
     return (
         <div>
-            <Link className="card_link" to={`/capoevent/${capoEvent?.id}`}>
-                <div className="event_card" style={{backgroundImage: `url(${capoEvent?.thumbnail})`}}>
+            <div className="event_card" role={"button"} onClick={handleOpenDetails} tabIndex={0}>
+                <div style={{backgroundImage: `url(${capoEvent?.thumbnail})`}}>
                     <div className="event_info">
                         <h3>{capoEvent?.eventTitle}</h3>
                         <p>{capoEvent?.eventType} · {capoEvent?.locationData.city} · {date} · {time} </p>
@@ -68,28 +75,28 @@ export default function CapoEventCard({ user, capoEvent, bookmarks, onHandleEdit
                         <p>
                             <button type={"button"} hidden={!bIsCreatedByUser} disabled={!bIsCreatedByUser}
                                     onClick={(e) => {
-                                        e.preventDefault();
+                                        preventCardClick(e);
                                         handleDelete();
                                     }}>delete
                             </button>
                             {"   "}
                             <button type="button" hidden={!bIsCreatedByUser} disabled={!bIsCreatedByUser}
                                     onClick={(e) => {
-                                        e.preventDefault();
+                                        preventCardClick(e);
                                         handleEdit();
                                     }}>edit
                             </button>
                             {"   "}
                             <button type="button" hidden={!bShowButtons} disabled={!bShowButtons}
                                     onClick={(e) => {
-                                        e.preventDefault();
+                                        preventCardClick(e);
                                         handleBookmarking()
                                     }}>{bIsBookmarkedByUser ? "★" : "☆"}
                             </button>
                         </p>
                     </div>
                 </div>
-            </Link>
+            </div>
         </div>
     )
 }
