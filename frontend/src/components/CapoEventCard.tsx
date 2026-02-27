@@ -66,7 +66,7 @@ export default function CapoEventCard({ user, capoEvent, bookmarks, onHandleEdit
 
     return (
         <div>
-            <div className="event_card" role={"button"} onClick={handleOpenDetails} tabIndex={0}>
+            <div className="event_card" role={"button"} onClick={handleOpenDetails}>
                 <div style={{backgroundImage: `url(${capoEvent?.thumbnail})`}}>
                     <div className="event_info">
                         <h3>{capoEvent?.eventTitle}</h3>
