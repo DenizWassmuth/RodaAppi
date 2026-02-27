@@ -7,6 +7,8 @@ import org.example.backend.data.StateData;
 import org.example.backend.dto.CityDto;
 import org.example.backend.dto.CountryDto;
 import org.example.backend.dto.StateDto;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 
@@ -18,10 +20,16 @@ import java.util.List;
 @Service
 public class GeoDataService {
 
+
+
     private final RestClient restClient;
-    public GeoDataService(RestClient.Builder restClientBuilder) {
+    public GeoDataService(RestClient.Builder restClientBuilder, @Value("${rapidapi.csc.host}") String host,
+                          @Value("${rapidapi.csc.key}") String key) {
         this.restClient = restClientBuilder
                 .baseUrl("https://country-state-city-search-rest-api.p.rapidapi.com")
+                .defaultHeader("x-rapidapi-host", host)
+                .defaultHeader("x-rapidapi-key", key)
+                .defaultHeader(HttpHeaders.ACCEPT, "application/json")
                 .build();
     }
 
@@ -39,7 +47,7 @@ public class GeoDataService {
         return Arrays.stream(countries).map((c)-> new CountryDto(c.name(),c.isoCode())).toList();
     }
 
-    public List<StateDto> getStatesFromCountryIsoCode(String countryCode) {
+    public List<StateDto> getStatesByCountryCode(String countryCode) {
 
         StateData[] states = restClient.get()
                 .uri(uriBuilder -> uriBuilder
@@ -56,7 +64,7 @@ public class GeoDataService {
         return Arrays.stream(states).map((s)-> new StateDto(s.name(),s.isoCode())).toList();
     }
 
-    public List<CityDto> getCitiesFromStateIsoCode(String countryCode, String stateCode) {
+    public List<CityDto> getCitiesByCountryCodeAndStateCode(String countryCode, String stateCode) {
 
         CityData[] cities = restClient.get()
                 .uri(uriBuilder -> uriBuilder
