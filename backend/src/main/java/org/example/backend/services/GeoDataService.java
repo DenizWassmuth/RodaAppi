@@ -12,7 +12,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -21,8 +20,11 @@ import java.util.List;
 public class GeoDataService {
 
     private final RestClient restClient;
-    public GeoDataService(RestClient.Builder restClientBuilder, @Value("${rapidapi.csc.host}") String host,
-                          @Value("${rapidapi.csc.key}") String key) {
+    public GeoDataService(
+            RestClient.Builder restClientBuilder,
+            @Value("${rapidapi.csc.host}") String host,
+            @Value("${rapidapi.csc.key}") String key) {
+
         this.restClient = restClientBuilder
                 .baseUrl("https://country-state-city-search-rest-api.p.rapidapi.com")
                 .defaultHeader("x-rapidapi-host", host)

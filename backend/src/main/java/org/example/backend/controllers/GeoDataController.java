@@ -23,17 +23,17 @@ public class GeoDataController {
     }
 
     @GetMapping("/countries")
-    public List<CountryDto> countries() {
+    public List<CountryDto> getCountries() {
         return geoLookupService.getCountries();
     }
 
     @GetMapping("/states")
-    public List<StateDto> states(@RequestParam String countryCode) {
+    public List<StateDto> getStates(@RequestParam String countryCode) {
         return geoLookupService.getStatesByCountryCode(countryCode);
     }
 
     @GetMapping("/cities")
-    public List<CityDto> cities(@RequestParam String countryCode, @RequestParam String stateCode) {
+    public List<CityDto> getCities(@RequestParam String countryCode, @RequestParam String stateCode) {
         return geoLookupService.getCitiesByCountryCodeAndStateCode(countryCode, stateCode);
     }
 }
