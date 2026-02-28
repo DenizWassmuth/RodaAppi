@@ -1,5 +1,6 @@
 import axios from "axios";
 import type {CapoEventType, EditScope, PartOfSeriesDto} from "../types/CapoEvent.ts";
+import type {CityData, CountryData, StateData} from "../types/GeoData.ts";
 
 export async function fetchAllCapoEvents() {
   return await axios.get<CapoEventType[]>("/api/capoevent");
@@ -43,21 +44,53 @@ export async function checkIfPartOfSeries(capoEvent: CapoEventType, setPartOfSer
 
 export async function bookmarkEvents(userId:string | undefined | null, eventId: string | undefined, isBookmarkedByUser:boolean) {
 
-  if (!isBookmarkedByUser) {
-    await axios.put(`/api/bookmarks/${userId}/${eventId}`)
-        .then((response) => {
-          console.log("event was added to bookmarks " + response.data);
-        })
-        .catch((error) => {
-          console.log(error)
-        });
+    if (!isBookmarkedByUser) {
+        await axios.put(`/api/bookmarks/${userId}/${eventId}`)
+            .then((response) => {
+                console.log("event was added to bookmarks " + response.data);
+            })
+            .catch((error) => {
+                console.log(error)
+            });
 
-    return;
-  }
+        return;
+    }
 
     await axios.delete(`/api/bookmarks/${userId}/${eventId}`)
         .then((response) => {
-          console.log("event was removed from bookmarks " + response.data);
+            console.log("event was removed from bookmarks " + response.data);
         })
 
-  }
+}
+
+export async function fetchCountries(setCountries:(countries: CountryData[]) => void) {
+  await axios.get("api/geodata/countries")
+        .then((r) => {
+            setCountries(r.data);
+            console.log("countries fetched:");
+            console.log(r.data); })
+        .catch(err=>
+            console.log(err));
+}
+
+export async function fetchStates(setStates:(states: StateData[]) => void, countryCode:string) {
+    await axios.get(`api/geodata/states`, {params: {countryCode:countryCode},})
+        .then((r) => {
+            setStates(r.data);
+            console.log("states fetched:");
+            console.log(r.data); })
+        .catch(err=>
+            console.log(err));
+}
+
+export async function fetchCities(setCities:(cites: CityData[]) => void, countryCode:string, stateCode:string) {
+    await axios.get(`api/geodata/cities`, {params: {countryCode:countryCode, stateCode:stateCode},})
+        .then((r) => {
+            setCities(r.data);
+            console.log("cities fetched:");
+            console.log(r.data);
+        })
+        .catch(err=>
+            console.log(err)
+        );
+}

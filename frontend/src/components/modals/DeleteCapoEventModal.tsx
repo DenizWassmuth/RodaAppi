@@ -17,7 +17,7 @@ export function DeleteCapoEventModal({bOpen, eventId, user, partOfSeries, onClos
 
     const [editScope, setEditScope] = useState<EditScope>("ONLY_THIS");
 
-    if(!bOpen){
+    if(!bOpen || !user){
         return null;
     }
 

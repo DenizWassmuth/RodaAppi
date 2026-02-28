@@ -9,7 +9,7 @@ type Props = {
     children: ReactNode;
 };
 
-export default function CreateAndEditModal({open, title, onClose, children}: Readonly<Props>) {
+export default function FrameModal({open, title, onClose, children}: Readonly<Props>) {
 
     if (!open) return null;
 

@@ -42,18 +42,13 @@ export default function CapoEventDetailsCard({bOpen ,user, capoEvent, onEdit, on
                 <div className="capo-detail__banner-overlay">
                     <h1 className="capo-detail__title">{capoEvent?.eventTitle}</h1>
                     <p className="capo-detail__subtitle">
-                        {capoEvent?.eventType} · {capoEvent?.locationData.country} · {capoEvent?.locationData.city}
+                        {capoEvent?.eventType} · {capoEvent?.locationData.city} · {capoEvent?.locationData.country }
                     </p>
                 </div>
             </header>
 
             <section className="capo-detail__grid">
                 <fieldset className="create-event__fieldset">
-
-                    <div className="capo-detail__row">
-                        <span className="capo-detail__label">Title</span>
-                        <span className="capo-detail__value">{capoEvent?.eventTitle}</span>
-                    </div>
 
                     <div className="capo-detail__row">
                         <span className="capo-detail__label">Description</span>
@@ -70,18 +65,9 @@ export default function CapoEventDetailsCard({bOpen ,user, capoEvent, onEdit, on
                     <legend className="create-event__legend">Location</legend>
 
                     <div className="capo-detail__row">
-                        <span className="capo-detail__label">Country</span>
-                        <span className="capo-detail__value">{capoEvent?.locationData.country}</span>
-                    </div>
-
-                    <div className="capo-detail__row">
-                        <span className="capo-detail__label">State</span>
-                        <span className="capo-detail__value">{capoEvent?.locationData.state}</span>
-                    </div>
-
-                    <div className="capo-detail__row">
-                        <span className="capo-detail__label">City</span>
-                        <span className="capo-detail__value">{capoEvent?.locationData.city}</span>
+                        <span className="capo-detail__value">
+                            {capoEvent?.locationData.city} - {capoEvent?.locationData.country}
+                        </span>
                     </div>
 
                     <div className="capo-detail__row">

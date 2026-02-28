@@ -20,8 +20,6 @@ import java.util.List;
 @Service
 public class GeoDataService {
 
-
-
     private final RestClient restClient;
     public GeoDataService(RestClient.Builder restClientBuilder, @Value("${rapidapi.csc.host}") String host,
                           @Value("${rapidapi.csc.key}") String key) {

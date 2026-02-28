@@ -4,17 +4,21 @@ import CapoEventForm from "../CapoEventForm.tsx";
 import type { AppUserType } from "../../types/AppUser.ts";
 import type {EventFormValue, EventRegDto} from "../../types/CapoEvent.ts";
 import {useNavigate} from "react-router-dom";
-import CreateAndEditModal from "../modals/Create&EditModal.tsx";
+import FrameModal from "../modals/FrameModal.tsx";
 import {useState} from "react";
+import type {CountryData} from "../../types/GeoData.ts";
+import {fetchCountries} from "../../utility/AxiosUtilities.ts";
 
 type Props = {
     user: AppUserType;
     fetchEvents: () => Promise<void | string>;
     onClosePath:string;
+    countries:CountryData[]
+    setCountries:(countries:CountryData[]) => void;
 
 };
 
-export default function CreateCapoEventPage({user, fetchEvents, onClosePath}:Readonly<Props>) {
+export default function CreateCapoEventPage({user, fetchEvents, onClosePath, countries, setCountries}:Readonly<Props>) {
     const empty: EventFormValue = {
         userName:user?.username,
         eventTitle: "",
@@ -38,6 +42,17 @@ export default function CreateCapoEventPage({user, fetchEvents, onClosePath}:Rea
     const [openFormModal, setOpenFormModal] = useState(true);
     const nav = useNavigate();
 
+    if (!openFormModal) {
+        return null;
+    }
+
+    const isLoggedIn = user !== null && user !== undefined;
+
+    if(countries.length <= 0){
+        fetchCountries(setCountries)
+            .then()
+    }
+
     async function submit(value: EventFormValue) {
        if (!user?.id){
            throw new Error("Not logged in");
@@ -60,12 +75,6 @@ export default function CreateCapoEventPage({user, fetchEvents, onClosePath}:Rea
         nav(onClosePath)
     }
 
-    const isLoggedIn = user !== null && user !== undefined;
-
-    if (!openFormModal) {
-        return null;
-    }
-
     return (
         <>
             {!isLoggedIn && (
@@ -75,7 +84,7 @@ export default function CreateCapoEventPage({user, fetchEvents, onClosePath}:Rea
             )}
 
             {isLoggedIn && openFormModal && (
-                <CreateAndEditModal title={""} open={openFormModal} onClose={() => onClose()}>
+                <FrameModal title={""} open={openFormModal} onClose={() => onClose()}>
                     <div>
                         <CapoEventForm
                             submitText="Create"
@@ -83,9 +92,10 @@ export default function CreateCapoEventPage({user, fetchEvents, onClosePath}:Rea
                             submit={submit}
                             bEditMode={false}
                             partOfSeries={null}
+                            countries={countries}
                         />
                     </div>
-                </CreateAndEditModal>)
+                </FrameModal>)
             }
         </>
     );

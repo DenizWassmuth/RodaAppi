@@ -2,7 +2,7 @@ import axios from "axios";
 import type {CapoEventType, EditScope, EventFormValue, EventRegDto, PartOfSeriesDto} from "../../types/CapoEvent.ts";
 import type { AppUserType } from "../../types/AppUser.ts";
 import CapoEventForm from "../CapoEventForm.tsx";
-import CreateAndEditModal from "./Create&EditModal.tsx";
+import FrameModal from "./FrameModal.tsx";
 
 type EditModalProps = {
     bOpen: boolean;
@@ -16,7 +16,7 @@ type EditModalProps = {
 
 export default function EditCapoEventModal({bOpen, user, event, setCapoEvent, partOfSeries, fetchEvents, onClose}:Readonly<EditModalProps>) {
 
-    if(!bOpen){
+    if(!bOpen || !user) {
         return null;
     }
 
@@ -69,11 +69,7 @@ export default function EditCapoEventModal({bOpen, user, event, setCapoEvent, pa
     return (
         <>
             {bOpen &&
-                <CreateAndEditModal
-                    title={"Edit Event"}
-                    open={bOpen}
-                    onClose={onClose}
-                >
+                <FrameModal title={"Edit Event"} open={bOpen} onClose={onClose}>
                     <div>
                         {!event && <p style={{color: "white"}}>Loading...</p>}
                         {event && (
@@ -83,10 +79,11 @@ export default function EditCapoEventModal({bOpen, user, event, setCapoEvent, pa
                                 submit={update}
                                 bEditMode={true}
                                 partOfSeries={partOfSeries}
+                                countries={[]}
                             />
                         )}
                     </div>
-                </CreateAndEditModal>
+                </FrameModal>
             }
         </>
     );

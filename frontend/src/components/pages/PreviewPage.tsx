@@ -8,7 +8,7 @@ import type {CapoEventType, PartOfSeriesDto} from "../../types/CapoEvent.ts";
 import {DeleteCapoEventModal} from "../modals/DeleteCapoEventModal.tsx";
 import {checkIfPartOfSeries} from "../../utility/AxiosUtilities.ts";
 import CapoEventDetailsCard from "./CapoEventDetailsCard.tsx";
-import CreateAndEditModal from "../modals/Create&EditModal.tsx";
+import FrameModal from "../modals/FrameModal.tsx";
 
 type PageProps = {
     user:AppUserType | null | undefined;
@@ -108,21 +108,20 @@ export default function PreviewPage({user, bIsLoginArea, events, fetchEvents, bo
                 </div>
             </main>
 
-            { (
+            {(
                 <>
                     {capoEvent && openDetails && (
-                    <CreateAndEditModal title={""} open={openDetails} onClose={() => closeDetailsPage()}>
+                    <FrameModal title={""} open={openDetails} onClose={() => closeDetailsPage()}>
                         <CapoEventDetailsCard
                             bOpen={openDetails}
                             user={user}
                             partOfSeries={partOfSeries}
                             capoEvent={capoEvent}
-                            onClose={closeDetailsPage}
                             onEdit={() => openEditModal(capoEvent)}
                             onDelete={() => openDeleteModal(capoEvent)}
                         />
-                    </CreateAndEditModal>)
-                }
+                    </FrameModal>
+                    )}
                     {user && openEdit && (
                         <EditCapoEventModal
                             bOpen={openEdit}
@@ -144,7 +143,6 @@ export default function PreviewPage({user, bIsLoginArea, events, fetchEvents, bo
                             onClose={closeDeleteModal}
                         />
                     )}
-
                 </>
             )}
         </div>

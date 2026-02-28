@@ -128,7 +128,7 @@
 .create-event__label:has(.create-event__input:required:not(:disabled))::before,
 .create-event__label:has(.create-event__textarea:required:not(:disabled))::before,
 .create-event__label:has(.create-event__select:required:not(:disabled))::before {
-    content: " *";
+    /*content: "*";*/
     color: #f5c542;
     font-weight: 700;
 }

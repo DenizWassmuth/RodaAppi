@@ -9,18 +9,35 @@ import type {AppUserType} from "./types/AppUser.ts";
 import type {CapoEventType} from "./types/CapoEvent.ts";
 import PreviewPage from "./components/pages/PreviewPage.tsx";
 import CreateCapoEventPage from "./components/pages/CreateCapoEventPage.tsx";
+import type {CountryData} from "./types/GeoData.ts";
 
 
 function App() {
 
     const [user, setUser] = useState<AppUserType>(null);
+
     const [capoEvents, setCapoEvents] = useState<CapoEventType[]>([]);
     const [bookmarks, setBookmarks] = useState<string[] | null>(null);
+
+    const [countries, setCountries] = useState<CountryData[]> ([]);
 
     const loadUser = () => {
         axios.get("/api/auth")
             .then((response) => setUser(response.data))
-            .catch((error) => {setUser(null); console.log(error + " user was set to null, as user is not logged in")});
+            .catch((error) => {
+                setUser(null);
+                console.log(error + " user was set to null, as user is not logged in")});
+    }
+
+    async function fetchEvents() {
+
+        await axios.get<CapoEventType[]>("/api/capoevent")
+            .then((response) => {
+                setCapoEvents(response.data);
+                console.log("fetched events: ");
+                console.log(response.data);
+            })
+            .catch((error) => error + ": could not fetch capoEvents");
     }
 
     async function getUsersBookMarks() {
@@ -38,17 +55,6 @@ function App() {
             .catch((error) => error + ": could not fetch bookmarks");
     }
 
-    async function fetchEvents() {
-
-        await axios.get<CapoEventType[]>("/api/capoevent")
-            .then((response) => {
-                setCapoEvents(response.data);
-                console.log("fetched events: ");
-                console.log(response.data);
-            })
-            .catch((error) => error + ": could not fetch capoEvents");
-    }
-
     useEffect(() => {
         loadUser();
         fetchEvents()
@@ -57,12 +63,15 @@ function App() {
     }, []);
 
     useEffect(() => {
-        if (capoEvents.length <= 0) {
+        if (!capoEvents || capoEvents.length <= 0) {
             return;
         }
-        getUsersBookMarks().then();
+
+        getUsersBookMarks()
+            .then();
 
     }, [capoEvents]);
+
 
   return (
       <>
@@ -73,7 +82,7 @@ function App() {
 
               <Route element={<ProtectedRoute user={user}/> }>
                   <Route path={"/loggedin"} element={<PreviewPage user={user} events={capoEvents} fetchEvents={fetchEvents} bIsLoginArea={true} bookmarks={bookmarks} />}/>
-                  <Route path={"/add"} element={<CreateCapoEventPage user={user} fetchEvents={fetchEvents} onClosePath={"/Loggedin"}/>}/>
+                  <Route path={"/add"} element={<CreateCapoEventPage user={user} fetchEvents={fetchEvents} onClosePath={"/loggedin"} countries={countries} setCountries={setCountries}/>}/>
               </Route>
           </Routes>
       </>
