@@ -15,7 +15,8 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.*;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 
-@SpringBootTest(properties = {"rapidapi.csc.host=fakehost.com", "rapidapi.csc.key=fakeKey"})
+//@SpringBootTest(properties = {"rapidapi.csc.host=fakehost.com", "rapidapi.csc.key=fakeKey"})
+@SpringBootTest
 @AutoConfigureMockMvc
 @AutoConfigureMockRestServiceServer
 

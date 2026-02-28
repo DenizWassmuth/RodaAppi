@@ -26,6 +26,13 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/api/capoevent").authenticated()
                         .requestMatchers(HttpMethod.PUT, "/api/capoevent/update/*").authenticated()
                         .requestMatchers(HttpMethod.DELETE, "/api/capoevent/delete/*").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/api/bookmarks/*").authenticated()
+                        .requestMatchers(HttpMethod.PUT, "/api/bookmarks/*/*").authenticated()
+                        .requestMatchers(HttpMethod.DELETE, "/api/bookmarks/*/*").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/api/geodata/countries").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/geodata/states").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/geodata/cities").permitAll()
+
 //                        .requestMatchers(HttpMethod.GET, "/api/users").hasAuthority("ADMIN")
                         .anyRequest().permitAll()) // am Ende alles auf permitAll stellen, da es Hintergrundprozesse gibt die sonst blockiert werden
                 .logout(l -> l.logoutSuccessUrl("http://localhost:5173"))
