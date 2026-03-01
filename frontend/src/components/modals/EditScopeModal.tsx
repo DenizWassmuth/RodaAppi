@@ -4,7 +4,7 @@ import ConfirmModal from "./ConfirmModal.tsx";
 import type {EditScope, PartOfSeriesDto} from "../../types/CapoEvent.ts";
 
 
-type Props = {
+type EditScopeModalProps = {
     bOpen: boolean;
     onCancel: () => void;
     onConfirm: () => void;
@@ -15,7 +15,7 @@ type Props = {
     setEditScope: (scope: EditScope) => void;
 };
 
-export default function EditScopeModal({bOpen, onCancel, onConfirm, onConfirmTitle, onConfirmMsg, partOfSeries, editScope, setEditScope}: Readonly<Props>) {
+export default function EditScopeModal({bOpen, onCancel, onConfirm, onConfirmTitle, onConfirmMsg, partOfSeries, editScope, setEditScope}: Readonly<EditScopeModalProps>) {
 
     const [openConfirm, setOpenConfirm] = useState(false);
 
@@ -33,8 +33,8 @@ export default function EditScopeModal({bOpen, onCancel, onConfirm, onConfirmTit
                             name="editScope"
                             checked={editScope === "ONLY_THIS"}
                             onChange={() => setEditScope("ONLY_THIS")}
-                        />{" "}
-                        this one
+                        />
+                        {" "} this one
                     </label>
 
                     {partOfSeries?.isPartOfSeries &&
@@ -44,8 +44,8 @@ export default function EditScopeModal({bOpen, onCancel, onConfirm, onConfirmTit
                                 name="editScope"
                                 checked={editScope === "ALL_IN_SERIES"}
                                 onChange={() => setEditScope("ALL_IN_SERIES")}
-                            />{" "}
-                            all in this series
+                            />
+                            {" "} all in this series
                         </label>
                     }
 
@@ -56,8 +56,8 @@ export default function EditScopeModal({bOpen, onCancel, onConfirm, onConfirmTit
                                 name="editScope"
                                 checked={editScope === "BEFORE_THIS"}
                                 onChange={() => setEditScope("BEFORE_THIS")}
-                            />{" "}
-                            this + all before (in this series)
+                            />
+                            {" "} this + all before (in this series)
                         </label>
                     }
 
@@ -68,8 +68,8 @@ export default function EditScopeModal({bOpen, onCancel, onConfirm, onConfirmTit
                                 name="editScope"
                                 checked={editScope === "AFTER_THIS"}
                                 onChange={() => setEditScope("AFTER_THIS")}
-                            />{" "}
-                            this + all after (in this series)
+                            />
+                            {" "} this + all after (in this series)
                         </label>
                     }
                 </div>
@@ -95,7 +95,8 @@ export default function EditScopeModal({bOpen, onCancel, onConfirm, onConfirmTit
                 message={onConfirmMsg}
                 confirmText= {"Yes, " + onConfirmTitle}
                 cancelText="No"
-                onCancel={() => setOpenConfirm(false)}
+                onCancel={() =>
+                    setOpenConfirm(false)}
                 onConfirm={() => {
                     setOpenConfirm(false);
                     onConfirm();

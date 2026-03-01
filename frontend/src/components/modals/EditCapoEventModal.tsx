@@ -42,7 +42,7 @@ export default function EditCapoEventModal({bOpen, user, event, setCapoEvent, pa
             .finally(() => {fetchEvents(); onClose()});
     }
 
-    const initial: EventFormValue = event ? {
+    const initialValue: EventFormValue = event ? {
         userName: event.creatorName,
         eventTitle: event.eventTitle,
         eventDescription: event.eventDescription,
@@ -58,7 +58,13 @@ export default function EditCapoEventModal({bOpen, user, event, setCapoEvent, pa
         eventTitle: "",
         eventDescription: "",
         thumbnail: "",
-        locationData: { country: "", state: "", city: "", street: "", streetNumber: "", specifics:"" },
+        locationData: {
+            country: "",
+            state: "",
+            city: "",
+            street: "",
+            streetNumber: "",
+            specifics:"" },
         eventStart: "",
         eventEnd: "",
         eventType: "RODA",
@@ -75,7 +81,7 @@ export default function EditCapoEventModal({bOpen, user, event, setCapoEvent, pa
                         {event && (
                             <CapoEventForm
                                 submitText="Update"
-                                initialValue={initial}
+                                initialValue={initialValue}
                                 submit={update}
                                 bEditMode={true}
                                 partOfSeries={partOfSeries}

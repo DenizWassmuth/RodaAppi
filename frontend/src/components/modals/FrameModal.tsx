@@ -1,15 +1,15 @@
 
-import "../../styles/Create&EditModal.css"
+import "../../styles/FrameModal.css"
 import type {ReactNode} from "react";
 
-type Props = {
+type FrameModalProps = {
     open: boolean;
     title: string;
     onClose: () => void;
     children: ReactNode;
 };
 
-export default function FrameModal({open, title, onClose, children}: Readonly<Props>) {
+export default function FrameModal({open, title, onClose, children}: Readonly<FrameModalProps>) {
 
     if (!open) return null;
 
