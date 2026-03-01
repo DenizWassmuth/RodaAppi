@@ -50,17 +50,26 @@ public class CapoEventFilterService {
             }
         }
 
+        if (startsAfter != null && startsBefore != null && startsBefore.isBefore(startsAfter)) {
+            throw new IllegalArgumentException("startsBefore cannot be before startsAfter");
+        }
+
+        Criteria startCriteria = null;
+
         if (startsAfter != null) {
-            query.addCriteria(Criteria.where("eventStart").gte(startsAfter));
+            startCriteria = Criteria.where("eventStart").gte(startsAfter);
         }
 
         if (startsBefore != null) {
-            query.addCriteria(Criteria.where("eventStart").lte(startsBefore));
+            if (startCriteria == null) {
+                startCriteria = Criteria.where("eventStart").lte(startsBefore);
+            } else {
+                startCriteria = startCriteria.lte(startsBefore);
+            }
         }
 
-
-        if (startsAfter != null && startsBefore != null && startsBefore.isBefore(startsAfter)) {
-            throw new IllegalArgumentException("startsBefore cannot be before startsAfter");
+        if (startCriteria != null) {
+            query.addCriteria(startCriteria);
         }
 
         return mongoTemplate.find(query, CapoEvent.class); // Run query against the "capoevent" collection.

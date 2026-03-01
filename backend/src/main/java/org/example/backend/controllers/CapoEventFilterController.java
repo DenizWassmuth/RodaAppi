@@ -23,7 +23,7 @@ public class CapoEventFilterController {
     }
 
     @PostMapping("/search")
-    public ResponseEntity<List<CapoEvent>> search(@RequestBody CapoEventFilterDto dto) {
+    public ResponseEntity<List<CapoEvent>> filter(@RequestBody CapoEventFilterDto dto) {
         try {
             return ResponseEntity.ok(capoEventFilterService.filter(dto));
         } catch (IllegalArgumentException e) {
