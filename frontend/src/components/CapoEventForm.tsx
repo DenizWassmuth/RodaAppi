@@ -12,6 +12,7 @@ import EditScopeModal from "./modals/EditScopeModal.tsx";
 import type {CityData, CountryData, StateData} from "../types/GeoData.ts";
 import {fetchCities, fetchStates} from "../utility/AxiosUtilities.ts";
 import {nowAsDateTimeLocal} from "../utility/Helpers.ts";
+import * as React from "react";
 
 
 type EventFormProps = {
@@ -201,15 +202,11 @@ export default function CapoEventForm({initialValue, submitText, submit, bEditMo
                             disabled={bEditMode || (!bEditMode && countries.length <= 0)}
                             required={true}
                         >
-                            <option value="" disabled>
-                                select a country
-                            </option>
-
+                            <option value="" disabled> select a country </option>
+                            <option value=""> clear field </option>
                             {countries &&
                                 countries.map((c) => (
-                                    <option key={c.isoCode} value={c.name} >
-                                        {c.name}
-                                    </option>))}
+                                    <option key={c.isoCode} value={c.name}> {c.name} </option>))}
                         </select>
                     </label>
 
@@ -221,15 +218,11 @@ export default function CapoEventForm({initialValue, submitText, submit, bEditMo
                             disabled={bEditMode || (!bEditMode && states.length <= 0)}
                             required={true}
                         >
-                            <option value="" disabled>
-                                select a state
-                            </option>
-
+                            <option value="" disabled> select a state </option>
+                            <option value=""> clear field </option>
                             {states &&
                                 states.map((c) => (
-                                    <option key={c.isoCode} value={c.name} >
-                                        {c.name}
-                                    </option>))}
+                                    <option key={c.isoCode} value={c.name} > {c.name} </option>))}
                         </select>
                     </label>
 
@@ -241,15 +234,11 @@ export default function CapoEventForm({initialValue, submitText, submit, bEditMo
                             disabled={bEditMode || (!bEditMode && cities.length <= 0)}
                             required={true}
                         >
-                            <option value="" disabled>
-                                select a city
-                            </option>
-
+                            <option value="" disabled={true} > select a city </option>
+                            <option value=""> clear field </option>
                             {cities &&
                                 cities.map((c) => (
-                                    <option key={c.name} value={c.name} >
-                                        {c.name}
-                                    </option>))}
+                                    <option key={c.name} value={c.name} > {c.name} </option>))}
                         </select>
                     </label>
 

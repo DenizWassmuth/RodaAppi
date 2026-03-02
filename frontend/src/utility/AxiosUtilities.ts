@@ -1,4 +1,4 @@
-import axios, {type AxiosResponse} from "axios";
+import axios from "axios";
 import type {CapoEventFilterDto, CapoEventType, EditScope, PartOfSeriesDto} from "../types/CapoEvent.ts";
 import type {CityData, CountryData, StateData} from "../types/GeoData.ts";
 

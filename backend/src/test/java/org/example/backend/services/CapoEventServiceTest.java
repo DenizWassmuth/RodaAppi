@@ -40,7 +40,8 @@ class CapoEventServiceTest {
             LocalDateTime.of(2026, 2, 15, 19, 0, 0, 0),
             LocalDateTime.of(2026, 2, 15, 23, 0, 0, 0),
             CapoEventEnumType.RODA,
-            RepetitionRhythmEnumType.ONCE
+            RepetitionRhythmEnumType.ONCE,
+            LocalDateTime.of(2026,1,1,0,0,0)
     );
 
     CapoEventRegDto regDuplicateDto = new CapoEventRegDto(
@@ -193,6 +194,7 @@ class CapoEventServiceTest {
 
         assertNotNull(actual);
         assertNotNull(actual.id());
+        assertNotNull(actual.createdAt());
         assertNotEquals(0, actual.id().length());
         assertEquals(regEventDto.userId(), actual.creatorId());
         assertEquals(regEventDto.eventTitle(), actual.eventTitle());
@@ -305,6 +307,7 @@ class CapoEventServiceTest {
         CapoEvent actual = capoEventService.updateCapoEvent("1", "1", regDto, EditScope.ONLY_THIS);
 
         assertNotNull(actual);
+        assertNotNull(actual.createdAt());
         assertNotEquals(fakeEvent1, actual);
         assertEquals(expected.creatorId(), actual.creatorId());
         assertEquals(expected.id(), actual.id());

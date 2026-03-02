@@ -20,6 +20,9 @@ const defaultFilters: CapoEventFilterDto = {
     startsAfter: undefined,
     startsBefore: undefined,
     upcomingOnly: false,
+    upcomingDays: 90,
+    recentOnly: false,
+    limit: 20
 };
 
 function App() {
@@ -42,14 +45,6 @@ function App() {
     }
 
     async function fetchEvents() {
-
-        //await axios.get<CapoEventType[]>("/api/capoevent")
-        //    .then((response) => {
-        //        setCapoEvents(response.data);
-        //        console.log("fetched events: ");
-        //        console.log(response.data);
-        //    })
-        //    .catch((error) => error + ": could not fetch capoEvents");
 
         fetchFilteredCapoEvents(filters,setCapoEvents)
             .then()
@@ -74,7 +69,7 @@ function App() {
         loadUser();
         fetchEvents()
             .then();
-        fetchCountries(setCountries).then();
+        //fetchCountries(setCountries).then();
 
     }, []);
 
@@ -93,7 +88,6 @@ function App() {
 
     }, [capoEvents]);
 
-
   return (
       <>
           <TopBar user={user} filters={filters} setFilters={setFilters} countries={countries} />
@@ -101,8 +95,6 @@ function App() {
           <div className="app_content">
           <Routes>
               <Route path={"/"} element={<PreviewPage user={user} events={capoEvents} fetchEvents={fetchEvents} bIsLoginArea={false} bookmarks={bookmarks}/>}/>
-              {/*} <Route path={"/capoevent/:id"} element={<CapoEventDetailsCard user={user} fetchEvents={fetchEvents} />}/> */}
-
               <Route element={<ProtectedRoute user={user}/> }>
                   <Route path={"/loggedin"} element={<PreviewPage user={user} events={capoEvents} fetchEvents={fetchEvents} bIsLoginArea={true} bookmarks={bookmarks} />}/>
                   <Route path={"/add"} element={<CreateCapoEventPage user={user} fetchEvents={fetchEvents} onClosePath={"/loggedin"} countries={countries} setCountries={setCountries}/>}/>

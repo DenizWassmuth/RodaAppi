@@ -3,7 +3,11 @@ import "../styles/FilterBar.css"
 import * as React from "react";
 import type {CityData, CountryData, StateData} from "../types/GeoData.ts";
 import {useEffect, useMemo, useState} from "react";
-import {dateToStartOfDayLocalDateTime, nowAsDate} from "../utility/Helpers.ts";
+import {
+    addOneDayToDateInput,
+    dateToStartOfDayLocalDateTime,
+    nowAsDate
+} from "../utility/Helpers.ts";
 import {fetchCities, fetchStates} from "../utility/AxiosUtilities.ts";
 
 type FilterBarProps = {
@@ -26,18 +30,15 @@ export default function FilterBar({ filters, setFilters, countries }: Readonly<F
         setFilters((prev) => {
             const next: CapoEventFilterDto = { ...prev, [key]: value };
 
-            // Upcoming window: if upcomingDays is set, user shouldn't also set date bounds manually (simple rule)
             if (key === "upcomingDays" && value) {
                 next.startsAfter = undefined;
                 next.startsBefore = undefined;
             }
 
-            // If user manually changes date bounds, clear upcomingDays (so there is only one "date mode")
             if ((key === "startsAfter" || key === "startsBefore") && value) {
                 next.upcomingDays = undefined;
             }
 
-            // Country changed: reset dependent filters + local state
             if (key === "country") {
                 const countryName = String(value ?? "");
                 const countryIso = countries?.find((c) => c.name === countryName)?.isoCode ?? "";
@@ -52,7 +53,6 @@ export default function FilterBar({ filters, setFilters, countries }: Readonly<F
                 next.city = undefined;
             }
 
-            // State changed: reset city + local state
             if (key === "state") {
                 const stateName = String(value ?? "");
                 const stateIso = states?.find((s) => s.name === stateName)?.isoCode ?? "";
@@ -73,17 +73,20 @@ export default function FilterBar({ filters, setFilters, countries }: Readonly<F
         setStates([]);
         setCities([]);
 
-        setFilters({
+        const defaultFilters: CapoEventFilterDto = {
             country: undefined,
             state: undefined,
             city: undefined,
             eventType: undefined,
             startsAfter: undefined,
             startsBefore: undefined,
-            upcomingDays: undefined,
+            upcomingOnly: false,
+            upcomingDays: 90,
             recentOnly: false,
-            limit: 20,
-        });
+            limit: 20
+        };
+
+        setFilters(defaultFilters);
     }
 
     useEffect(() => {
@@ -100,66 +103,50 @@ export default function FilterBar({ filters, setFilters, countries }: Readonly<F
         <div className="filterbar">
             <div className="filterbar__row">
                 <label className="filterbar__label">
-                    <span>Country</span>
                     <select
                         className="filterbar__input"
                         value={filters.country ?? ""}
                         onChange={(e) => update("country", e.target.value || undefined)}
                     >
-                        <option value="" disabled>
-                            select a country
-                        </option>
-
+                        <option value="" disabled={true} hidden={filters.country !== null}> select a country </option>
+                        <option value="" disabled={filters.country === null} hidden={filters.country === null || filters.country === undefined}>clear field </option>
                         {countries.map((c) => (
-                            <option key={c.isoCode} value={c.name}>
-                                {c.name}
-                            </option>
+                            <option key={c.isoCode} value={c.name}> {c.name} </option>
                         ))}
                     </select>
                 </label>
 
                 <label className="filterbar__label">
-                    <span>State</span>
                     <select
                         className="filterbar__input"
                         value={filters.state ?? ""}
                         disabled={!selectedCountryIso}
                         onChange={(e) => update("state", e.target.value || undefined)}
                     >
-                        <option value="" disabled>
-                            select a state
-                        </option>
-
+                        <option value="" disabled={true} hidden={filters.state !== null}> select a state </option>
+                        <option value="" disabled={filters.state === null} hidden={filters.state === null || filters.state === undefined}>clear field </option>
                         {states.map((s) => (
-                            <option key={s.isoCode} value={s.name}>
-                                {s.name}
-                            </option>
+                            <option key={s.isoCode} value={s.name}> {s.name} </option>
                         ))}
                     </select>
                 </label>
 
                 <label className="filterbar__label">
-                    <span>City</span>
                     <select
                         className="filterbar__input"
                         value={filters.city ?? ""}
                         disabled={!selectedStateIso}
                         onChange={(e) => update("city", e.target.value || undefined)}
                     >
-                        <option value="" disabled>
-                            select a city
-                        </option>
-
+                        <option value="" disabled={true} hidden={filters.city !== null}> select a city </option>
+                        <option value="" disabled={filters.city === null} hidden={filters.city === null || filters.city === undefined}>clear field </option>
                         {cities.map((c) => (
-                            <option key={c.name} value={c.name}>
-                                {c.name}
-                            </option>
+                            <option key={c.name} value={c.name}> {c.name} </option>
                         ))}
                     </select>
                 </label>
 
                 <label className="filterbar__label">
-                    <span>Type</span>
                     <select
                         className="filterbar__input"
                         value={filters.eventType ?? ""}
@@ -167,7 +154,7 @@ export default function FilterBar({ filters, setFilters, countries }: Readonly<F
                             update("eventType", (e.target.value || undefined) as CapoEventEnumType | undefined)
                         }
                     >
-                        <option value="">Any</option>
+                        <option value="">any type</option>
                         <option value="RODA">RODA</option>
                         <option value="WORKSHOP">WORKSHOP</option>
                     </select>
@@ -176,7 +163,21 @@ export default function FilterBar({ filters, setFilters, countries }: Readonly<F
 
             <div className="filterbar__row">
                 <label className="filterbar__label">
-                    <span>Starts after</span>
+                    <select
+                        className="filterbar__input"
+                        value={filters.upcomingDays ?? ""}
+                        onChange={(e) => update("upcomingDays", e.target.value ? Number(e.target.value) : undefined)}
+                    >
+                        <option value="">pick date</option>
+                        <option value="7">Next 7 days</option>
+                        <option value="30">Next 30 days</option>
+                        <option value="90">Next 90 days</option>
+                        <option value="180">Next 180 days</option>
+                        <option value="365">Next 365 days</option>
+                    </select>
+                </label>
+
+                <label className="filterbar__label">
                     <input
                         className="filterbar__input"
                         type="date"
@@ -190,11 +191,10 @@ export default function FilterBar({ filters, setFilters, countries }: Readonly<F
                 </label>
 
                 <label className="filterbar__label">
-                    <span>Starts before</span>
                     <input
                         className="filterbar__input"
                         type="date"
-                        min={minStart}
+                        min={filters.startsAfter ? addOneDayToDateInput(filters.startsAfter) : minStart}
                         value={filters.startsBefore ? filters.startsBefore.slice(0, 10) : ""}
                         disabled={Boolean(filters.upcomingDays)}
                         onChange={(e) =>
@@ -203,29 +203,16 @@ export default function FilterBar({ filters, setFilters, countries }: Readonly<F
                     />
                 </label>
 
-                <label className="filterbar__label">
-                    <span>Upcoming</span>
-                    <select
-                        className="filterbar__input"
-                        value={filters.upcomingDays ?? ""}
-                        onChange={(e) => update("upcomingDays", e.target.value ? Number(e.target.value) : undefined)}
-                    >
-                        <option value="">Any</option>
-                        <option value="7">Next 7 days</option>
-                    </select>
-                </label>
-
                 <label className="filterbar__checkbox">
                     <input
                         type="checkbox"
                         checked={Boolean(filters.recentOnly)}
                         onChange={(e) => update("recentOnly", e.target.checked)}
                     />
-                    <span>Recently added</span>
+                    <span>recently added</span>
                 </label>
 
                 <label className="filterbar__label">
-                    <span>Show</span>
                     <select
                         className="filterbar__input"
                         value={filters.limit ?? 20}

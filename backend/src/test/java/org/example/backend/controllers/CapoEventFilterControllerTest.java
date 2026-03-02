@@ -44,7 +44,8 @@ class CapoEventFilterControllerTest {
             LocalDateTime.of(2026, 3, 10, 19, 0),
             LocalDateTime.of(2026, 3, 10, 21, 0),
             CapoEventEnumType.RODA,
-            RepetitionRhythmEnumType.ONCE
+            RepetitionRhythmEnumType.ONCE,
+            LocalDateTime.of(2026,1,1,0,0,0)
     );
 
     private final CapoEvent e2 = new CapoEvent(
@@ -60,7 +61,9 @@ class CapoEventFilterControllerTest {
             LocalDateTime.of(2026, 2, 5, 18, 0),
             LocalDateTime.of(2026, 2, 5, 20, 0),
             CapoEventEnumType.WORKSHOP,
-            RepetitionRhythmEnumType.ONCE
+            RepetitionRhythmEnumType.ONCE,
+            LocalDateTime.of(2026,1,1,0,0,0)
+
     );
 
     private final CapoEvent e3 = new CapoEvent(
@@ -76,7 +79,8 @@ class CapoEventFilterControllerTest {
             LocalDateTime.of(2026, 4, 1, 19, 0),
             LocalDateTime.of(2026, 4, 1, 21, 0),
             CapoEventEnumType.RODA,
-            RepetitionRhythmEnumType.ONCE
+            RepetitionRhythmEnumType.ONCE,
+            LocalDateTime.of(2026,1,1,0,0,0)
     );
 
     @BeforeEach

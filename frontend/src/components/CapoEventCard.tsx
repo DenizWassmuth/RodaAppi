@@ -3,6 +3,7 @@ import "../styles/CapoEventCard.css"
 import "../index.css"
 import type {AppUserType} from "../types/AppUser.ts";
 import {bookmarkEvents} from "../utility/AxiosUtilities.ts";
+import {formatLocalDateTimeToDMonY} from "../utility/Helpers.ts";
 
 type EventCardProps = {
     user: AppUserType | undefined | null
@@ -62,6 +63,7 @@ export default function CapoEventCard({ user, capoEvent, bookmarks, onHandleEdit
     if (localDateTime !== null && localDateTime !== undefined) {
         [date, timeWithRest] = localDateTime.split("T");
     }
+    date = formatLocalDateTimeToDMonY(localDateTime);
     const time = timeWithRest.slice(0, 5);
 
     return (
@@ -73,11 +75,11 @@ export default function CapoEventCard({ user, capoEvent, bookmarks, onHandleEdit
                     }
                 }
             }>
+
                 <div style={{backgroundImage: `url(${capoEvent?.thumbnail})`}}>
                     <div className="event_info">
-                        <h3>{capoEvent?.eventTitle}</h3>
+                        <h4>{capoEvent?.eventTitle}</h4>
                         <p>{capoEvent?.eventType} · {capoEvent?.locationData.city} · {date} · {time} </p>
-                        <p>{capoEvent?.creatorName}</p>
                         <p>
                             <button type={"button"} hidden={!bIsCreatedByUser} disabled={!bIsCreatedByUser}
                                     onClick={(e) => {

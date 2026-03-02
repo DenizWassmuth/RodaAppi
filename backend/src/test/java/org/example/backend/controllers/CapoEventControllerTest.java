@@ -51,7 +51,8 @@ class CapoEventControllerTest {
             LocalDateTime.of(2026,2,15, 19, 0, 0, 0),
             LocalDateTime.of(2026,2,15, 23, 0, 0, 0),
             CapoEventEnumType.RODA,
-            RepetitionRhythmEnumType.ONCE
+            RepetitionRhythmEnumType.ONCE,
+            LocalDateTime.of(2026,1,1,0,0,0)
     );
 
     CapoEvent fakeEvent2 = new CapoEvent(
@@ -67,7 +68,8 @@ class CapoEventControllerTest {
             LocalDateTime.of(2026,2,15, 19, 0, 0, 0),
             LocalDateTime.of(2026,2,15, 23, 0, 0, 0),
             CapoEventEnumType.RODA,
-            RepetitionRhythmEnumType.ONCE
+            RepetitionRhythmEnumType.ONCE,
+            LocalDateTime.of(2026,1,1,0,0,0)
     );
 
     CapoEventRegDto fakeRegDto = new CapoEventRegDto(

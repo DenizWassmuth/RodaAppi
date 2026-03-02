@@ -2,6 +2,7 @@
 import type {CapoEventType, PartOfSeriesDto} from "../../types/CapoEvent.ts";
 import "../../styles/CapoEventPage.css"
 import type {AppUserType} from "../../types/AppUser.ts";
+import {formatLocalDateTimeToDMonY, formatLocalDateTimeToHHmm} from "../../utility/Helpers.ts";
 
 type EventPageProps = {
     bOpen: boolean;
@@ -35,6 +36,9 @@ export default function CapoEventDetailsCard({bOpen ,user, capoEvent, onEdit, on
     let end = capoEvent?.eventEnd.replace("T", " ");
     end = end?.slice(0, 16);
 
+    const startDate = formatLocalDateTimeToDMonY(capoEvent?.eventStart);
+    const startTime = formatLocalDateTimeToHHmm(capoEvent?.eventStart);
+
 
     if (!capoEvent) return <p style={{ color: "white" }}>Loading...</p>;
 
@@ -46,6 +50,9 @@ export default function CapoEventDetailsCard({bOpen ,user, capoEvent, onEdit, on
                     <h1 className="capo-detail__title">{capoEvent?.eventTitle}</h1>
                     <p className="capo-detail__subtitle">
                         {capoEvent?.eventType} · {capoEvent?.locationData.city} · {capoEvent?.locationData.country }
+                    </p>
+                    <p className="capo-detail__subtitle">
+                        {startDate} · {startTime} {"h"}
                     </p>
                 </div>
             </header>
@@ -69,24 +76,12 @@ export default function CapoEventDetailsCard({bOpen ,user, capoEvent, onEdit, on
 
                     <div className="capo-detail__row">
                         <span className="capo-detail__value">
-                            {capoEvent?.locationData.street} {capoEvent?.locationData.streetNumber}
-                        </span>
-                        <p></p>
-                        <span className="capo-detail__value">
-                            {capoEvent?.locationData.city} - {capoEvent?.locationData.country}
+                            {capoEvent?.locationData.street} {capoEvent?.locationData.streetNumber} {capoEvent?.locationData.specifics && (capoEvent.locationData.specifics
+                        )}
                         </span>
                     </div>
 
-                    <div className="capo-detail__row">
 
-                    </div>
-
-                    {capoEvent?.locationData.specifics && (
-                        <div className="capo-detail__row">
-                            <span className="capo-detail__label">Specifics</span>
-                            <span className="capo-detail__value">{capoEvent.locationData.specifics}</span>
-                        </div>
-                    )}
                 </fieldset>
 
                 <fieldset className="create-event__fieldset">

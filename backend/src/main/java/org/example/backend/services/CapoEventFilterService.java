@@ -26,7 +26,6 @@ public class CapoEventFilterService {
 
         Query query = new Query();
 
-        // Location
         if (hasText(dto.country())) {
             query.addCriteria(Criteria.where("locationData.country").is(dto.country()));
         }
@@ -37,39 +36,32 @@ public class CapoEventFilterService {
             query.addCriteria(Criteria.where("locationData.city").is(dto.city()));
         }
 
-        // Type
         if (dto.eventType() != null) {
             query.addCriteria(Criteria.where("eventType").is(dto.eventType()));
         }
 
-        // Date filters
         LocalDateTime startsAfter = dto.startsAfter();
         LocalDateTime startsBefore = dto.startsBefore();
 
-        // Upcoming window (now .. now + upcomingDays)
         Integer upcomingDays = dto.upcomingDays();
         if (upcomingDays != null && upcomingDays > 0) {
 
             LocalDateTime now = LocalDateTime.now();
             LocalDateTime until = now.plusDays(upcomingDays);
 
-            // effective startsAfter = max(startsAfter, now)
             if (startsAfter == null || now.isAfter(startsAfter)) {
                 startsAfter = now;
             }
 
-            // effective startsBefore = min(startsBefore, until)
             if (startsBefore == null || until.isBefore(startsBefore)) {
                 startsBefore = until;
             }
         }
 
-        // Validate final range
         if (startsAfter != null && startsBefore != null && startsBefore.isBefore(startsAfter)) {
             throw new IllegalArgumentException("startsBefore cannot be before startsAfter");
         }
 
-        // Build ONE criteria for eventStart
         boolean hasStartBound = false;
         Criteria startCriteria = Criteria.where("eventStart");
 
@@ -87,14 +79,12 @@ public class CapoEventFilterService {
             query.addCriteria(startCriteria);
         }
 
-        // Sorting
         if (Boolean.TRUE.equals(dto.recentOnly())) {
             query.with(Sort.by(Sort.Direction.DESC, "createdAt"));
         } else {
             query.with(Sort.by(Sort.Direction.ASC, "eventStart"));
         }
 
-        // Limit (allow only 10/20/30, default 20)
         int limit = dto.limit() == null ? 20 : dto.limit();
         if (limit != 10 && limit != 20 && limit != 30) {
             limit = 20;
@@ -102,6 +92,5 @@ public class CapoEventFilterService {
         query.limit(limit);
 
         return mongoTemplate.find(query, CapoEvent.class);
-
     }
 }
