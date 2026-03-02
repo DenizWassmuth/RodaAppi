@@ -13,8 +13,7 @@ type FilterBarProps = {
 };
 
 export default function FilterBar({ filters, setFilters, countries }: Readonly<FilterBarProps>) {
-
-    const minStart = useMemo(() => nowAsDate(), []); // Compute once on mount.
+    const minStart = useMemo(() => nowAsDate(), []);
 
     const [selectedCountryIso, setSelectedCountryIso] = useState<string | null>(null);
 
@@ -23,51 +22,57 @@ export default function FilterBar({ filters, setFilters, countries }: Readonly<F
 
     const [cities, setCities] = useState<CityData[]>([]);
 
-
     function update<K extends keyof CapoEventFilterDto>(key: K, value: CapoEventFilterDto[K]) {
-        setFilters((prev) => ({ ...prev, [key]: value }));
+        setFilters((prev) => {
+            const next: CapoEventFilterDto = { ...prev, [key]: value };
 
-        if (key === "upcomingOnly" && value === true) {
-            setFilters((prev) => ({ ...prev, ["startsAfter"]: undefined }));
-            setFilters((prev) => ({ ...prev, ["startsBefore"]: undefined }));
-        }
+            // Upcoming window: if upcomingDays is set, user shouldn't also set date bounds manually (simple rule)
+            if (key === "upcomingDays" && value) {
+                next.startsAfter = undefined;
+                next.startsBefore = undefined;
+            }
 
-        if (key === "country") {
-            const countryName = String(value);
-            console.log("country:", value);
+            // If user manually changes date bounds, clear upcomingDays (so there is only one "date mode")
+            if ((key === "startsAfter" || key === "startsBefore") && value) {
+                next.upcomingDays = undefined;
+            }
 
-            const countryIso = countries?.find((c) => c.name === countryName)?.isoCode ?? "";
-            setSelectedCountryIso(countryIso);
-            console.log("country code:", countryIso);
+            // Country changed: reset dependent filters + local state
+            if (key === "country") {
+                const countryName = String(value ?? "");
+                const countryIso = countries?.find((c) => c.name === countryName)?.isoCode ?? "";
 
-            setSelectedStateIso(null);
-            setStates([]);
-            setFilters((prev) => ({...prev, ["state"]: undefined }));
+                setSelectedCountryIso(countryIso);
+                setSelectedStateIso(null);
 
-            setCities([])
-            setFilters((prev) => ({...prev, ["city"]: undefined}));
+                setStates([]);
+                setCities([]);
 
-        }
+                next.state = undefined;
+                next.city = undefined;
+            }
 
-        if(key === "state") {
-            const stateName = String(value);
-            console.log("state:", stateName);
+            // State changed: reset city + local state
+            if (key === "state") {
+                const stateName = String(value ?? "");
+                const stateIso = states?.find((s) => s.name === stateName)?.isoCode ?? "";
 
-            const stateIso = states?.find((c) => c.name === stateName)?.isoCode ?? "";
-            setSelectedStateIso(stateIso);
-            console.log("state code:", stateIso);
+                setSelectedStateIso(stateIso);
+                setCities([]);
 
-            setCities([])
-            setFilters((prev) => ({...prev, ["city"]: ""}));
-        }
+                next.city = undefined;
+            }
 
-        if (key === "city") {
-            const cityName = String(value);
-            console.log("city: ", cityName);
-        }
+            return next;
+        });
     }
 
     function reset() {
+        setSelectedCountryIso(null);
+        setSelectedStateIso(null);
+        setStates([]);
+        setCities([]);
+
         setFilters({
             country: undefined,
             state: undefined,
@@ -75,31 +80,21 @@ export default function FilterBar({ filters, setFilters, countries }: Readonly<F
             eventType: undefined,
             startsAfter: undefined,
             startsBefore: undefined,
-            upcomingOnly: false,
+            upcomingDays: undefined,
+            recentOnly: false,
+            limit: 20,
         });
     }
 
     useEffect(() => {
-        if (!selectedCountryIso) {
-            return;
-        }
-
-        console.log("fetching states");
-
-        fetchStates(setStates, selectedCountryIso)
-            .then();
-
-    },[selectedCountryIso]);
+        if (!selectedCountryIso) return;
+        fetchStates(setStates, selectedCountryIso).then();
+    }, [selectedCountryIso]);
 
     useEffect(() => {
-        if (!selectedCountryIso || !selectedStateIso  ) {
-            return;
-        }
-
-        fetchCities(setCities, selectedCountryIso, selectedStateIso)
-            .then();
-
-    },[selectedCountryIso, selectedStateIso]);
+        if (!selectedCountryIso || !selectedStateIso) return;
+        fetchCities(setCities, selectedCountryIso, selectedStateIso).then();
+    }, [selectedCountryIso, selectedStateIso]);
 
     return (
         <div className="filterbar">
@@ -115,11 +110,11 @@ export default function FilterBar({ filters, setFilters, countries }: Readonly<F
                             select a country
                         </option>
 
-                        {countries &&
-                            countries.map((c) => (
-                                <option key={c.isoCode} value={c.name} >
-                                    {c.name}
-                                </option>))}
+                        {countries.map((c) => (
+                            <option key={c.isoCode} value={c.name}>
+                                {c.name}
+                            </option>
+                        ))}
                     </select>
                 </label>
 
@@ -135,11 +130,11 @@ export default function FilterBar({ filters, setFilters, countries }: Readonly<F
                             select a state
                         </option>
 
-                        {countries &&
-                            states.map((s) => (
-                                <option key={s.isoCode} value={s.name} >
-                                    {s.name}
-                                </option>))}
+                        {states.map((s) => (
+                            <option key={s.isoCode} value={s.name}>
+                                {s.name}
+                            </option>
+                        ))}
                     </select>
                 </label>
 
@@ -155,37 +150,42 @@ export default function FilterBar({ filters, setFilters, countries }: Readonly<F
                             select a city
                         </option>
 
-                        {countries &&
-                            cities.map((c) => (
-                                <option key={c.name} value={c.name} >
-                                    {c.name}
-                                </option>))}
+                        {cities.map((c) => (
+                            <option key={c.name} value={c.name}>
+                                {c.name}
+                            </option>
+                        ))}
                     </select>
                 </label>
-            </div>
 
-            <div className="filterbar__row">
                 <label className="filterbar__label">
                     <span>Type</span>
                     <select
                         className="filterbar__input"
                         value={filters.eventType ?? ""}
-                        onChange={(e) => update("eventType", (e.target.value || undefined) as CapoEventEnumType | undefined)}
+                        onChange={(e) =>
+                            update("eventType", (e.target.value || undefined) as CapoEventEnumType | undefined)
+                        }
                     >
                         <option value="">Any</option>
                         <option value="RODA">RODA</option>
                         <option value="WORKSHOP">WORKSHOP</option>
                     </select>
                 </label>
+            </div>
 
+            <div className="filterbar__row">
                 <label className="filterbar__label">
                     <span>Starts after</span>
                     <input
                         className="filterbar__input"
                         type="date"
                         min={minStart}
-                        value={filters.startsAfter ?? ""}
-                        onChange={(e) => update("startsAfter", dateToStartOfDayLocalDateTime(e.target.value) || undefined)}
+                        value={filters.startsAfter ? filters.startsAfter.slice(0, 10) : ""}
+                        disabled={Boolean(filters.upcomingDays)}
+                        onChange={(e) =>
+                            update("startsAfter", e.target.value ? dateToStartOfDayLocalDateTime(e.target.value) : undefined)
+                        }
                     />
                 </label>
 
@@ -195,18 +195,46 @@ export default function FilterBar({ filters, setFilters, countries }: Readonly<F
                         className="filterbar__input"
                         type="date"
                         min={minStart}
-                        value={filters.startsBefore ?? ""}
-                        onChange={(e) => update("startsBefore", dateToStartOfDayLocalDateTime(e.target.value)  || undefined)}
+                        value={filters.startsBefore ? filters.startsBefore.slice(0, 10) : ""}
+                        disabled={Boolean(filters.upcomingDays)}
+                        onChange={(e) =>
+                            update("startsBefore", e.target.value ? dateToStartOfDayLocalDateTime(e.target.value) : undefined)
+                        }
                     />
+                </label>
+
+                <label className="filterbar__label">
+                    <span>Upcoming</span>
+                    <select
+                        className="filterbar__input"
+                        value={filters.upcomingDays ?? ""}
+                        onChange={(e) => update("upcomingDays", e.target.value ? Number(e.target.value) : undefined)}
+                    >
+                        <option value="">Any</option>
+                        <option value="7">Next 7 days</option>
+                    </select>
                 </label>
 
                 <label className="filterbar__checkbox">
                     <input
                         type="checkbox"
-                        checked={Boolean(filters.upcomingOnly)}
-                        onChange={(e) => update("upcomingOnly", e.target.checked)}
+                        checked={Boolean(filters.recentOnly)}
+                        onChange={(e) => update("recentOnly", e.target.checked)}
                     />
-                    <span>Upcoming only</span>
+                    <span>Recently added</span>
+                </label>
+
+                <label className="filterbar__label">
+                    <span>Show</span>
+                    <select
+                        className="filterbar__input"
+                        value={filters.limit ?? 20}
+                        onChange={(e) => update("limit", Number(e.target.value) as 10 | 20 | 30)}
+                    >
+                        <option value="10">10</option>
+                        <option value="20">20</option>
+                        <option value="30">30</option>
+                    </select>
                 </label>
 
                 <button type="button" className="filterbar__btn" onClick={reset}>
