@@ -1,0 +1,49 @@
+.filterbar {
+    padding: 10px 16px;
+    border-bottom: 1px solid #333;
+    background: #0f0f0f;
+    color: #ddd;
+}
+
+.filterbar__row {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    align-items: end;
+    margin-bottom: 10px;
+}
+
+.filterbar__label {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    min-width: 160px;
+}
+
+.filterbar__input {
+    padding: 10px;
+    border-radius: 6px;
+    border: 1px solid #555;
+    background: #111;
+    color: white;
+}
+
+.filterbar__checkbox {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    padding: 6px 0;
+}
+
+.filterbar__btn {
+    padding: 10px 16px;
+    border-radius: 8px;
+    border: 1px solid #777;
+    background: #222;
+    color: white;
+    cursor: pointer;
+}
+
+.filterbar__btn:hover {
+    background: #333;
+}

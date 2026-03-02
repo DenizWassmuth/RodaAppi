@@ -1,12 +1,14 @@
 package org.example.backend.services;
 import org.example.backend.dto.CapoEventFilterDto;
 import org.example.backend.models.CapoEvent;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 public class CapoEventFilterService {
@@ -20,58 +22,86 @@ public class CapoEventFilterService {
         return s != null && !s.isBlank();
     }
 
-    public java.util.List<CapoEvent> filter(CapoEventFilterDto dto) {
+    public List<CapoEvent> filter(CapoEventFilterDto dto) {
 
-        Query query = new Query(); // Start with an empty query (matches everything).
+        Query query = new Query();
 
+        // Location
         if (hasText(dto.country())) {
             query.addCriteria(Criteria.where("locationData.country").is(dto.country()));
         }
-
         if (hasText(dto.state())) {
             query.addCriteria(Criteria.where("locationData.state").is(dto.state()));
         }
-
         if (hasText(dto.city())) {
             query.addCriteria(Criteria.where("locationData.city").is(dto.city()));
         }
 
+        // Type
         if (dto.eventType() != null) {
             query.addCriteria(Criteria.where("eventType").is(dto.eventType()));
         }
 
+        // Date filters
         LocalDateTime startsAfter = dto.startsAfter();
         LocalDateTime startsBefore = dto.startsBefore();
 
-        if (dto.upcomingOnly()) {
+        // Upcoming window (now .. now + upcomingDays)
+        Integer upcomingDays = dto.upcomingDays();
+        if (upcomingDays != null && upcomingDays > 0) {
+
             LocalDateTime now = LocalDateTime.now();
+            LocalDateTime until = now.plusDays(upcomingDays);
+
+            // effective startsAfter = max(startsAfter, now)
             if (startsAfter == null || now.isAfter(startsAfter)) {
                 startsAfter = now;
             }
+
+            // effective startsBefore = min(startsBefore, until)
+            if (startsBefore == null || until.isBefore(startsBefore)) {
+                startsBefore = until;
+            }
         }
 
+        // Validate final range
         if (startsAfter != null && startsBefore != null && startsBefore.isBefore(startsAfter)) {
             throw new IllegalArgumentException("startsBefore cannot be before startsAfter");
         }
 
-        Criteria startCriteria = null;
+        // Build ONE criteria for eventStart
+        boolean hasStartBound = false;
+        Criteria startCriteria = Criteria.where("eventStart");
 
         if (startsAfter != null) {
-            startCriteria = Criteria.where("eventStart").gte(startsAfter);
+            startCriteria = startCriteria.gte(startsAfter);
+            hasStartBound = true;
         }
 
         if (startsBefore != null) {
-            if (startCriteria == null) {
-                startCriteria = Criteria.where("eventStart").lte(startsBefore);
-            } else {
-                startCriteria = startCriteria.lte(startsBefore);
-            }
+            startCriteria = startCriteria.lte(startsBefore);
+            hasStartBound = true;
         }
 
-        if (startCriteria != null) {
+        if (hasStartBound) {
             query.addCriteria(startCriteria);
         }
 
-        return mongoTemplate.find(query, CapoEvent.class); // Run query against the "capoevent" collection.
+        // Sorting
+        if (Boolean.TRUE.equals(dto.recentOnly())) {
+            query.with(Sort.by(Sort.Direction.DESC, "createdAt"));
+        } else {
+            query.with(Sort.by(Sort.Direction.ASC, "eventStart"));
+        }
+
+        // Limit (allow only 10/20/30, default 20)
+        int limit = dto.limit() == null ? 20 : dto.limit();
+        if (limit != 10 && limit != 20 && limit != 30) {
+            limit = 20;
+        }
+        query.limit(limit);
+
+        return mongoTemplate.find(query, CapoEvent.class);
+
     }
 }

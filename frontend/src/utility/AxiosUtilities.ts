@@ -1,5 +1,5 @@
-import axios from "axios";
-import type {CapoEventType, EditScope, PartOfSeriesDto} from "../types/CapoEvent.ts";
+import axios, {type AxiosResponse} from "axios";
+import type {CapoEventFilterDto, CapoEventType, EditScope, PartOfSeriesDto} from "../types/CapoEvent.ts";
 import type {CityData, CountryData, StateData} from "../types/GeoData.ts";
 
 export async function fetchAllCapoEvents() {
@@ -93,4 +93,15 @@ export async function fetchCities(setCities:(cites: CityData[]) => void, country
         .catch(err=>
             console.log(err)
         );
+}
+
+export async function fetchFilteredCapoEvents(filters: CapoEventFilterDto, setEvents: (capoEvents:CapoEventType[]) => void): Promise<void> {
+
+    console.log("fetching filtered events:");
+
+    await axios.post<CapoEventType[]>(`/api/capoevent/filters/search`, filters)
+        .then((response) => {
+            console.log(response.data);
+            setEvents(response.data);})
+        .catch((error) => error + ": could not fetch capoEvents");
 }

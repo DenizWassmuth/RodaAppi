@@ -112,7 +112,8 @@ public class CapoEventService {
                     startDate,
                     endDate,
                     regDto.eventType(),
-                    regDto.repRhythm()
+                    regDto.repRhythm(),
+                    LocalDateTime.now()
             ));
 
             if(regDto.repRhythm() == RepetitionRhythmEnumType.ONCE){

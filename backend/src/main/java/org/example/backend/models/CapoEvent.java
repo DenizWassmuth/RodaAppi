@@ -25,6 +25,7 @@ public record CapoEvent(
         LocalDateTime eventStart,
         LocalDateTime eventEnd,
         CapoEventEnumType eventType,
-        RepetitionRhythmEnumType repRhythm
+        RepetitionRhythmEnumType repRhythm,
+        LocalDateTime createdAt
         ) {
 }

@@ -11,6 +11,7 @@ import type {
 import EditScopeModal from "./modals/EditScopeModal.tsx";
 import type {CityData, CountryData, StateData} from "../types/GeoData.ts";
 import {fetchCities, fetchStates} from "../utility/AxiosUtilities.ts";
+import {nowAsDateTimeLocal} from "../utility/Helpers.ts";
 
 
 type EventFormProps = {
@@ -21,18 +22,6 @@ type EventFormProps = {
     partOfSeries: PartOfSeriesDto
     countries: CountryData[]
 };
-
-function nowAsDateTimeLocal(): string { // Helper to format current time for datetime-local input.
-    const d = new Date(); // Current date/time in browser timezone.
-    d.setSeconds(0, 0); // Remove seconds/ms because datetime-local usually uses minutes.
-    const pad = (n: number) => String(n).padStart(2, "0"); // Zero-pad helper.
-    const yyyy = d.getFullYear(); // Year.
-    const mm = pad(d.getMonth() + 1); // Month (0-based).
-    const dd = pad(d.getDate()); // Day.
-    const hh = pad(d.getHours()); // Hour.
-    const min = pad(d.getMinutes()); // Minute.
-    return `${yyyy}-${mm}-${dd}T${hh}:${min}`; // Format required by datetime-local.
-}
 
 export default function CapoEventForm({initialValue, submitText, submit, bEditMode, partOfSeries, countries}: Readonly<EventFormProps>) {
 

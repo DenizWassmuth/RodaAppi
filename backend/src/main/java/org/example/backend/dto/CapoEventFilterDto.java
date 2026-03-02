@@ -11,5 +11,8 @@ public record CapoEventFilterDto(
         CapoEventEnumType eventType,
         LocalDateTime startsAfter,
         LocalDateTime startsBefore,
-        boolean upcomingOnly) {
+        boolean upcomingOnly,
+        Integer upcomingDays,
+        Boolean recentOnly,
+        Integer limit) {
 }

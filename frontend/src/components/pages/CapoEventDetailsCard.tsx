@@ -30,8 +30,11 @@ export default function CapoEventDetailsCard({bOpen ,user, capoEvent, onEdit, on
         onEdit();
     }
 
-    const start = capoEvent?.eventStart.replace("T", " ");
-    const end = capoEvent?.eventEnd.replace("T", " ");
+    let start = capoEvent?.eventStart.replace("T", " ")
+    start = start?.slice(0, 16);
+    let end = capoEvent?.eventEnd.replace("T", " ");
+    end = end?.slice(0, 16);
+
 
     if (!capoEvent) return <p style={{ color: "white" }}>Loading...</p>;
 
@@ -66,15 +69,16 @@ export default function CapoEventDetailsCard({bOpen ,user, capoEvent, onEdit, on
 
                     <div className="capo-detail__row">
                         <span className="capo-detail__value">
+                            {capoEvent?.locationData.street} {capoEvent?.locationData.streetNumber}
+                        </span>
+                        <p></p>
+                        <span className="capo-detail__value">
                             {capoEvent?.locationData.city} - {capoEvent?.locationData.country}
                         </span>
                     </div>
 
                     <div className="capo-detail__row">
-                        <span className="capo-detail__label">Street</span>
-                        <span className="capo-detail__value">
-                            {capoEvent?.locationData.street} {capoEvent?.locationData.streetNumber}
-                        </span>
+
                     </div>
 
                     {capoEvent?.locationData.specifics && (
@@ -108,7 +112,9 @@ export default function CapoEventDetailsCard({bOpen ,user, capoEvent, onEdit, on
                                 className="create-event__submit capo-detail__btn"
                                 type="button"
                                 disabled={!eventIsCreatedByUser}
-                                onClick={handleDelete}
+                                onClick={(e) => {
+                                    e.preventDefault();
+                                    handleDelete()}}
                             >
                                 delete
                             </button>
@@ -116,8 +122,9 @@ export default function CapoEventDetailsCard({bOpen ,user, capoEvent, onEdit, on
                             <button
                                 className="create-event__submit capo-detail__btn"
                                 type="button"
-                                disabled={!eventIsCreatedByUser}
-                                onClick={handleEdit}
+                                onClick={(e) => {
+                                    e.preventDefault();
+                                    handleEdit()}}
                             >
                                 edit
                             </button>

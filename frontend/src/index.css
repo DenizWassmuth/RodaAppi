@@ -1,3 +1,7 @@
+.app_content {
+  padding-top: 140px; /* adjust once you see actual bar height */
+}
+
 body {
   background-color: black;
 }

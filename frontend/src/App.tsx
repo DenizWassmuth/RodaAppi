@@ -1,25 +1,37 @@
 import './index.css'
 
-import Navbar from "./components/NavBar.tsx";
 import {Route, Routes} from "react-router-dom";
 import {useEffect, useState} from "react";
 import ProtectedRoute from "./components/ProtectedRoute.tsx";
 import axios from "axios";
 import type {AppUserType} from "./types/AppUser.ts";
-import type {CapoEventType} from "./types/CapoEvent.ts";
+import type {CapoEventFilterDto, CapoEventType} from "./types/CapoEvent.ts";
 import PreviewPage from "./components/pages/PreviewPage.tsx";
 import CreateCapoEventPage from "./components/pages/CreateCapoEventPage.tsx";
 import type {CountryData} from "./types/GeoData.ts";
+import {fetchCountries, fetchFilteredCapoEvents} from "./utility/AxiosUtilities.ts";
+import TopBar from "./components/TopBar.tsx";
 
+const defaultFilters: CapoEventFilterDto = {
+    country: undefined,
+    state: undefined,
+    city: undefined,
+    eventType: undefined,
+    startsAfter: undefined,
+    startsBefore: undefined,
+    upcomingOnly: false,
+};
 
 function App() {
 
     const [user, setUser] = useState<AppUserType>(null);
 
+    const [filters, setFilters] = useState<CapoEventFilterDto>(defaultFilters);
     const [capoEvents, setCapoEvents] = useState<CapoEventType[]>([]);
     const [bookmarks, setBookmarks] = useState<string[] | null>(null);
 
     const [countries, setCountries] = useState<CountryData[]> ([]);
+
 
     const loadUser = () => {
         axios.get("/api/auth")
@@ -31,13 +43,16 @@ function App() {
 
     async function fetchEvents() {
 
-        await axios.get<CapoEventType[]>("/api/capoevent")
-            .then((response) => {
-                setCapoEvents(response.data);
-                console.log("fetched events: ");
-                console.log(response.data);
-            })
-            .catch((error) => error + ": could not fetch capoEvents");
+        //await axios.get<CapoEventType[]>("/api/capoevent")
+        //    .then((response) => {
+        //        setCapoEvents(response.data);
+        //        console.log("fetched events: ");
+        //        console.log(response.data);
+        //    })
+        //    .catch((error) => error + ": could not fetch capoEvents");
+
+        fetchFilteredCapoEvents(filters,setCapoEvents)
+            .then()
     }
 
     async function getUsersBookMarks() {
@@ -59,23 +74,31 @@ function App() {
         loadUser();
         fetchEvents()
             .then();
+        fetchCountries(setCountries).then();
 
     }, []);
+
+    useEffect(() => {
+        fetchEvents()
+            .then();
+
+    }, [filters]);
 
     useEffect(() => {
         if (!capoEvents || capoEvents.length <= 0) {
             return;
         }
 
-        getUsersBookMarks()
-            .then();
+        getUsersBookMarks().then();
 
     }, [capoEvents]);
 
 
   return (
       <>
-          <header><Navbar user={user}/></header>
+          <TopBar user={user} filters={filters} setFilters={setFilters} countries={countries} />
+
+          <div className="app_content">
           <Routes>
               <Route path={"/"} element={<PreviewPage user={user} events={capoEvents} fetchEvents={fetchEvents} bIsLoginArea={false} bookmarks={bookmarks}/>}/>
               {/*} <Route path={"/capoevent/:id"} element={<CapoEventDetailsCard user={user} fetchEvents={fetchEvents} />}/> */}
@@ -85,6 +108,7 @@ function App() {
                   <Route path={"/add"} element={<CreateCapoEventPage user={user} fetchEvents={fetchEvents} onClosePath={"/loggedin"} countries={countries} setCountries={setCountries}/>}/>
               </Route>
           </Routes>
+          </div>
       </>
   )
 }

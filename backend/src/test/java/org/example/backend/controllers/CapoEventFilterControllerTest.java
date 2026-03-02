@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDateTime;
@@ -89,6 +90,7 @@ class CapoEventFilterControllerTest {
     }
 
     @Test
+    @WithMockUser
     void search_shouldReturnAll_whenNoFiltersProvided() throws Exception {
         mockMvc.perform(post("/api/capoevent/filters/search")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -108,6 +110,7 @@ class CapoEventFilterControllerTest {
     }
 
     @Test
+    @WithMockUser
     void search_shouldFilterByCountryStateCity_andEventType() throws Exception {
         mockMvc.perform(post("/api/capoevent/filters/search")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -130,6 +133,7 @@ class CapoEventFilterControllerTest {
     }
 
     @Test
+    @WithMockUser
     void search_shouldFilterByStartsAfter_andStartsBefore() throws Exception {
         mockMvc.perform(post("/api/capoevent/filters/search")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -150,6 +154,7 @@ class CapoEventFilterControllerTest {
     }
 
     @Test
+    @WithMockUser
     void search_shouldReturnBadRequest_whenStartsBeforeIsBeforeStartsAfter() throws Exception {
         mockMvc.perform(post("/api/capoevent/filters/search")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -168,6 +173,7 @@ class CapoEventFilterControllerTest {
     }
 
     @Test
+    @WithMockUser
     void search_upcomingOnly_shouldNotOverrideStartsAfter_ifStartsAfterIsInFuture() throws Exception {
         mockMvc.perform(post("/api/capoevent/filters/search")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -184,5 +190,49 @@ class CapoEventFilterControllerTest {
                                 """))
                 .andExpect(status().isOk())
                 .andExpect(content().json("[]"));
+    }
+
+    @Test
+    @WithMockUser
+    void search_shouldFilterByEventTypeOnly() throws Exception {
+        mockMvc.perform(post("/api/capoevent/filters/search")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                            {
+                              "country": null,
+                              "state": null,
+                              "city": null,
+                              "eventType": "RODA",
+                              "startsAfter": null,
+                              "startsBefore": null,
+                              "upcomingOnly": false
+                            }
+                            """))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value(2))
+                .andExpect(jsonPath("$[0].eventType").value("RODA"))
+                .andExpect(jsonPath("$[1].eventType").value("RODA"));
+    }
+
+    @Test
+    @WithMockUser
+    void search_shouldFilterByCountryOnly() throws Exception {
+        mockMvc.perform(post("/api/capoevent/filters/search")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                            {
+                              "country": "Germany",
+                              "state": null,
+                              "city": null,
+                              "eventType": null,
+                              "startsAfter": null,
+                              "startsBefore": null,
+                              "upcomingOnly": false
+                            }
+                            """))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value(2))
+                .andExpect(jsonPath("$[0].locationData.country").value("Germany"))
+                .andExpect(jsonPath("$[1].locationData.country").value("Germany"));
     }
 }

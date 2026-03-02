@@ -50,3 +50,20 @@ export type PartOfSeriesDto = null | undefined | {
     hasBefore: boolean;
     hasAfter: boolean;
 }
+
+export type CapoEventFilterDto = {
+    country?: string | null;
+    state?: string | null;
+    city?: string | null;
+
+    eventType?: CapoEventEnumType | null;
+
+    startsAfter?: string | null;
+    startsBefore?: string | null;
+
+    upcomingOnly?: boolean | null;
+
+    upcomingDays?: number;
+    recentOnly?: boolean;
+    limit?: 10 | 20 | 30;
+};

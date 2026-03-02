@@ -32,6 +32,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/geodata/countries").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/geodata/states").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/geodata/cities").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/capoevent/filters/search").permitAll()
 
 //                        .requestMatchers(HttpMethod.GET, "/api/users").hasAuthority("ADMIN")
                         .anyRequest().permitAll()) // am Ende alles auf permitAll stellen, da es Hintergrundprozesse gibt die sonst blockiert werden
