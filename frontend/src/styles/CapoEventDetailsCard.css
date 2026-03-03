@@ -1,0 +1,230 @@
+/* details.css */
+
+/* =========================
+   Root layout
+   ========================= */
+.details {
+    color: white;
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 16px;
+
+    position: relative;     /* for floating actions */
+    padding-bottom: 84px;   /* reserve room for bottom-right buttons */
+}
+
+.details__grid {
+    display: grid;
+    gap: 12px;
+}
+
+/* =========================
+   Banner (top block)
+   ========================= */
+.details__banner {
+    position: relative;
+    border: 1px solid #444;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #111;
+    min-height: 320px;
+    margin-bottom: 16px;
+}
+
+/* title above image */
+.details__titlebar {
+    position: relative; /* IMPORTANT: anchor for absolute button */
+    padding: 14px 16px;
+    text-align: center;
+    background: #111;
+    border-bottom: 1px solid #222;
+}
+
+.details__bookmark {
+    width: 38px;
+    height: 38px;
+    border-radius: 999px;
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    background: rgba(0, 0, 0, 0.35);
+    color: #ffb700;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.details__bookmark_icon {
+    font-size: 26px;
+    line-height: 1;
+}
+
+/* NEW: float it above the “margin/edge” */
+.details__bookmark--floating {
+    position: absolute;
+    right: 12px;
+
+    top: 20px;
+    z-index: 5;
+}
+
+.details__title {
+    margin: 0;
+    font-size: 28px;
+    text-align: center;
+}
+
+.details__postedby {
+    margin: 6px 0 0 0;
+    font-size: 12px;
+    color: #bbb;
+}
+
+.details__postedby-name {
+    color: #ddd;
+    font-weight: 600;
+}
+
+/* image */
+.details__banner-img {
+    width: 100%;
+    height: 320px;
+    object-fit: cover;
+    display: block;
+    opacity: 0.9;
+    margin-top: 0px; /* gap from titlebar */
+}
+
+/* overlay content on image */
+.details__banner-overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 16px;
+
+    background: linear-gradient(to top, rgba(0,0,0,0.75), rgba(0,0,0,0));
+}
+
+.details__banner-title {
+    margin: 0;
+    font-size: 28px;
+    font-weight: 700;
+    text-shadow: 0 2px 10px rgba(0,0,0,0.75);
+}
+
+.details__subtitle {
+    margin: 6px 0 0 0;
+    color: #ddd;
+}
+
+/* =========================
+   Fieldsets
+   ========================= */
+.details__fieldset {
+    border: 1px solid #444;
+    border-radius: 8px;
+    padding: 12px;
+}
+
+.details__legend {
+    padding: 0 8px;
+    color: #ddd;
+}
+
+/* =========================
+   Rows + values
+   IMPORTANT: single-column row by default
+   ========================= */
+.details__row {
+    display: grid;
+    grid-template-columns: 1fr;   /* FIX: was 160px 1fr, which squashed your long text */
+    padding: 6px 0;
+    border-bottom: 1px solid #222;
+}
+
+.details__row:last-child {
+    border-bottom: none;
+}
+
+.details__value {
+    color: white;
+    overflow-wrap: break-word;
+}
+
+/* Long text: centered readable column */
+.details__row--longtext {
+    border-bottom: none;
+    padding: 10px 0;
+}
+
+.details__value--longtext {
+    display: block;
+
+    /* keep readable line length (optional) */
+    max-width: 72ch;
+
+    /* 🔴 CHANGED: remove centering */
+    margin: 0;            /* was: 0 auto */
+
+    /* 🔴 CHANGED: set your left gap */
+    padding-left: 24px;   /* <-- X amount (example: 24px) */
+    padding-right: 14px;  /* keep some right breathing room */
+
+    white-space: normal;
+    overflow-wrap: break-word;
+    word-break: normal;
+}
+
+/* =========================
+   Floating actions (bottom-right)
+   ========================= */
+.details__floating-actions {
+    position: absolute;
+    right: 16px;
+    bottom: 16px;
+    z-index: 10;
+
+    display: flex;
+    gap: 16px;
+    align-items: center;
+
+    flex-wrap: nowrap;     /* never wrap */
+    white-space: nowrap;
+}
+
+.details__btn {
+    padding: 10px 16px;
+    border-radius: 8px;
+    border: 1px solid #777;
+    background: #222;
+    color: white;
+    cursor: pointer;
+}
+
+.details__btn:hover {
+    background: #333;
+}
+
+.details__btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.details__btn--danger {
+    border-color: #a55;
+}
+
+.details__btn--danger:hover {
+    background: #3a1111;
+}
+
+/* =========================
+   Mobile
+   ========================= */
+@media (max-width: 600px) {
+    .details__value--longtext {
+        max-width: 100%; /* on small screens, use full width */
+        padding: 0 8px;
+    }
+}

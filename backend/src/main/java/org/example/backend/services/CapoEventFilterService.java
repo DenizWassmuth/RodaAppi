@@ -47,7 +47,8 @@ public class CapoEventFilterService {
         if (upcomingDays != null && upcomingDays > 0) {
 
             LocalDateTime now = LocalDateTime.now();
-            LocalDateTime until = now.plusDays(upcomingDays);
+            now = now.withHour(0).withMinute(0).withSecond(0).withNano(0);
+            LocalDateTime until = now.plusDays(upcomingDays + 1 );
 
             if (startsAfter == null || now.isAfter(startsAfter)) {
                 startsAfter = now;

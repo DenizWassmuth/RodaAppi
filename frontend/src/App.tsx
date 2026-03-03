@@ -9,7 +9,7 @@ import type {CapoEventFilterDto, CapoEventType} from "./types/CapoEvent.ts";
 import PreviewPage from "./components/pages/PreviewPage.tsx";
 import CreateCapoEventPage from "./components/pages/CreateCapoEventPage.tsx";
 import type {CountryData} from "./types/GeoData.ts";
-import {fetchCountries, fetchFilteredCapoEvents} from "./utility/AxiosUtilities.ts";
+import {fetchFilteredCapoEvents} from "./utility/AxiosUtilities.ts";
 import TopBar from "./components/TopBar.tsx";
 
 const defaultFilters: CapoEventFilterDto = {
@@ -31,10 +31,9 @@ function App() {
 
     const [filters, setFilters] = useState<CapoEventFilterDto>(defaultFilters);
     const [capoEvents, setCapoEvents] = useState<CapoEventType[]>([]);
-    const [bookmarks, setBookmarks] = useState<string[] | null>(null);
+    const [bookmarks, setBookmarks] = useState<string[]>([]);
 
     const [countries, setCountries] = useState<CountryData[]> ([]);
-
 
     const loadUser = () => {
         axios.get("/api/auth")
@@ -46,29 +45,36 @@ function App() {
 
     async function fetchEvents() {
 
-        fetchFilteredCapoEvents(filters,setCapoEvents)
+        fetchFilteredCapoEvents(filters, setCapoEvents)
             .then()
     }
 
-    async function getUsersBookMarks() {
-        if (!user) {
-            console.log("could not get bookmarks, user not logged in");
+    const  getUsersBookMarks = () => {
+
+        if (!user || !user?.id) {
+            //setBookmarks([]); // optional: treat as "no bookmarks"
             return;
         }
 
-        await axios.get<string[]>(`/api/bookmarks/${user.id}`)
+        if (!capoEvents || capoEvents.length <= 0) {
+            console.log("didi not get bookmarks, as no events were fetched");
+            return;
+        }
+
+        axios.get<string[]>(`/api/bookmarks/${user?.id}`)
             .then((response) => {
                 setBookmarks(response.data);
                 console.log("fetched bookmarks: ");
                 console.log(response.data);
             })
-            .catch((error) => error + ": could not fetch bookmarks");
+            .catch((error) => {
+                setBookmarks([]);
+                console.log(error + ": could not fetch bookmarks")
+            });
     }
 
     useEffect(() => {
         loadUser();
-        fetchEvents()
-            .then();
         //fetchCountries(setCountries).then();
 
     }, []);
@@ -80,29 +86,51 @@ function App() {
     }, [filters]);
 
     useEffect(() => {
-        if (!capoEvents || capoEvents.length <= 0) {
-            return;
-        }
+        getUsersBookMarks();
 
-        getUsersBookMarks().then();
+    }, [capoEvents, user]);
 
-    }, [capoEvents]);
+    return (
+        <>
+            <TopBar user={user} filters={filters} setFilters={setFilters} countries={countries}/>
+            <div className="app_content">
+                <Routes>
 
-  return (
-      <>
-          <TopBar user={user} filters={filters} setFilters={setFilters} countries={countries} />
+                    <Route path={"/"} element={
+                        <PreviewPage
+                            user={user}
+                            events={capoEvents}
+                            fetchEvents={fetchEvents}
+                            bIsLoginArea={false}
+                            bookmarks={bookmarks}
+                        />}
+                    />
 
-          <div className="app_content">
-          <Routes>
-              <Route path={"/"} element={<PreviewPage user={user} events={capoEvents} fetchEvents={fetchEvents} bIsLoginArea={false} bookmarks={bookmarks}/>}/>
-              <Route element={<ProtectedRoute user={user}/> }>
-                  <Route path={"/loggedin"} element={<PreviewPage user={user} events={capoEvents} fetchEvents={fetchEvents} bIsLoginArea={true} bookmarks={bookmarks} />}/>
-                  <Route path={"/add"} element={<CreateCapoEventPage user={user} fetchEvents={fetchEvents} onClosePath={"/loggedin"} countries={countries} setCountries={setCountries}/>}/>
-              </Route>
-          </Routes>
-          </div>
-      </>
-  )
+                    <Route element={<ProtectedRoute user={user}/>}>
+
+                        <Route path={"/loggedin"} element={
+                            <PreviewPage
+                                user={user}
+                                events={capoEvents}
+                                fetchEvents={fetchEvents}
+                                bIsLoginArea={true}
+                                bookmarks={bookmarks}/>}/>
+
+                        <Route path={"/add"} element={
+                            <CreateCapoEventPage
+                                user={user}
+                                fetchEvents={fetchEvents}
+                                onClosePath={"/loggedin"}
+                                countries={countries}
+                                setCountries={setCountries}
+                            />}
+                        />
+
+                    </Route>
+                </Routes>
+            </div>
+        </>
+    )
 }
 
 export default App

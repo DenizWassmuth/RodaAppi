@@ -24,7 +24,7 @@ export function DeleteCapoEventModal({bOpen, eventId, user, partOfSeries, onClos
     function handleDelete() {
         deleteCapoEvent(user?.id, eventId, editScope)
             .catch((error) => {
-                console.log("could not delete capoEvent through CapoEventCard: " + error.toString())
+                console.log("could not delete capoEvent through CapoEventPreviewCard: " + error.toString())
             })
             .finally(() => {
                 fetchEvents()

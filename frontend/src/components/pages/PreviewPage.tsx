@@ -1,5 +1,5 @@
-import CapoEventCard from "../CapoEventCard.tsx";
-import "../../styles/CapoEventCard.css"
+import CapoEventPreviewCard from "../CapoEventPreviewCard.tsx";
+import "../../styles/CapoEventPreviewCard.css"
 import "../../index.css"
 import {useEffect, useState} from "react";
 import EditCapoEventModal from "../modals/EditCapoEventModal.tsx";
@@ -92,7 +92,7 @@ export default function PreviewPage({user, bIsLoginArea, events, fetchEvents, bo
                     {
                         eventsToMap
                             .map(capoEvent => (
-                                    <CapoEventCard
+                                    <CapoEventPreviewCard
                                         key={capoEvent?.id}
                                         capoEvent={capoEvent}
                                         user={user}
@@ -119,6 +119,8 @@ export default function PreviewPage({user, bIsLoginArea, events, fetchEvents, bo
                             capoEvent={capoEvent}
                             onEdit={() => openEditModal(capoEvent)}
                             onDelete={() => openDeleteModal(capoEvent)}
+                            bookmarks={bookmarks}
+                            fetchEvents={fetchEvents}
                         />
                     </FrameModal>
                     )}

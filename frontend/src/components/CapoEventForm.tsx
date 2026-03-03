@@ -11,8 +11,7 @@ import type {
 import EditScopeModal from "./modals/EditScopeModal.tsx";
 import type {CityData, CountryData, StateData} from "../types/GeoData.ts";
 import {fetchCities, fetchStates} from "../utility/AxiosUtilities.ts";
-import {nowAsDateTimeLocal} from "../utility/Helpers.ts";
-import * as React from "react";
+import {addOneHourToDateTimeInput, nowAsDateTimeLocal} from "../utility/Helpers.ts";
 
 
 type EventFormProps = {
@@ -27,7 +26,6 @@ type EventFormProps = {
 export default function CapoEventForm({initialValue, submitText, submit, bEditMode, partOfSeries, countries}: Readonly<EventFormProps>) {
 
     const [value, setValue] = useState<EventFormValue>(initialValue);
-    const [error, setError] = useState<string | null>(null);
 
     const [editScope, setEditScope] = useState<EditScope>("ONLY_THIS");
     const [openEditScopeModal, setOpenEditScopeModal] = useState<boolean>(false);
@@ -40,6 +38,7 @@ export default function CapoEventForm({initialValue, submitText, submit, bEditMo
     const [cities, setCities] = useState<CityData[]>([]);
 
     const minStart = useMemo(() => nowAsDateTimeLocal(), []); // Compute once on mount.
+
     const showRepUntil = value.repRhythm !== "ONCE" && !bEditMode;
 
     function updateField<K extends keyof EventFormValue>(key: K, v: EventFormValue[K]) {
@@ -102,7 +101,6 @@ export default function CapoEventForm({initialValue, submitText, submit, bEditMo
 
     async function handleSubmit(e: FormEvent<HTMLFormElement>) {
         e.preventDefault();
-        setError(null);
 
         if (bEditMode) {
             setOpenEditScopeModal(true);
@@ -147,8 +145,6 @@ export default function CapoEventForm({initialValue, submitText, submit, bEditMo
                 <fieldset className="create-event__fieldset">
                     <legend className="create-event__legend">Basic</legend>
 
-                    {error && <div className="create-event__alert create-event__alert--error">{error}</div>}
-
                     <label className="create-event__label">
                         <select
                             className="create-event__select"
@@ -168,7 +164,7 @@ export default function CapoEventForm({initialValue, submitText, submit, bEditMo
                             value={value.eventTitle}
                             onChange={(e) => updateField("eventTitle", e.target.value)}
                             placeholder="title e.g. Weekly Roda"
-                            required={true}
+                            required={false}
                         />
                     </label>
 
@@ -232,7 +228,7 @@ export default function CapoEventForm({initialValue, submitText, submit, bEditMo
                             value={value.locationData.city}
                             onChange={(e) => updateLocationField("city", e.target.value)}
                             disabled={bEditMode || (!bEditMode && cities.length <= 0)}
-                            required={true}
+                            required={cities.length > 0}
                         >
                             <option value="" disabled={true} > select a city </option>
                             <option value=""> clear field </option>
@@ -284,7 +280,7 @@ export default function CapoEventForm({initialValue, submitText, submit, bEditMo
                             value={value.eventStart}
                             onChange={(e) => {
                                 updateField("eventStart", e.target.value);
-                                updateField("eventEnd", e.target.value);
+                                updateField("eventEnd", addOneHourToDateTimeInput(e.target.value) ?? "");
                                 updateField("repUntil", e.target.value);
                                 console.log(e.target.value);
                                 console.log(value.eventStart);
@@ -326,7 +322,7 @@ export default function CapoEventForm({initialValue, submitText, submit, bEditMo
                         </select>
                     </label>
 
-                    { showRepUntil && (
+                    {showRepUntil && (
                         <label className="create-event__label" >
                             <span>repeat until</span>
                             <input
@@ -335,6 +331,7 @@ export default function CapoEventForm({initialValue, submitText, submit, bEditMo
                                 min = {value.eventStart|| value.eventEnd || minStart}
                                 value={value.repUntil}
                                 onChange={(e) => updateField("repUntil", e.target.value)}
+                                required={true}
                             />
                         </label>
                     )}

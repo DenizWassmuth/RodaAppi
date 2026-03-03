@@ -101,6 +101,7 @@ export async function fetchFilteredCapoEvents(filters: CapoEventFilterDto, setEv
 
     await axios.post<CapoEventType[]>(`/api/capoevent/filters/search`, filters)
         .then((response) => {
+            console.log("fetched filtered events:");
             console.log(response.data);
             setEvents(response.data);})
         .catch((error) => error + ": could not fetch capoEvents");

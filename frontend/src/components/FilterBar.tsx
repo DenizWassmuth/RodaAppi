@@ -10,6 +10,19 @@ import {
 } from "../utility/Helpers.ts";
 import {fetchCities, fetchStates} from "../utility/AxiosUtilities.ts";
 
+const defaultFilters: CapoEventFilterDto = {
+    country: undefined,
+    state: undefined,
+    city: undefined,
+    eventType: undefined,
+    startsAfter: undefined,
+    startsBefore: undefined,
+    upcomingOnly: false,
+    upcomingDays: 90,
+    recentOnly: false,
+    limit: 20
+};
+
 type FilterBarProps = {
     filters: CapoEventFilterDto;
     setFilters: React.Dispatch<React.SetStateAction<CapoEventFilterDto>>;
@@ -72,19 +85,6 @@ export default function FilterBar({ filters, setFilters, countries }: Readonly<F
         setSelectedStateIso(null);
         setStates([]);
         setCities([]);
-
-        const defaultFilters: CapoEventFilterDto = {
-            country: undefined,
-            state: undefined,
-            city: undefined,
-            eventType: undefined,
-            startsAfter: undefined,
-            startsBefore: undefined,
-            upcomingOnly: false,
-            upcomingDays: 90,
-            recentOnly: false,
-            limit: 20
-        };
 
         setFilters(defaultFilters);
     }
