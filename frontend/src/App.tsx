@@ -1,7 +1,7 @@
 import './index.css'
 
-import {Route, Routes} from "react-router-dom";
-import {useEffect, useState} from "react";
+import {Route, Routes, useLocation} from "react-router-dom";
+import {useEffect, useMemo, useState} from "react";
 import ProtectedRoute from "./components/ProtectedRoute.tsx";
 import axios from "axios";
 import type {AppUserType} from "./types/AppUser.ts";
@@ -22,7 +22,8 @@ const defaultFilters: CapoEventFilterDto = {
     upcomingOnly: false,
     upcomingDays: 90,
     recentOnly: false,
-    limit: 20
+    limit: 20,
+    creatorId: undefined
 };
 
 function App() {
@@ -32,8 +33,7 @@ function App() {
     const [filters, setFilters] = useState<CapoEventFilterDto>(defaultFilters);
     const [capoEvents, setCapoEvents] = useState<CapoEventType[]>([]);
     const [bookmarks, setBookmarks] = useState<string[]>([]);
-
-    const [countries, setCountries] = useState<CountryData[]> ([]);
+    const [countries, setCountries] = useState<CountryData[]>([]);
 
     const loadUser = () => {
         axios.get("/api/auth")
@@ -43,16 +43,41 @@ function App() {
                 console.log(error + " user was set to null, as user is not logged in")});
     }
 
-    async function fetchEvents() {
+    useEffect(() => {
+        loadUser();
+        //fetchCountries(setCountries).then();
 
-        fetchFilteredCapoEvents(filters, setCapoEvents)
+    }, []);
+
+    const location = useLocation();
+    const bIsDashboard = location.pathname.startsWith("/loggedin");
+
+    const effectiveFilters = useMemo<CapoEventFilterDto>(() => {
+        if (bIsDashboard && user) {
+            console.log("filtering user created events")
+            return { ...filters, creatorId: user?.id}; // add this field in DTO type
+        }
+
+        console.log("filtering all events")
+        return { ...filters, creatorId: ""};
+
+    }, [filters, bIsDashboard, user]);
+
+    async function fetchEvents() {
+        fetchFilteredCapoEvents(effectiveFilters, setCapoEvents)
             .then()
     }
 
-    const  getUsersBookMarks = () => {
+    useEffect(() => {
+        fetchEvents()
+            .then();
+    }, [effectiveFilters]);
+
+
+    const fetchBookMarks = () => {
 
         if (!user || !user?.id) {
-            //setBookmarks([]); // optional: treat as "no bookmarks"
+            console.log(bookmarks);
             return;
         }
 
@@ -74,21 +99,9 @@ function App() {
     }
 
     useEffect(() => {
-        loadUser();
-        //fetchCountries(setCountries).then();
+        fetchBookMarks();
 
-    }, []);
-
-    useEffect(() => {
-        fetchEvents()
-            .then();
-
-    }, [filters]);
-
-    useEffect(() => {
-        getUsersBookMarks();
-
-    }, [capoEvents, user]);
+    }, [user]);
 
     return (
         <>
@@ -101,8 +114,8 @@ function App() {
                             user={user}
                             events={capoEvents}
                             fetchEvents={fetchEvents}
-                            bIsLoginArea={false}
                             bookmarks={bookmarks}
+                            getUserBookmarks={fetchBookMarks}
                         />}
                     />
 
@@ -113,8 +126,10 @@ function App() {
                                 user={user}
                                 events={capoEvents}
                                 fetchEvents={fetchEvents}
-                                bIsLoginArea={true}
-                                bookmarks={bookmarks}/>}/>
+                                bookmarks={bookmarks}
+                                getUserBookmarks={fetchBookMarks}
+                            />}
+                        />
 
                         <Route path={"/add"} element={
                             <CreateCapoEventPage

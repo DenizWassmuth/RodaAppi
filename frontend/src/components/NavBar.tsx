@@ -27,11 +27,11 @@ type NavBarProps = {
 export default function Navbar(props: Readonly<NavBarProps>) {
     const nav = useNavigate();
 
+    const isLoggedIn = props.user !== null && props.user !== undefined;
+
     function goTo(path: string) {
         nav(path);
     }
-
-    const isLoggedIn = props.user !== null && props.user !== undefined;
 
     return (
         <nav className="navbar">
@@ -42,17 +42,7 @@ export default function Navbar(props: Readonly<NavBarProps>) {
             <button
                 className="navbar_btn"
                 type="button"
-                hidden={isLoggedIn}
-                disabled={isLoggedIn}
-                onClick={login}
-            >
-                Login
-            </button>
 
-            <button
-                className="navbar_btn"
-                type="button"
-                hidden={!isLoggedIn}
                 disabled={!isLoggedIn}
                 onClick={() => goTo("/loggedin")}
             >
@@ -62,11 +52,21 @@ export default function Navbar(props: Readonly<NavBarProps>) {
             <button
                 className="navbar_btn"
                 type="button"
-                hidden={!isLoggedIn}
+
                 disabled={!isLoggedIn}
                 onClick={() => goTo("/add")}
             >
                 Add
+            </button>
+
+            <button
+                className="navbar_btn"
+                type="button"
+                hidden={isLoggedIn}
+                disabled={isLoggedIn}
+                onClick={login}
+            >
+                Login
             </button>
 
             <button

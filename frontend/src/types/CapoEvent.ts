@@ -66,4 +66,6 @@ export type CapoEventFilterDto = {
     upcomingDays?: number;
     recentOnly?: boolean;
     limit?: 10 | 20 | 30;
+
+    creatorId?: string | null | undefined ;
 };

@@ -20,7 +20,8 @@ const defaultFilters: CapoEventFilterDto = {
     upcomingOnly: false,
     upcomingDays: 90,
     recentOnly: false,
-    limit: 20
+    limit: 20,
+    creatorId: undefined
 };
 
 type FilterBarProps = {

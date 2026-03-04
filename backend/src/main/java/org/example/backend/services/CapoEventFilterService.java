@@ -26,6 +26,10 @@ public class CapoEventFilterService {
 
         Query query = new Query();
 
+        if (dto.creatorId() != null && !dto.creatorId().isBlank()) {
+            query.addCriteria(Criteria.where("creatorId").is(dto.creatorId()));
+        }
+
         if (hasText(dto.country())) {
             query.addCriteria(Criteria.where("locationData.country").is(dto.country()));
         }

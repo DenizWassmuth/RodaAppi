@@ -5,13 +5,13 @@ type ProtectedRouteProps = {
     user: AppUserType;
 }
 
-export default function ProtectedRoute(props: Readonly<ProtectedRouteProps>) {
+export default function ProtectedRoute({user}: Readonly<ProtectedRouteProps>) {
 
-    if(props.user === undefined) {
+    if(user === undefined) {
         <h3>loading</h3>
     }
 
     return (
-        props.user ? <Outlet/> : <Navigate to={"/"} />
+        user ? <Outlet/> : <Navigate to={"/"} />
     )
 }

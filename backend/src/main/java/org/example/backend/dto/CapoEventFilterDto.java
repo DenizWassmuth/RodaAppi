@@ -14,5 +14,6 @@ public record CapoEventFilterDto(
         boolean upcomingOnly,
         Integer upcomingDays,
         Boolean recentOnly,
-        Integer limit) {
+        Integer limit,
+        String creatorId) {
 }

@@ -42,7 +42,7 @@ export async function checkIfPartOfSeries(capoEvent: CapoEventType, setPartOfSer
       .catch(error => console.log("axios responded with error for checkIfPartOfSeries: " + error));
 }
 
-export async function bookmarkEvents(userId:string | undefined | null, eventId: string | undefined, isBookmarkedByUser:boolean) {
+export async function bookmarkEvent(userId:string | undefined | null, eventId: string | undefined, isBookmarkedByUser:boolean) {
 
     if (!isBookmarkedByUser) {
         await axios.put(`/api/bookmarks/${userId}/${eventId}`)

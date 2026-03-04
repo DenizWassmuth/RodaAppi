@@ -2,7 +2,7 @@ import type {CapoEventType} from "../types/CapoEvent.ts";
 import "../styles/CapoEventPreviewCard.css"
 import "../index.css"
 import type {AppUserType} from "../types/AppUser.ts";
-import {bookmarkEvents} from "../utility/AxiosUtilities.ts";
+import {bookmarkEvent} from "../utility/AxiosUtilities.ts";
 import {formatLocalDateTimeToDMonY, formatLocalDateTimeToHHmm} from "../utility/Helpers.ts";
 import * as React from "react";
 
@@ -12,11 +12,11 @@ type EventCardProps = {
     bookmarks:string[] | null;
     onHandleEdit: (event: CapoEventType) => void;
     onHandleDelete: (event: CapoEventType) => void;
-    fetchEvents: () => Promise<void | string>;
     openDetailsPage: (event:CapoEventType) => void;
+    onHandleGetBookmarks: () => void;
 }
 
-export default function CapoEventPreviewCard({user, capoEvent, bookmarks, onHandleEdit, onHandleDelete, fetchEvents, openDetailsPage}: Readonly<EventCardProps>) {
+export default function CapoEventPreviewCard({user, capoEvent, bookmarks, onHandleEdit, onHandleDelete, onHandleGetBookmarks, openDetailsPage}: Readonly<EventCardProps>) {
 
     const bUserIsValid = user !== null && user !== undefined;
     const bEventIsValid = capoEvent !== undefined && capoEvent !== null;
@@ -46,8 +46,8 @@ export default function CapoEventPreviewCard({user, capoEvent, bookmarks, onHand
             console.log("capoEvent === null or undefined, cannot handle bookmarks");
             return;
         }
-        bookmarkEvents(user?.id, capoEvent?.id, bIsBookmarkedByUser)
-            .then(() => fetchEvents());
+        bookmarkEvent(user?.id, capoEvent?.id, bIsBookmarkedByUser)
+            .then(() => onHandleGetBookmarks());
     }
 
     function handleOpenDetails() {

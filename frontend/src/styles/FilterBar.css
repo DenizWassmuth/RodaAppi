@@ -1,8 +1,8 @@
 .filterbar {
-    padding: 10px 16px;
-    border-bottom: 1px solid #333;
-    background: #0f0f0f;
-    color: #ddd;
+    padding: 0;
+    border: none;
+    background: transparent;
+    color: white;
 }
 
 .filterbar__row {
@@ -47,3 +47,4 @@
 .filterbar__btn:hover {
     background: #333;
 }
+

@@ -1,37 +1,15 @@
-/* One fixed bar at the top */
-.topbar {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    z-index: 1200;
-    background: #111;
-    opacity: 95%;
-    border-bottom: 1px solid #333;
-}
-
-/* Center content and control spacing */
-.topbar__inner {
-    max-width: 1400px;
-    margin: 0 auto;
-    padding: 10px 16px;
-
-    display: flex;
-    gap: 16px;
-    align-items: center;
-}
-
-/* navbar area */
 .navbar {
     display: flex;
-    gap: 10px;
     align-items: center;
+    width: 100%;
+
+    padding-right: 12px; /* extra breathing room at the far right */
 }
 
 /* keep your existing button look but make it fit the bar */
 .navbar_btn {
     padding: 10px 14px;
-    border: 2px solid yellow;
+    border: 2px solid #ffb700;
     color: white;
     background-color: transparent;
     font-size: 14px;
@@ -45,34 +23,15 @@
     color: black;
 }
 
-/* filters area sits to the right and can wrap */
-.topbar__filters {
-    flex: 1;
-}
-
-/* Make FilterBar look integrated (remove its own background/border if you added one) */
-.filterbar {
-    padding: 0;
-    border: none;
-    background: transparent;
-}
-
-/* Layout for FilterBar internals (if you used filterbar__row) */
-.filterbar__row {
+.navbar__left {
     display: flex;
     gap: 10px;
+    align-items: center;
     flex-wrap: wrap;
-    align-items: end;
 }
 
-/* On small screens stack nav above filters */
-@media (max-width: 900px) {
-    .topbar__inner {
-        flex-direction: column;
-        align-items: stretch;
-    }
-
-    .topbar__filters {
-        width: 100%;
-    }
+.navbar__right {
+    margin-left: auto;   /* pushes auth button to far right */
+    display: flex;
+    align-items: center;
 }

@@ -12,13 +12,13 @@ import FrameModal from "../modals/FrameModal.tsx";
 
 type PageProps = {
     user:AppUserType | null | undefined;
-    bIsLoginArea: boolean;
     events:CapoEventType[];
     fetchEvents: () => Promise<void | string>;
     bookmarks:string[] | null;
+    getUserBookmarks: () => void;
 }
 
-export default function PreviewPage({user, bIsLoginArea, events, fetchEvents, bookmarks}: Readonly<PageProps>) {
+export default function PreviewPage({user, events, fetchEvents, bookmarks, getUserBookmarks}: Readonly<PageProps>) {
 
     const [capoEvent, setCapoEvent] = useState<CapoEventType>(null);
     const [openEdit, setOpenEdit] = useState(false);
@@ -79,28 +79,22 @@ export default function PreviewPage({user, bIsLoginArea, events, fetchEvents, bo
         setPartOfSeries(null);
     }
 
-    let eventsToMap = events;
-    if (user && bIsLoginArea){
-       eventsToMap = events
-           .filter((capoEvent) => capoEvent?.creatorId === user?.id);
-    }
-
     return (
         <div>
             <main className="page_layout">
                 <div className="events_row">
                     {
-                        eventsToMap
+                        events
                             .map(capoEvent => (
                                     <CapoEventPreviewCard
                                         key={capoEvent?.id}
-                                        capoEvent={capoEvent}
                                         user={user}
+                                        capoEvent={capoEvent}
+                                        bookmarks={bookmarks}
                                         onHandleEdit={openEditModal}
                                         onHandleDelete={openDeleteModal}
-                                        bookmarks={bookmarks}
-                                        fetchEvents={fetchEvents}
                                         openDetailsPage={openDetailsPage}
+                                        onHandleGetBookmarks={getUserBookmarks}
                                     />
                                 )
                             )
@@ -113,6 +107,7 @@ export default function PreviewPage({user, bIsLoginArea, events, fetchEvents, bo
                     {capoEvent && openDetails && (
                     <FrameModal title={""} open={openDetails} onClose={() => closeDetailsPage()}>
                         <CapoEventDetailsCard
+                            key={"details"+capoEvent?.id}
                             bOpen={openDetails}
                             user={user}
                             partOfSeries={partOfSeries}
@@ -120,12 +115,13 @@ export default function PreviewPage({user, bIsLoginArea, events, fetchEvents, bo
                             onEdit={() => openEditModal(capoEvent)}
                             onDelete={() => openDeleteModal(capoEvent)}
                             bookmarks={bookmarks}
-                            fetchEvents={fetchEvents}
+                            onHandleGetBookmarks={getUserBookmarks}
                         />
                     </FrameModal>
                     )}
                     {user && openEdit && (
                         <EditCapoEventModal
+                            key={"edit"+capoEvent?.id}
                             bOpen={openEdit}
                             event={capoEvent}
                             setCapoEvent={setCapoEvent}
@@ -137,6 +133,7 @@ export default function PreviewPage({user, bIsLoginArea, events, fetchEvents, bo
                     )}
                     {user && openDelete && partOfSeries && (
                         <DeleteCapoEventModal
+                            key={"delete"+capoEvent?.id}
                             bOpen={openDelete}
                             eventId={capoEvent?.id}
                             partOfSeries={partOfSeries}

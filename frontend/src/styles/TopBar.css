@@ -1,0 +1,68 @@
+/* Fixed top bar */
+.topbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1200;
+
+    background: rgba(17, 17, 17, 0.95);
+    border-bottom: 1px solid #333;
+    backdrop-filter: blur(6px);
+}
+
+.topbar__inner {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 10px 16px;
+
+    display: flex;
+    flex-direction: column; /* NAVBAR ABOVE FILTERS */
+    gap: 16px;
+    align-items: center;
+}
+
+/* top row: navbar + toggle button */
+.topbar__navrow {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    justify-content: space-between;
+}
+
+/* toggle */
+.topbar__toggle {
+    padding: 10px 14px;
+    border-radius: 10px;
+    border: 1px solid rgba(255,255,255,0.25);
+    background: rgba(0,0,0,0.25);
+    color: white;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.topbar__toggle:hover {
+    background: rgba(255,255,255,0.10);
+}
+
+
+/* Collapsible section */
+.topbar__filters {
+    display: none; /* hidden by default */
+}
+
+.topbar__filters.is-open {
+    display: block; /* shown when open */
+}
+
+/* On small screens stack nav above filters */
+@media (max-width: 900px) {
+    .topbar__inner {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .topbar__filters {
+        width: 100%;
+    }
+}

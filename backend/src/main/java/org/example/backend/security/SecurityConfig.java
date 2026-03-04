@@ -22,7 +22,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/auth").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/capoevent").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/capoevent/*").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/capoevent/*/*/*").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/api/capoevent/*/*/*").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/capoevent").authenticated()
                         .requestMatchers(HttpMethod.PUT, "/api/capoevent/update/*").authenticated()
                         .requestMatchers(HttpMethod.DELETE, "/api/capoevent/delete/*").authenticated()
