@@ -18,7 +18,7 @@ export default function FrameModal({open, title, onClose, children}: Readonly<Fr
             <div className="modal__panel">
                 <div className="modal__header">
                     {title && <h2 className="modal__title">{title}</h2>}
-                    <button className="modal__close" type="button" onClick={onClose}>
+                    <button className="modal__close" type="button" onClick={ (e) =>{onClose(); e.preventDefault() }}>
                         ✕
                     </button>
                 </div>

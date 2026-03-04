@@ -21,7 +21,9 @@ const defaultFilters: CapoEventFilterDto = {
     upcomingDays: 90,
     recentOnly: false,
     limit: 20,
-    creatorId: undefined
+    isDashboardContent: false,
+    creatorId: undefined,
+    bookmarkedOnly: false
 };
 
 type FilterBarProps = {
@@ -103,6 +105,19 @@ export default function FilterBar({ filters, setFilters, countries }: Readonly<F
     return (
         <div className="filterbar">
             <div className="filterbar__row">
+
+                <label className="filterbar__label">
+                    <select
+                        className="filterbar__input"
+                        value={filters.limit ?? 20}
+                        onChange={(e) => update("limit", Number(e.target.value) as 10 | 20 | 30)}
+                    >
+                        <option value="10">10</option>
+                        <option value="20">20</option>
+                        <option value="30">30</option>
+                    </select>
+                </label>
+
                 <label className="filterbar__label">
                     <select
                         className="filterbar__input"
@@ -213,16 +228,13 @@ export default function FilterBar({ filters, setFilters, countries }: Readonly<F
                     <span>recently added</span>
                 </label>
 
-                <label className="filterbar__label">
-                    <select
-                        className="filterbar__input"
-                        value={filters.limit ?? 20}
-                        onChange={(e) => update("limit", Number(e.target.value) as 10 | 20 | 30)}
-                    >
-                        <option value="10">10</option>
-                        <option value="20">20</option>
-                        <option value="30">30</option>
-                    </select>
+                <label className="filterbar__checkbox">
+                    <input
+                        type="checkbox"
+                        checked={Boolean(filters.bookmarkedOnly)}
+                        onChange={(e) => update("bookmarkedOnly", e.target.checked)}
+                    />
+                    <span>bookmarked only</span>
                 </label>
 
                 <button type="button" className="filterbar__btn" onClick={reset}>

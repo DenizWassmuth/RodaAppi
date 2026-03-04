@@ -1,6 +1,8 @@
 package org.example.backend.services;
 import org.example.backend.dto.CapoEventFilterDto;
+import org.example.backend.models.BookmarkContainer;
 import org.example.backend.models.CapoEvent;
+import org.example.backend.repositories.BookmarkContainerRepository;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -13,10 +15,12 @@ import java.util.List;
 @Service
 public class CapoEventFilterService {
 
+    private final BookmarkContainerRepository bookmarkRepository;
     private final MongoTemplate mongoTemplate;
 
-    public CapoEventFilterService(MongoTemplate mongoTemplate) {
+    public CapoEventFilterService(MongoTemplate mongoTemplate,  BookmarkContainerRepository bookmarkRepository) {
         this.mongoTemplate = mongoTemplate;
+        this.bookmarkRepository = bookmarkRepository;
     }
     private boolean hasText(String s) {
         return s != null && !s.isBlank();
@@ -26,8 +30,15 @@ public class CapoEventFilterService {
 
         Query query = new Query();
 
-        if (dto.creatorId() != null && !dto.creatorId().isBlank()) {
+        boolean creatorIdIsValid = dto.creatorId() != null && !dto.creatorId().isBlank();
+
+        if (Boolean.TRUE.equals(dto.isDashboardContent()) && creatorIdIsValid) {
             query.addCriteria(Criteria.where("creatorId").is(dto.creatorId()));
+        }
+
+        if (Boolean.TRUE.equals(dto.bookmarkedOnly()) && creatorIdIsValid) {
+            bookmarkRepository.findById(dto.creatorId()).ifPresent(bookmarkContainer ->
+                    query.addCriteria(Criteria.where("_id").in(bookmarkContainer.bookmarkedIds())));
         }
 
         if (hasText(dto.country())) {

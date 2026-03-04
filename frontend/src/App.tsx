@@ -23,7 +23,9 @@ const defaultFilters: CapoEventFilterDto = {
     upcomingDays: 90,
     recentOnly: false,
     limit: 20,
-    creatorId: undefined
+    isDashboardContent: false,
+    creatorId: undefined,
+    bookmarkedOnly: false
 };
 
 function App() {
@@ -46,7 +48,6 @@ function App() {
     useEffect(() => {
         loadUser();
         //fetchCountries(setCountries).then();
-
     }, []);
 
     const location = useLocation();
@@ -55,13 +56,18 @@ function App() {
     const effectiveFilters = useMemo<CapoEventFilterDto>(() => {
         if (bIsDashboard && user) {
             console.log("filtering user created events")
-            return { ...filters, creatorId: user?.id}; // add this field in DTO type
+            return { ...filters, isDashboardContent: true , creatorId: user?.id}; // add this field in DTO type
+        }
+
+        if (filters.bookmarkedOnly && user) {
+            console.log("filtering only bookmarked events")
+            return { ...filters, isDashboardContent: false, creatorId: user?.id };
         }
 
         console.log("filtering all events")
-        return { ...filters, creatorId: ""};
+        return { ...filters, isDashboardContent: false, creatorId: null , bookmarkedOnly: false };
 
-    }, [filters, bIsDashboard, user]);
+    }, [user, filters, bIsDashboard, bookmarks]);
 
     async function fetchEvents() {
         fetchFilteredCapoEvents(effectiveFilters, setCapoEvents)
@@ -72,7 +78,6 @@ function App() {
         fetchEvents()
             .then();
     }, [effectiveFilters]);
-
 
     const fetchBookMarks = () => {
 

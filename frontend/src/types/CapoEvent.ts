@@ -67,5 +67,8 @@ export type CapoEventFilterDto = {
     recentOnly?: boolean;
     limit?: 10 | 20 | 30;
 
-    creatorId?: string | null | undefined ;
+    isDashboardContent?: boolean | null ;
+    creatorId?: string | null | undefined;
+
+    bookmarkedOnly?: boolean | null ;
 };
