@@ -50,6 +50,9 @@ function App() {
         //fetchCountries(setCountries).then();
     }, []);
 
+    const bookmarkedSet = useMemo(() =>
+        new Set(bookmarks), [bookmarks]);
+
     const location = useLocation();
     const bIsDashboard = location.pathname.startsWith("/loggedin");
 
@@ -67,7 +70,7 @@ function App() {
         console.log("filtering all events")
         return { ...filters, isDashboardContent: false, creatorId: null , bookmarkedOnly: false };
 
-    }, [user, filters, bIsDashboard, bookmarks]);
+    }, [user, filters, bIsDashboard, bookmarkedSet]);
 
     async function fetchEvents() {
         fetchFilteredCapoEvents(effectiveFilters, setCapoEvents)
@@ -119,8 +122,8 @@ function App() {
                             user={user}
                             events={capoEvents}
                             fetchEvents={fetchEvents}
-                            bookmarks={bookmarks}
-                            getUserBookmarks={fetchBookMarks}
+                            bookmarkedSet={bookmarkedSet}
+                            fetchBookmarks={fetchBookMarks}
                         />}
                     />
 
@@ -131,8 +134,8 @@ function App() {
                                 user={user}
                                 events={capoEvents}
                                 fetchEvents={fetchEvents}
-                                bookmarks={bookmarks}
-                                getUserBookmarks={fetchBookMarks}
+                                bookmarkedSet={bookmarkedSet}
+                                fetchBookmarks={fetchBookMarks}
                             />}
                         />
 

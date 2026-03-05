@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.awt.print.Book;
 import java.time.Duration;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -33,22 +34,22 @@ public class CapoEventService {
         return UUID.randomUUID().toString();
     }
 
-    boolean eventAlreadyExists(String idToExclude, CapoEventRegDto regDto){
-
-        if (regDto == null){
-            throw new IllegalArgumentException("event cannot be null if it is to be compared to existing events");
-        }
-
-        return capoEventRepo
-                .existsByIdNotAndEventStartAndLocationDataCountryAndLocationDataStateAndLocationDataCityAndLocationDataStreet(
-                        idToExclude,
-                        regDto.eventStart(),
-                        regDto.locationData().country(),
-                        regDto.locationData().state(),
-                        regDto.locationData().city(),
-                        regDto.locationData().street()
-        );
-    }
+//    boolean eventAlreadyExists(String idToExclude, CapoEventRegDto regDto){
+//
+//        if (regDto == null){
+//            throw new IllegalArgumentException("event cannot be null if it is to be compared to existing events");
+//        }
+//
+//        return capoEventRepo
+//                .existsByIdNotAndEventStartAndLocationDataCountryAndLocationDataStateAndLocationDataCityAndLocationDataStreet(
+//                        idToExclude,
+//                        regDto.eventStart(),
+//                        regDto.locationData().country(),
+//                        regDto.locationData().state(),
+//                        regDto.locationData().city(),
+//                        regDto.locationData().street()
+//        );
+//    }
 
     LocalDateTime shiftLocalDateTime(LocalDateTime toShift, RepetitionRhythmEnumType rhythm) {
 
@@ -93,11 +94,13 @@ public class CapoEventService {
         LocalDateTime startDate = regDto.eventStart();
         LocalDateTime endDate = regDto.eventEnd();
 
+        LocalDateTime createdAtBaseTime = LocalDateTime.now();
+
         while(regDto.repRhythm() == RepetitionRhythmEnumType.ONCE || startDate.isBefore(regDto.repUntil())){
 
-            if (eventAlreadyExists(null, regDto)) {
-                throw new MatchException("cannot create new event, event already exists", new Throwable());
-            }
+//            if (eventAlreadyExists(null, regDto)) {
+//                throw new MatchException("cannot create new event, event already exists", new Throwable());
+//            }
 
             capoEvents.add(new CapoEvent(
                     createId(),
@@ -113,7 +116,7 @@ public class CapoEventService {
                     endDate,
                     regDto.eventType(),
                     regDto.repRhythm(),
-                    LocalDateTime.now()
+                    createdAtBaseTime.plusNanos(index * 1_000_000L)
             ));
 
             if(regDto.repRhythm() == RepetitionRhythmEnumType.ONCE){
@@ -174,23 +177,33 @@ public class CapoEventService {
                     capoEvents.addAll(capoEventRepo.findAllBySeriesIdAndOccurrenceIndexIsGreaterThanEqual(seriesId, index));
         }
 
-        LocalDateTime origStart = eventToUpdate.eventStart();
-        LocalDateTime origEnd = eventToUpdate.eventEnd();
+        LocalDateTime currentStart = eventToUpdate.eventStart();
+        LocalDateTime currentEnd = eventToUpdate.eventEnd();
 
-        Duration startShift = Duration.between(origStart, newStart);
-        Duration endShift = Duration.between(origEnd, newEnd);
+
+        Duration startDateShift = Duration.between(currentStart, newStart);
+        Duration endDateShift = Duration.between(currentEnd, newEnd);
 
         List<CapoEvent> updatedCapoEvents = new ArrayList<>();
 
         for (CapoEvent refEvent : capoEvents) {
+
+            LocalDateTime startDateTime = refEvent.eventStart().plus(startDateShift)
+                    .withHour(newStart.getHour())
+                    .withMinute(newStart.getMinute());
+
+                    LocalDateTime endDateTime = refEvent.eventEnd().plus(endDateShift)
+                    .withHour(newEnd.getHour())
+                    .withMinute(newEnd.getMinute());
 
             updatedCapoEvents.add(refEvent
                     .withEventTitle(updateDto.eventTitle())
                     .withEventDescription(updateDto.eventDescription())
                     .withThumbnail(updateDto.thumbnail())
                     .withLocationData(updateDto.locationData()) // TODO: change to only street
-                    .withEventStart(refEvent.eventStart().plus(startShift))
-                    .withEventEnd(refEvent.eventEnd().plus(endShift)));
+                    .withEventStart(startDateTime)
+                    .withEventEnd(endDateTime)
+            );
         }
 
         capoEventRepo.saveAll(updatedCapoEvents);

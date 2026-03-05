@@ -13,8 +13,9 @@ public interface CapoEventRepository extends MongoRepository<CapoEvent,String> {
 
     List<CapoEvent> findAllByCreatorId(String creatorId);
 
-    boolean existsByIdNotAndEventStartAndLocationDataCountryAndLocationDataStateAndLocationDataCityAndLocationDataStreet(
+    boolean existsByIdNotAndCreatorIdAndEventStartAndLocationDataCountryAndLocationDataStateAndLocationDataCityAndLocationDataStreet(
             String excludedId,
+            String creatorId,
             LocalDateTime eventStart,
             String country,
             String state,

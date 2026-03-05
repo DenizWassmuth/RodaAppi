@@ -103,9 +103,10 @@ export default function FilterBar({ filters, setFilters, countries }: Readonly<F
     }, [selectedCountryIso, selectedStateIso]);
 
     return (
-        <div className="filterbar">
-            <div className="filterbar__row">
 
+        <div className="filterbar filterbar--grid">
+            {/* left: limit (spans both rows) */}
+            <div className="filterbar__side filterbar__side--left">
                 <label className="filterbar__label">
                     <select
                         className="filterbar__input"
@@ -117,126 +118,138 @@ export default function FilterBar({ filters, setFilters, countries }: Readonly<F
                         <option value="30">30</option>
                     </select>
                 </label>
-
-                <label className="filterbar__label">
-                    <select
-                        className="filterbar__input"
-                        value={filters.country ?? ""}
-                        onChange={(e) => update("country", e.target.value || undefined)}
-                    >
-                        <option value="" disabled={true} hidden={filters.country !== null}> select a country </option>
-                        <option value="" disabled={filters.country === null} hidden={filters.country === null || filters.country === undefined}>clear field </option>
-                        {countries.map((c) => (
-                            <option key={c.isoCode} value={c.name}> {c.name} </option>
-                        ))}
-                    </select>
-                </label>
-
-                <label className="filterbar__label">
-                    <select
-                        className="filterbar__input"
-                        value={filters.state ?? ""}
-                        disabled={!selectedCountryIso}
-                        onChange={(e) => update("state", e.target.value || undefined)}
-                    >
-                        <option value="" disabled={true} hidden={filters.state !== null}> select a state </option>
-                        <option value="" disabled={filters.state === null} hidden={filters.state === null || filters.state === undefined}>clear field </option>
-                        {states.map((s) => (
-                            <option key={s.isoCode} value={s.name}> {s.name} </option>
-                        ))}
-                    </select>
-                </label>
-
-                <label className="filterbar__label">
-                    <select
-                        className="filterbar__input"
-                        value={filters.city ?? ""}
-                        disabled={!selectedStateIso}
-                        onChange={(e) => update("city", e.target.value || undefined)}
-                    >
-                        <option value="" disabled={true} hidden={filters.city !== null}> select a city </option>
-                        <option value="" disabled={filters.city === null} hidden={filters.city === null || filters.city === undefined}>clear field </option>
-                        {cities.map((c) => (
-                            <option key={c.name} value={c.name}> {c.name} </option>
-                        ))}
-                    </select>
-                </label>
-
-                <label className="filterbar__label">
-                    <select
-                        className="filterbar__input"
-                        value={filters.eventType ?? ""}
-                        onChange={(e) =>
-                            update("eventType", (e.target.value || undefined) as CapoEventEnumType | undefined)
-                        }
-                    >
-                        <option value="">any type</option>
-                        <option value="RODA">RODA</option>
-                        <option value="WORKSHOP">WORKSHOP</option>
-                    </select>
-                </label>
             </div>
+            <div className="filterbar__center">
+                <div className="filterbar__row">
+                    <label className="filterbar__label">
+                        <select
+                            className="filterbar__input"
+                            value={filters.country ?? ""}
+                            onChange={(e) => update("country", e.target.value || undefined)}
+                        >
+                            <option value="" disabled={true} hidden={filters.country !== null}> select a country
+                            </option>
+                            <option value="" disabled={filters.country === null}
+                                    hidden={filters.country === null || filters.country === undefined}>clear field
+                            </option>
+                            {countries.map((c) => (
+                                <option key={c.isoCode} value={c.name}> {c.name} </option>
+                            ))}
+                        </select>
+                    </label>
 
-            <div className="filterbar__row">
-                <label className="filterbar__label">
-                    <select
-                        className="filterbar__input"
-                        value={filters.upcomingDays ?? ""}
-                        onChange={(e) => update("upcomingDays", e.target.value ? Number(e.target.value) : undefined)}
-                    >
-                        <option value="">pick date</option>
-                        <option value="7">Next 7 days</option>
-                        <option value="30">Next 30 days</option>
-                        <option value="90">Next 90 days</option>
-                        <option value="180">Next 180 days</option>
-                        <option value="365">Next 365 days</option>
-                    </select>
-                </label>
+                    <label className="filterbar__label">
+                        <select
+                            className="filterbar__input"
+                            value={filters.state ?? ""}
+                            disabled={!selectedCountryIso}
+                            onChange={(e) => update("state", e.target.value || undefined)}
+                        >
+                            <option value="" disabled={true} hidden={filters.state !== null}> select a state</option>
+                            <option value="" disabled={filters.state === null}
+                                    hidden={filters.state === null || filters.state === undefined}>clear field
+                            </option>
+                            {states.map((s) => (
+                                <option key={s.isoCode} value={s.name}> {s.name} </option>
+                            ))}
+                        </select>
+                    </label>
 
-                <label className="filterbar__label">
-                    <input
-                        className="filterbar__input"
-                        type="date"
-                        min={minStart}
-                        value={filters.startsAfter ? filters.startsAfter.slice(0, 10) : ""}
-                        disabled={Boolean(filters.upcomingDays)}
-                        onChange={(e) =>
-                            update("startsAfter", e.target.value ? dateToStartOfDayLocalDateTime(e.target.value) : undefined)
-                        }
-                    />
-                </label>
+                    <label className="filterbar__label">
+                        <select
+                            className="filterbar__input"
+                            value={filters.city ?? ""}
+                            disabled={!selectedStateIso}
+                            onChange={(e) => update("city", e.target.value || undefined)}
+                        >
+                            <option value="" disabled={true} hidden={filters.city !== null}> select a city</option>
+                            <option value="" disabled={filters.city === null}
+                                    hidden={filters.city === null || filters.city === undefined}>clear field
+                            </option>
+                            {cities.map((c) => (
+                                <option key={c.name} value={c.name}> {c.name} </option>
+                            ))}
+                        </select>
+                    </label>
 
-                <label className="filterbar__label">
-                    <input
-                        className="filterbar__input"
-                        type="date"
-                        min={filters.startsAfter ? addOneDayToDateInput(filters.startsAfter) : minStart}
-                        value={filters.startsBefore ? filters.startsBefore.slice(0, 10) : ""}
-                        disabled={Boolean(filters.upcomingDays)}
-                        onChange={(e) =>
-                            update("startsBefore", e.target.value ? dateToStartOfDayLocalDateTime(e.target.value) : undefined)
-                        }
-                    />
-                </label>
+                    <label className="filterbar__label">
+                        <select
+                            className="filterbar__input"
+                            value={filters.eventType ?? ""}
+                            onChange={(e) =>
+                                update("eventType", (e.target.value || undefined) as CapoEventEnumType | undefined)
+                            }
+                        >
+                            <option value="">any type</option>
+                            <option value="RODA">RODA</option>
+                            <option value="WORKSHOP">WORKSHOP</option>
+                        </select>
+                    </label>
+                </div>
 
-                <label className="filterbar__checkbox">
-                    <input
-                        type="checkbox"
-                        checked={Boolean(filters.recentOnly)}
-                        onChange={(e) => update("recentOnly", e.target.checked)}
-                    />
-                    <span>recently added</span>
-                </label>
+                <div className="filterbar__row">
+                    <label className="filterbar__label">
+                        <select
+                            className="filterbar__input"
+                            value={filters.upcomingDays ?? ""}
+                            onChange={(e) => update("upcomingDays", e.target.value ? Number(e.target.value) : undefined)}
+                        >
+                            <option value="">pick date</option>
+                            <option value="7">Next 7 days</option>
+                            <option value="30">Next 30 days</option>
+                            <option value="90">Next 90 days</option>
+                            <option value="180">Next 180 days</option>
+                            <option value="365">Next 365 days</option>
+                        </select>
+                    </label>
 
-                <label className="filterbar__checkbox">
-                    <input
-                        type="checkbox"
-                        checked={Boolean(filters.bookmarkedOnly)}
-                        onChange={(e) => update("bookmarkedOnly", e.target.checked)}
-                    />
-                    <span>bookmarked only</span>
-                </label>
+                    <label className="filterbar__label">
+                        <input
+                            className="filterbar__input"
+                            type="date"
+                            min={minStart}
+                            value={filters.startsAfter ? filters.startsAfter.slice(0, 10) : ""}
+                            disabled={Boolean(filters.upcomingDays)}
+                            onChange={(e) =>
+                                update("startsAfter", e.target.value ? dateToStartOfDayLocalDateTime(e.target.value) : undefined)
+                            }
+                        />
+                    </label>
 
+                    <label className="filterbar__label">
+                        <input
+                            className="filterbar__input"
+                            type="date"
+                            min={filters.startsAfter ? addOneDayToDateInput(filters.startsAfter) : minStart}
+                            value={filters.startsBefore ? filters.startsBefore.slice(0, 10) : ""}
+                            disabled={Boolean(filters.upcomingDays)}
+                            onChange={(e) =>
+                                update("startsBefore", e.target.value ? dateToStartOfDayLocalDateTime(e.target.value) : undefined)
+                            }
+                        />
+                    </label>
+
+                    <label className="filterbar__checkbox">
+                        <input
+                            type="checkbox"
+                            checked={Boolean(filters.recentOnly)}
+                            onChange={(e) => update("recentOnly", e.target.checked)}
+                        />
+                        <span>recently added</span>
+                    </label>
+
+                    <label className="filterbar__checkbox">
+                        <input
+                            type="checkbox"
+                            checked={Boolean(filters.bookmarkedOnly)}
+                            onChange={(e) => update("bookmarkedOnly", e.target.checked)}
+                        />
+                        <span>bookmarked only</span>
+                    </label>
+                    
+                </div>
+            </div>
+            <div className="filterbar__side filterbar__side--right">
                 <button type="button" className="filterbar__btn" onClick={reset}>
                     Reset
                 </button>

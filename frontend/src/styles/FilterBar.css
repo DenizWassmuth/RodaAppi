@@ -48,3 +48,38 @@
     background: #333;
 }
 
+/* 3-column layout: left limit | center rows | right reset */
+.filterbar--grid {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    column-gap: 12px;
+    align-items: stretch;
+}
+
+/* side columns are vertically centered across both rows */
+.filterbar__side {
+    display: flex;
+    align-items: center;  /* vertical center */
+}
+
+.filterbar__side--left {
+    justify-content: flex-start;
+}
+
+.filterbar__side--right {
+    justify-content: flex-end;
+}
+
+/* center holds the two rows */
+.filterbar__center {
+    display: grid;
+    gap: 10px; /* matches your row spacing */
+}
+
+/* keep your existing row styles (flex wrap etc.) */
+.filterbar__row {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    align-items: end;
+}

@@ -14,11 +14,11 @@ type PageProps = {
     user:AppUserType | null | undefined;
     events:CapoEventType[];
     fetchEvents: () => Promise<void | string>;
-    bookmarks:string[] | null;
-    getUserBookmarks: () => void;
+    bookmarkedSet: ReadonlySet<string> | null;
+    fetchBookmarks: () => void;
 }
 
-export default function PreviewPage({user, events, fetchEvents, bookmarks, getUserBookmarks}: Readonly<PageProps>) {
+export default function PreviewPage({user, events, fetchEvents, bookmarkedSet, fetchBookmarks}: Readonly<PageProps>) {
 
     const [capoEvent, setCapoEvent] = useState<CapoEventType>(null);
     const [openEdit, setOpenEdit] = useState(false);
@@ -90,11 +90,11 @@ export default function PreviewPage({user, events, fetchEvents, bookmarks, getUs
                                         key={capoEvent?.id}
                                         user={user}
                                         capoEvent={capoEvent}
-                                        bookmarks={bookmarks}
+                                        bookmarkedSet={bookmarkedSet}
                                         onHandleEdit={openEditModal}
                                         onHandleDelete={openDeleteModal}
                                         openDetailsPage={openDetailsPage}
-                                        onHandleGetBookmarks={getUserBookmarks}
+                                        onHandleGetBookmarks={fetchBookmarks}
                                     />
                                 )
                             )
@@ -114,8 +114,8 @@ export default function PreviewPage({user, events, fetchEvents, bookmarks, getUs
                             capoEvent={capoEvent}
                             onEdit={() => openEditModal(capoEvent)}
                             onDelete={() => openDeleteModal(capoEvent)}
-                            bookmarks={bookmarks}
-                            onHandleGetBookmarks={getUserBookmarks}
+                            bookmarkedSet={bookmarkedSet}
+                            onHandleGetBookmarks={fetchBookmarks}
                         />
                     </FrameModal>
                     )}

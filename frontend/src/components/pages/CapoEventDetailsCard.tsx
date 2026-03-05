@@ -11,18 +11,18 @@ type EventPageProps = {
     partOfSeries: PartOfSeriesDto;
     onEdit: () => void;
     onDelete: () => void;
-    bookmarks:string[] | null;
+    bookmarkedSet:ReadonlySet<string> | null;
     onHandleGetBookmarks: () => void;
 }
 
-export default function CapoEventDetailsCard({bOpen, user, capoEvent, onEdit, onDelete, bookmarks, onHandleGetBookmarks}: Readonly<EventPageProps>) {
+export default function CapoEventDetailsCard({bOpen, user, capoEvent, onEdit, onDelete, bookmarkedSet, onHandleGetBookmarks}: Readonly<EventPageProps>) {
 
     const isLoggedIn = user !== null && user !== undefined;
     const eventIsValid = capoEvent !== undefined && capoEvent !== null;
     const eventIsCreatedByUser = isLoggedIn && eventIsValid && user.id === capoEvent?.creatorId;
 
-    const bBookmarksNotNull = bookmarks !== null && bookmarks.length >= 0;
-    const bIsBookmarkedByUser = isLoggedIn && bBookmarksNotNull && bookmarks.includes(capoEvent?.id ?? "")
+    const bBookmarksNotNull = bookmarkedSet !== null && bookmarkedSet.size >= 0;
+    const bIsBookmarkedByUser = isLoggedIn && bBookmarksNotNull && bookmarkedSet.has(capoEvent?.id ?? "")
 
     if (!bOpen) {
         return null;

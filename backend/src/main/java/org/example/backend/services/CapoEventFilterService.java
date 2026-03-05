@@ -1,6 +1,5 @@
 package org.example.backend.services;
 import org.example.backend.dto.CapoEventFilterDto;
-import org.example.backend.models.BookmarkContainer;
 import org.example.backend.models.CapoEvent;
 import org.example.backend.repositories.BookmarkContainerRepository;
 import org.springframework.data.domain.Sort;
@@ -82,11 +81,13 @@ public class CapoEventFilterService {
         Criteria startCriteria = Criteria.where("eventStart");
 
         if (startsAfter != null) {
+            startsAfter = startsAfter.withHour(0).withMinute(0).withSecond(0).withNano(0);
             startCriteria = startCriteria.gte(startsAfter);
             hasStartBound = true;
         }
 
         if (startsBefore != null) {
+            startsBefore = startsBefore.withHour(23).withMinute(59).withSecond(59).withNano(0);
             startCriteria = startCriteria.lte(startsBefore);
             hasStartBound = true;
         }

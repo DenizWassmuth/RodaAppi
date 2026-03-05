@@ -9,21 +9,21 @@ import * as React from "react";
 type EventCardProps = {
     user: AppUserType | undefined | null
     capoEvent: CapoEventType
-    bookmarks:string[] | null;
+    bookmarkedSet: ReadonlySet<string> | null;
     onHandleEdit: (event: CapoEventType) => void;
     onHandleDelete: (event: CapoEventType) => void;
     openDetailsPage: (event:CapoEventType) => void;
     onHandleGetBookmarks: () => void;
 }
 
-export default function CapoEventPreviewCard({user, capoEvent, bookmarks, onHandleEdit, onHandleDelete, onHandleGetBookmarks, openDetailsPage}: Readonly<EventCardProps>) {
+export default function CapoEventPreviewCard({user, capoEvent, bookmarkedSet, onHandleEdit, onHandleDelete, onHandleGetBookmarks, openDetailsPage}: Readonly<EventCardProps>) {
 
     const bUserIsValid = user !== null && user !== undefined;
     const bEventIsValid = capoEvent !== undefined && capoEvent !== null;
     const bShowButtons = bUserIsValid && bEventIsValid;
     const bIsCreatedByUser = bShowButtons && user?.id === capoEvent.creatorId;
-    const bBookmarksNotNull = bookmarks !== null && bookmarks.length >= 0;
-    const bIsBookmarkedByUser = bShowButtons && bBookmarksNotNull && bookmarks.includes(capoEvent?.id)
+    const bBookmarksNotNull = bookmarkedSet !== null && bookmarkedSet.size >= 0;
+    const bIsBookmarkedByUser = bShowButtons && bBookmarksNotNull && bookmarkedSet.has(capoEvent?.id)
 
     function handleDelete() {
         if (!capoEvent) {
