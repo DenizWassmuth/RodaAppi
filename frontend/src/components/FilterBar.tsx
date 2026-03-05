@@ -30,9 +30,10 @@ type FilterBarProps = {
     filters: CapoEventFilterDto;
     setFilters: React.Dispatch<React.SetStateAction<CapoEventFilterDto>>;
     countries: CountryData[];
+    bIsLoggedIn: boolean;
 };
 
-export default function FilterBar({ filters, setFilters, countries }: Readonly<FilterBarProps>) {
+export default function FilterBar({ filters, setFilters, countries, bIsLoggedIn }: Readonly<FilterBarProps>) {
     const minStart = useMemo(() => nowAsDate(), []);
 
     const [selectedCountryIso, setSelectedCountryIso] = useState<string | null>(null);
@@ -105,7 +106,6 @@ export default function FilterBar({ filters, setFilters, countries }: Readonly<F
     return (
 
         <div className="filterbar filterbar--grid">
-            {/* left: limit (spans both rows) */}
             <div className="filterbar__side filterbar__side--left">
                 <label className="filterbar__label">
                     <select
@@ -238,15 +238,17 @@ export default function FilterBar({ filters, setFilters, countries }: Readonly<F
                         <span>recently added</span>
                     </label>
 
-                    <label className="filterbar__checkbox">
-                        <input
-                            type="checkbox"
-                            checked={Boolean(filters.bookmarkedOnly)}
-                            onChange={(e) => update("bookmarkedOnly", e.target.checked)}
-                        />
-                        <span>bookmarked only</span>
-                    </label>
-                    
+                    {bIsLoggedIn && (
+                        <label className="filterbar__checkbox">
+                            <input
+                                type="checkbox"
+                                disabled={Boolean(!bIsLoggedIn)}
+                                checked={Boolean(filters.bookmarkedOnly)}
+                                onChange={(e) => update("bookmarkedOnly", e.target.checked)}
+                            />
+                            <span>bookmarked only</span>
+                        </label>
+                    )}
                 </div>
             </div>
             <div className="filterbar__side filterbar__side--right">

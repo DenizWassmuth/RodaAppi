@@ -48,18 +48,17 @@
     background: #333;
 }
 
-/* 3-column layout: left limit | center rows | right reset */
 .filterbar--grid {
     display: grid;
-    grid-template-columns: auto 1fr auto;
+    grid-template-columns: auto minmax(0, 1fr) auto; /* important */
     column-gap: 12px;
-    align-items: stretch;
+    align-items: center;
 }
 
 /* side columns are vertically centered across both rows */
 .filterbar__side {
     display: flex;
-    align-items: center;  /* vertical center */
+    align-items: center;
 }
 
 .filterbar__side--left {

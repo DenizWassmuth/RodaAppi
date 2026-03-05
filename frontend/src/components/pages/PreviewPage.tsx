@@ -9,6 +9,7 @@ import {DeleteCapoEventModal} from "../modals/DeleteCapoEventModal.tsx";
 import {checkIfPartOfSeries} from "../../utility/AxiosUtilities.ts";
 import CapoEventDetailsCard from "./CapoEventDetailsCard.tsx";
 import FrameModal from "../modals/FrameModal.tsx";
+import {useNavigate} from "react-router-dom";
 
 type PageProps = {
     user:AppUserType | null | undefined;
@@ -16,9 +17,10 @@ type PageProps = {
     fetchEvents: () => Promise<void | string>;
     bookmarkedSet: ReadonlySet<string> | null;
     fetchBookmarks: () => void;
+    bOnDashboard:boolean;
 }
 
-export default function PreviewPage({user, events, fetchEvents, bookmarkedSet, fetchBookmarks}: Readonly<PageProps>) {
+export default function PreviewPage({user, events, fetchEvents, bookmarkedSet, fetchBookmarks, bOnDashboard}: Readonly<PageProps>) {
 
     const [capoEvent, setCapoEvent] = useState<CapoEventType>(null);
     const [openEdit, setOpenEdit] = useState(false);
@@ -79,9 +81,23 @@ export default function PreviewPage({user, events, fetchEvents, bookmarkedSet, f
         setPartOfSeries(null);
     }
 
+    const nav = useNavigate();
+    const showAdd = Boolean(bOnDashboard) && Boolean(user);
+
     return (
-        <div>
-            <main className="page_layout">
+
+        <div className="page_layout">
+            {showAdd && (
+                <button
+                    type="button"
+                    className="add_fab"
+                    onClick={() => nav("/add")}
+                    aria-label="Add event"
+                    title="Add event"
+                >
+                    +
+                </button>
+            )}
                 <div className="events_row">
                     {
                         events
@@ -100,8 +116,6 @@ export default function PreviewPage({user, events, fetchEvents, bookmarkedSet, f
                             )
                     }
                 </div>
-            </main>
-
             {(
                 <>
                     {capoEvent && openDetails && (

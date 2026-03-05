@@ -124,6 +124,7 @@ function App() {
                             fetchEvents={fetchEvents}
                             bookmarkedSet={bookmarkedSet}
                             fetchBookmarks={fetchBookMarks}
+                            bOnDashboard={bIsDashboard}
                         />}
                     />
 
@@ -136,6 +137,7 @@ function App() {
                                 fetchEvents={fetchEvents}
                                 bookmarkedSet={bookmarkedSet}
                                 fetchBookmarks={fetchBookMarks}
+                                bOnDashboard={bIsDashboard}
                             />}
                         />
 
