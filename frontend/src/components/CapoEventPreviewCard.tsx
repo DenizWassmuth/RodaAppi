@@ -1,13 +1,12 @@
 import type {CapoEventType} from "../types/CapoEvent.ts";
 import "../styles/CapoEventPreviewCard.css"
 import "../index.css"
-import type {AppUserType} from "../types/AppUser.ts";
 import {bookmarkEvent} from "../utility/AxiosUtilities.ts";
 import {formatLocalDateTimeToDMonY, formatLocalDateTimeToHHmm} from "../utility/Helpers.ts";
 import * as React from "react";
+import {useAuth} from "../context/AuthContext.ts";
 
 type EventCardProps = {
-    user: AppUserType | undefined | null
     capoEvent: CapoEventType
     bookmarkedSet: ReadonlySet<string> | null;
     onHandleEdit: (event: CapoEventType) => void;
@@ -16,9 +15,10 @@ type EventCardProps = {
     onHandleGetBookmarks: () => void;
 }
 
-export default function CapoEventPreviewCard({user, capoEvent, bookmarkedSet, onHandleEdit, onHandleDelete, onHandleGetBookmarks, openDetailsPage}: Readonly<EventCardProps>) {
+export default function CapoEventPreviewCard({capoEvent, bookmarkedSet, onHandleEdit, onHandleDelete, onHandleGetBookmarks, openDetailsPage}: Readonly<EventCardProps>) {
+    const { user } = useAuth();
 
-    const bUserIsValid = user !== null && user !== undefined;
+    const bUserIsValid = !!user;
     const bEventIsValid = capoEvent !== undefined && capoEvent !== null;
     const bShowButtons = bUserIsValid && bEventIsValid;
     const bIsCreatedByUser = bShowButtons && user?.id === capoEvent.creatorId;

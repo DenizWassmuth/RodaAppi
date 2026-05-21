@@ -1,14 +1,11 @@
 import {Navigate, Outlet} from "react-router-dom";
-import type {AppUserType} from "../types/AppUser.ts";
+import {useAuth} from "../context/AuthContext.ts";
 
-type ProtectedRouteProps = {
-    user: AppUserType;
-}
+export default function ProtectedRoute() {
+    const { user, loading } = useAuth();
 
-export default function ProtectedRoute({user}: Readonly<ProtectedRouteProps>) {
-
-    if(user === undefined) {
-        <h3>loading</h3>
+    if (loading) {
+        return <h3>Loading...</h3>;
     }
 
     return (

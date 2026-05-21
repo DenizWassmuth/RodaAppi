@@ -1,12 +1,11 @@
 import axios from "axios";
 import type {CapoEventType, EditScope, EventFormValue, EventRegDto, PartOfSeriesDto} from "../../types/CapoEvent.ts";
-import type { AppUserType } from "../../types/AppUser.ts";
 import CapoEventForm from "../CapoEventForm.tsx";
 import FrameModal from "./FrameModal.tsx";
+import {useAuth} from "../../context/AuthContext.ts";
 
 type EditModalProps = {
     bOpen: boolean;
-    user: AppUserType | null;
     event: CapoEventType;
     setCapoEvent: (capoEvent: CapoEventType) => void;
     partOfSeries: PartOfSeriesDto;
@@ -14,7 +13,8 @@ type EditModalProps = {
     onClose: () => void;
 };
 
-export default function EditCapoEventModal({bOpen, user, event, setCapoEvent, partOfSeries, fetchEvents, onClose}:Readonly<EditModalProps>) {
+export default function EditCapoEventModal({bOpen, event, setCapoEvent, partOfSeries, fetchEvents, onClose}:Readonly<EditModalProps>) {
+    const { user } = useAuth();
 
     if(!bOpen || !user) {
         return null;

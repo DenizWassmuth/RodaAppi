@@ -3,16 +3,15 @@ import "../../styles/CapoEventPreviewCard.css"
 import "../../index.css"
 import {useEffect, useState} from "react";
 import EditCapoEventModal from "../modals/EditCapoEventModal.tsx";
-import type {AppUserType} from "../../types/AppUser.ts";
 import type {CapoEventType, PartOfSeriesDto} from "../../types/CapoEvent.ts";
 import {DeleteCapoEventModal} from "../modals/DeleteCapoEventModal.tsx";
 import {checkIfPartOfSeries} from "../../utility/AxiosUtilities.ts";
 import CapoEventDetailsCard from "./CapoEventDetailsCard.tsx";
 import FrameModal from "../modals/FrameModal.tsx";
 import {useNavigate} from "react-router-dom";
+import {useAuth} from "../../context/AuthContext.ts";
 
 type PageProps = {
-    user:AppUserType | null | undefined;
     events:CapoEventType[];
     fetchEvents: () => Promise<void | string>;
     bookmarkedSet: ReadonlySet<string> | null;
@@ -20,8 +19,8 @@ type PageProps = {
     bOnDashboard:boolean;
 }
 
-export default function PreviewPage({user, events, fetchEvents, bookmarkedSet, fetchBookmarks, bOnDashboard}: Readonly<PageProps>) {
-
+export default function PreviewPage({events, fetchEvents, bookmarkedSet, fetchBookmarks, bOnDashboard}: Readonly<PageProps>) {
+    const { user } = useAuth();
     const [capoEvent, setCapoEvent] = useState<CapoEventType>(null);
     const [openEdit, setOpenEdit] = useState(false);
     const [openDelete, setOpenDelete] = useState(false);
@@ -104,7 +103,6 @@ export default function PreviewPage({user, events, fetchEvents, bookmarkedSet, f
                             .map(capoEvent => (
                                     <CapoEventPreviewCard
                                         key={capoEvent?.id}
-                                        user={user}
                                         capoEvent={capoEvent}
                                         bookmarkedSet={bookmarkedSet}
                                         onHandleEdit={openEditModal}
@@ -123,7 +121,6 @@ export default function PreviewPage({user, events, fetchEvents, bookmarkedSet, f
                         <CapoEventDetailsCard
                             key={"details"+capoEvent?.id}
                             bOpen={openDetails}
-                            user={user}
                             partOfSeries={partOfSeries}
                             capoEvent={capoEvent}
                             onEdit={() => openEditModal(capoEvent)}
@@ -140,7 +137,6 @@ export default function PreviewPage({user, events, fetchEvents, bookmarkedSet, f
                             event={capoEvent}
                             setCapoEvent={setCapoEvent}
                             partOfSeries={partOfSeries}
-                            user={user}
                             fetchEvents={fetchEvents}
                             onClose={closeEditModal}
                         />
@@ -151,7 +147,6 @@ export default function PreviewPage({user, events, fetchEvents, bookmarkedSet, f
                             bOpen={openDelete}
                             eventId={capoEvent?.id}
                             partOfSeries={partOfSeries}
-                            user={user}
                             fetchEvents={fetchEvents}
                             onClose={closeDeleteModal}
                         />

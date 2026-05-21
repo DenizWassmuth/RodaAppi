@@ -4,13 +4,13 @@ import {Route, Routes, useLocation} from "react-router-dom";
 import {useEffect, useMemo, useState} from "react";
 import ProtectedRoute from "./components/ProtectedRoute.tsx";
 import axios from "axios";
-import type {AppUserType} from "./types/AppUser.ts";
 import type {CapoEventFilterDto, CapoEventType} from "./types/CapoEvent.ts";
 import PreviewPage from "./components/pages/PreviewPage.tsx";
 import CreateCapoEventPage from "./components/pages/CreateCapoEventPage.tsx";
 import type {CountryData} from "./types/GeoData.ts";
 import {fetchFilteredCapoEvents} from "./utility/AxiosUtilities.ts";
 import TopBar from "./components/TopBar.tsx";
+import {useAuth} from "./context/AuthContext.ts";
 
 const defaultFilters: CapoEventFilterDto = {
     country: undefined,
@@ -30,25 +30,12 @@ const defaultFilters: CapoEventFilterDto = {
 
 function App() {
 
-    const [user, setUser] = useState<AppUserType>(null);
+    const {user, loading} = useAuth();
 
     const [filters, setFilters] = useState<CapoEventFilterDto>(defaultFilters);
     const [capoEvents, setCapoEvents] = useState<CapoEventType[]>([]);
     const [bookmarks, setBookmarks] = useState<string[]>([]);
     const [countries, setCountries] = useState<CountryData[]>([]);
-
-    const loadUser = () => {
-        axios.get("/api/auth")
-            .then((response) => setUser(response.data))
-            .catch((error) => {
-                setUser(null);
-                console.log(error + " user was set to null, as user is not logged in")});
-    }
-
-    useEffect(() => {
-        loadUser();
-        //fetchCountries(setCountries).then();
-    }, []);
 
     const bookmarkedSet = useMemo(() =>
         new Set(bookmarks), [bookmarks]);
@@ -59,16 +46,16 @@ function App() {
     const effectiveFilters = useMemo<CapoEventFilterDto>(() => {
         if (bIsDashboard && user) {
             console.log("filtering user created events")
-            return { ...filters, isDashboardContent: true , creatorId: user?.id}; // add this field in DTO type
+            return {...filters, isDashboardContent: true, creatorId: user?.id}; // add this field in DTO type
         }
 
         if (filters.bookmarkedOnly && user) {
             console.log("filtering only bookmarked events")
-            return { ...filters, isDashboardContent: false, creatorId: user?.id };
+            return {...filters, isDashboardContent: false, creatorId: user?.id};
         }
 
         console.log("filtering all events")
-        return { ...filters, isDashboardContent: false, creatorId: null , bookmarkedOnly: false };
+        return {...filters, isDashboardContent: false, creatorId: null, bookmarkedOnly: false};
 
     }, [user, filters, bIsDashboard, bookmarkedSet]);
 
@@ -83,22 +70,22 @@ function App() {
     }, [effectiveFilters]);
 
     const fetchBookMarks = () => {
-
         if (!user || !user?.id) {
-            console.log(bookmarks);
+            console.log("user is not logged in, so no bookmarks can be fetched.");
             return;
         }
 
+        console.log("fetching bookmarks for user: " + user?.id);
+
         if (!capoEvents || capoEvents.length <= 0) {
-            console.log("didi not get bookmarks, as no events were fetched");
+            console.log("stopped fetching bookmarks, as no events have been fetched yet.");
             return;
         }
 
         axios.get<string[]>(`/api/bookmarks/${user?.id}`)
             .then((response) => {
                 setBookmarks(response.data);
-                console.log("fetched bookmarks: ");
-                console.log(response.data);
+                console.log("fetched bookmarks: " + response.data);
             })
             .catch((error) => {
                 setBookmarks([]);
@@ -108,18 +95,19 @@ function App() {
 
     useEffect(() => {
         fetchBookMarks();
-
     }, [user]);
+
+    if (loading) {
+        return <div className="loading-screen">Loading...</div>;
+    }
 
     return (
         <>
-            <TopBar user={user} filters={filters} setFilters={setFilters} countries={countries}/>
+            <TopBar filters={filters} setFilters={setFilters} countries={countries}/>
             <div className="app_content">
                 <Routes>
-
                     <Route path={"/"} element={
                         <PreviewPage
-                            user={user}
                             events={capoEvents}
                             fetchEvents={fetchEvents}
                             bookmarkedSet={bookmarkedSet}
@@ -127,12 +115,10 @@ function App() {
                             bOnDashboard={bIsDashboard}
                         />}
                     />
-
-                    <Route element={<ProtectedRoute user={user}/>}>
-
-                        <Route path={"/loggedin"} element={
-                            <PreviewPage
-                                user={user}
+                    <Route element={<ProtectedRoute/>}>
+                        <Route
+                            path={"/loggedin"}
+                            element={<PreviewPage
                                 events={capoEvents}
                                 fetchEvents={fetchEvents}
                                 bookmarkedSet={bookmarkedSet}
@@ -140,17 +126,15 @@ function App() {
                                 bOnDashboard={bIsDashboard}
                             />}
                         />
-
-                        <Route path={"/add"} element={
-                            <CreateCapoEventPage
-                                user={user}
+                        <Route
+                            path={"/add"}
+                            element={<CreateCapoEventPage
                                 fetchEvents={fetchEvents}
                                 onClosePath={"/loggedin"}
                                 countries={countries}
                                 setCountries={setCountries}
                             />}
                         />
-
                     </Route>
                 </Routes>
             </div>

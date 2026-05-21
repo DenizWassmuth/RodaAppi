@@ -1,12 +1,11 @@
 import type {CapoEventType, PartOfSeriesDto} from "../../types/CapoEvent.ts";
 import "../../styles/CapoEventDetailsCard.css"
-import type {AppUserType} from "../../types/AppUser.ts";
 import {formatLocalDateTimeToDMonY, formatLocalDateTimeToHHmm, hasSameDate} from "../../utility/Helpers.ts";
 import {bookmarkEvent} from "../../utility/AxiosUtilities.ts";
+import {useAuth} from "../../context/AuthContext.ts";
 
 type EventPageProps = {
     bOpen: boolean;
-    user: AppUserType;
     capoEvent: CapoEventType;
     partOfSeries: PartOfSeriesDto;
     onEdit: () => void;
@@ -15,9 +14,10 @@ type EventPageProps = {
     onHandleGetBookmarks: () => void;
 }
 
-export default function CapoEventDetailsCard({bOpen, user, capoEvent, onEdit, onDelete, bookmarkedSet, onHandleGetBookmarks}: Readonly<EventPageProps>) {
+export default function CapoEventDetailsCard({bOpen, capoEvent, onEdit, onDelete, bookmarkedSet, onHandleGetBookmarks}: Readonly<EventPageProps>) {
+    const { user } = useAuth();
 
-    const isLoggedIn = user !== null && user !== undefined;
+    const isLoggedIn = !!user;
     const eventIsValid = capoEvent !== undefined && capoEvent !== null;
     const eventIsCreatedByUser = isLoggedIn && eventIsValid && user.id === capoEvent?.creatorId;
 

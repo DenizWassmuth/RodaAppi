@@ -1,18 +1,13 @@
 
-import type {AppUserType} from "../types/AppUser.ts";
 import '../styles/NavBar.css'
-
 import { useNavigate } from "react-router-dom";
+import {useAuth} from "../context/AuthContext.ts";
 
-
-type NavBarProps = {
-    user: AppUserType;
-};
-
-export default function Navbar(props: Readonly<NavBarProps>) {
+export default function Navbar() {
     const nav = useNavigate();
+    const { user } = useAuth();
 
-    const isLoggedIn = props.user !== null && props.user !== undefined;
+    const isLoggedIn = !!user;
 
     function goTo(path: string) {
         nav(path);

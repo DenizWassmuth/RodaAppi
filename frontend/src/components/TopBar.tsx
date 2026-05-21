@@ -1,4 +1,3 @@
-import type {AppUserType} from "../types/AppUser.ts";
 import type {CapoEventFilterDto} from "../types/CapoEvent.ts";
 import Navbar from "./NavBar.tsx";
 import FilterBar from "./FilterBar.tsx";
@@ -6,17 +5,17 @@ import type {CountryData} from "../types/GeoData.ts";
 import '../styles/TopBar.css'
 import { useState } from "react";
 import * as React from "react";
-import {login, logout} from "../utility/Auth.ts";
+import {useAuth} from "../context/AuthContext.ts";
 
 type TopBarProps = {
-    user: AppUserType;
     filters: CapoEventFilterDto;
     setFilters: React.Dispatch<React.SetStateAction<CapoEventFilterDto>>;
 
     countries: CountryData[];
 };
 
-export default function TopBar({ user, filters, setFilters, countries }: Readonly<TopBarProps>) {
+export default function TopBar({ filters, setFilters, countries }: Readonly<TopBarProps>) {
+    const { user, login, logout } = useAuth();
     const [filtersOpen, setFiltersOpen] = useState(false);
 
     const isLoggedIn = !!user;
@@ -33,7 +32,7 @@ export default function TopBar({ user, filters, setFilters, countries }: Readonl
 
                     {/* CENTER (navbar + toggle) */}
                     <div className="topbar__center">
-                        <Navbar user={user} />
+                        <Navbar />
 
                         <button
                             type="button"
@@ -66,7 +65,6 @@ export default function TopBar({ user, filters, setFilters, countries }: Readonl
                         filters={filters}
                         setFilters={setFilters}
                         countries={countries}
-                        bIsLoggedIn={isLoggedIn}
                     />
                 </div>
             </div>

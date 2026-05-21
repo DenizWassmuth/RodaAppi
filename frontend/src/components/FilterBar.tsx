@@ -9,6 +9,7 @@ import {
     nowAsDate
 } from "../utility/Helpers.ts";
 import {fetchCities, fetchStates} from "../utility/AxiosUtilities.ts";
+import {useAuth} from "../context/AuthContext.ts";
 
 const defaultFilters: CapoEventFilterDto = {
     country: undefined,
@@ -30,11 +31,12 @@ type FilterBarProps = {
     filters: CapoEventFilterDto;
     setFilters: React.Dispatch<React.SetStateAction<CapoEventFilterDto>>;
     countries: CountryData[];
-    bIsLoggedIn: boolean;
 };
 
-export default function FilterBar({ filters, setFilters, countries, bIsLoggedIn }: Readonly<FilterBarProps>) {
+export default function FilterBar({ filters, setFilters, countries }: Readonly<FilterBarProps>) {
     const minStart = useMemo(() => nowAsDate(), []);
+    const { user } = useAuth();
+    const bIsLoggedIn = !!user;
 
     const [selectedCountryIso, setSelectedCountryIso] = useState<string | null>(null);
 

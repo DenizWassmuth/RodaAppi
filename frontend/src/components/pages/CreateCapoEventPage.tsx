@@ -1,16 +1,15 @@
 import axios from "axios";
 import CapoEventForm from "../CapoEventForm.tsx";
 
-import type { AppUserType } from "../../types/AppUser.ts";
 import type {EventFormValue, EventRegDto} from "../../types/CapoEvent.ts";
 import {useNavigate} from "react-router-dom";
 import FrameModal from "../modals/FrameModal.tsx";
 import {useState} from "react";
 import type {CountryData} from "../../types/GeoData.ts";
 import {fetchCountries} from "../../utility/AxiosUtilities.ts";
+import {useAuth} from "../../context/AuthContext.ts";
 
 type Props = {
-    user: AppUserType;
     fetchEvents: () => Promise<void | string>;
     onClosePath:string;
     countries:CountryData[]
@@ -18,7 +17,8 @@ type Props = {
 
 };
 
-export default function CreateCapoEventPage({user, fetchEvents, onClosePath, countries, setCountries}:Readonly<Props>) {
+export default function CreateCapoEventPage({fetchEvents, onClosePath, countries, setCountries}:Readonly<Props>) {
+    const { user } = useAuth();
     const empty: EventFormValue = {
         userName:user?.username,
         eventTitle: "",
@@ -46,7 +46,7 @@ export default function CreateCapoEventPage({user, fetchEvents, onClosePath, cou
         return null;
     }
 
-    const isLoggedIn = user !== null && user !== undefined;
+    const isLoggedIn = !!user;
 
     if(countries.length <= 0){
         fetchCountries(setCountries)
