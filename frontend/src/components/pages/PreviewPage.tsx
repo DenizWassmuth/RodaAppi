@@ -10,17 +10,15 @@ import CapoEventDetailsCard from "./CapoEventDetailsCard.tsx";
 import FrameModal from "../modals/FrameModal.tsx";
 import {useNavigate} from "react-router-dom";
 import {useAuth} from "../../context/AuthContext.ts";
+import {useEvents} from "../../context/EventContext.ts";
 
 type PageProps = {
-    events:CapoEventType[];
-    fetchEvents: () => Promise<void | string>;
-    bookmarkedSet: ReadonlySet<string> | null;
-    fetchBookmarks: () => void;
     bOnDashboard:boolean;
 }
 
-export default function PreviewPage({events, fetchEvents, bookmarkedSet, fetchBookmarks, bOnDashboard}: Readonly<PageProps>) {
+export default function PreviewPage({bOnDashboard}: Readonly<PageProps>) {
     const { user } = useAuth();
+    const { events, bookmarkedSet, refreshEvents, refreshBookmarks } = useEvents();
     const [capoEvent, setCapoEvent] = useState<CapoEventType>(null);
     const [openEdit, setOpenEdit] = useState(false);
     const [openDelete, setOpenDelete] = useState(false);
@@ -108,7 +106,7 @@ export default function PreviewPage({events, fetchEvents, bookmarkedSet, fetchBo
                                         onHandleEdit={openEditModal}
                                         onHandleDelete={openDeleteModal}
                                         openDetailsPage={openDetailsPage}
-                                        onHandleGetBookmarks={fetchBookmarks}
+                                        onHandleGetBookmarks={refreshBookmarks}
                                     />
                                 )
                             )
@@ -126,7 +124,7 @@ export default function PreviewPage({events, fetchEvents, bookmarkedSet, fetchBo
                             onEdit={() => openEditModal(capoEvent)}
                             onDelete={() => openDeleteModal(capoEvent)}
                             bookmarkedSet={bookmarkedSet}
-                            onHandleGetBookmarks={fetchBookmarks}
+                            onHandleGetBookmarks={refreshBookmarks}
                         />
                     </FrameModal>
                     )}
@@ -137,7 +135,7 @@ export default function PreviewPage({events, fetchEvents, bookmarkedSet, fetchBo
                             event={capoEvent}
                             setCapoEvent={setCapoEvent}
                             partOfSeries={partOfSeries}
-                            fetchEvents={fetchEvents}
+                            fetchEvents={refreshEvents}
                             onClose={closeEditModal}
                         />
                     )}
@@ -147,7 +145,7 @@ export default function PreviewPage({events, fetchEvents, bookmarkedSet, fetchBo
                             bOpen={openDelete}
                             eventId={capoEvent?.id}
                             partOfSeries={partOfSeries}
-                            fetchEvents={fetchEvents}
+                            fetchEvents={refreshEvents}
                             onClose={closeDeleteModal}
                         />
                     )}

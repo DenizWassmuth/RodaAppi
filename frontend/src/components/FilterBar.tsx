@@ -1,6 +1,5 @@
 import type {CapoEventEnumType, CapoEventFilterDto} from "../types/CapoEvent.ts";
 import "../styles/FilterBar.css"
-import * as React from "react";
 import type {CityData, CountryData, StateData} from "../types/GeoData.ts";
 import {useEffect, useMemo, useState} from "react";
 import {
@@ -10,6 +9,7 @@ import {
 } from "../utility/Helpers.ts";
 import {fetchCities, fetchStates} from "../utility/AxiosUtilities.ts";
 import {useAuth} from "../context/AuthContext.ts";
+import {useEvents} from "../context/EventContext.ts";
 
 const defaultFilters: CapoEventFilterDto = {
     country: undefined,
@@ -28,14 +28,13 @@ const defaultFilters: CapoEventFilterDto = {
 };
 
 type FilterBarProps = {
-    filters: CapoEventFilterDto;
-    setFilters: React.Dispatch<React.SetStateAction<CapoEventFilterDto>>;
     countries: CountryData[];
 };
 
-export default function FilterBar({ filters, setFilters, countries }: Readonly<FilterBarProps>) {
+export default function FilterBar({ countries }: Readonly<FilterBarProps>) {
     const minStart = useMemo(() => nowAsDate(), []);
     const { user } = useAuth();
+    const { filters, setFilters } = useEvents();
     const bIsLoggedIn = !!user;
 
     const [selectedCountryIso, setSelectedCountryIso] = useState<string | null>(null);

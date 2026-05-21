@@ -8,17 +8,17 @@ import {useState} from "react";
 import type {CountryData} from "../../types/GeoData.ts";
 import {fetchCountries} from "../../utility/AxiosUtilities.ts";
 import {useAuth} from "../../context/AuthContext.ts";
+import {useEvents} from "../../context/EventContext.ts";
 
 type Props = {
-    fetchEvents: () => Promise<void | string>;
     onClosePath:string;
     countries:CountryData[]
     setCountries:(countries:CountryData[]) => void;
-
 };
 
-export default function CreateCapoEventPage({fetchEvents, onClosePath, countries, setCountries}:Readonly<Props>) {
+export default function CreateCapoEventPage({onClosePath, countries, setCountries}:Readonly<Props>) {
     const { user } = useAuth();
+    const { refreshEvents } = useEvents();
     const empty: EventFormValue = {
         userName:user?.username,
         eventTitle: "",
@@ -66,7 +66,7 @@ export default function CreateCapoEventPage({fetchEvents, onClosePath, countries
         setOpenFormModal(false);
 
         await axios.post("/api/capoevent", dto)
-            .then(() => fetchEvents()
+            .then(() => refreshEvents()
                 .then(() => nav("/loggedin")));
     }
 

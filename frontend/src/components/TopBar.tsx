@@ -1,21 +1,16 @@
-import type {CapoEventFilterDto} from "../types/CapoEvent.ts";
 import Navbar from "./NavBar.tsx";
 import FilterBar from "./FilterBar.tsx";
 import type {CountryData} from "../types/GeoData.ts";
 import '../styles/TopBar.css'
 import { useState } from "react";
-import * as React from "react";
 import {useAuth} from "../context/AuthContext.ts";
 
 type TopBarProps = {
-    filters: CapoEventFilterDto;
-    setFilters: React.Dispatch<React.SetStateAction<CapoEventFilterDto>>;
-
     countries: CountryData[];
 };
 
-export default function TopBar({ filters, setFilters, countries }: Readonly<TopBarProps>) {
-    const { user, login, logout } = useAuth();
+export default function TopBar({ countries }: Readonly<TopBarProps>) {
+    const { login, logout, user } = useAuth();
     const [filtersOpen, setFiltersOpen] = useState(false);
 
     const isLoggedIn = !!user;
@@ -62,8 +57,6 @@ export default function TopBar({ filters, setFilters, countries }: Readonly<TopB
 
                 <div id="topbar-filters" className={`topbar__filters ${filtersOpen ? "is-open" : ""}`}>
                     <FilterBar
-                        filters={filters}
-                        setFilters={setFilters}
                         countries={countries}
                     />
                 </div>
