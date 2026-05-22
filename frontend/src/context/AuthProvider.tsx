@@ -4,17 +4,11 @@ import type { AppUserType } from '../types/AppUser.ts';
 import { login as authLogin, logout as authLogout } from '../utility/Auth.ts';
 import { AuthContext } from './AuthContext.ts';
 
-/**
- * AuthProvider component that wraps the app and provides auth state to children.
- */
+
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     const [user, setUser] = useState<AppUserType>(null);
     const [loading, setLoading] = useState(true);
 
-    /**
-     * Fetches the current user session from the backend.
-     * This is called on mount and can be called manually via refreshUser.
-     */
     const loadUser = async () => {
         try {
             // Check session status with the backend API

@@ -1,152 +1,128 @@
-import CapoEventPreviewCard from "../CapoEventPreviewCard.tsx";
+import EventPreviewCard from "../EventPreviewCard.tsx";
 import "../../styles/CapoEventPreviewCard.css"
 import "../../index.css"
 import {useEffect, useState} from "react";
-import EditCapoEventModal from "../modals/EditCapoEventModal.tsx";
+import EditEventModal from "../modals/EditEventModal.tsx";
 import type {CapoEventType, PartOfSeriesDto} from "../../types/CapoEvent.ts";
-import {DeleteCapoEventModal} from "../modals/DeleteCapoEventModal.tsx";
+import {DeleteEventModal} from "../modals/DeleteEventModal.tsx";
 import {checkIfPartOfSeries} from "../../utility/AxiosUtilities.ts";
-import CapoEventDetailsCard from "./CapoEventDetailsCard.tsx";
+import EventDetailsCard from "../EventDetailsCard.tsx";
 import FrameModal from "../modals/FrameModal.tsx";
-import {useNavigate} from "react-router-dom";
 import {useAuth} from "../../context/AuthContext.ts";
 import {useEvents} from "../../context/EventContext.ts";
+import CreateEventModal from "../modals/CreateEventModal.tsx";
+import type {CountryData} from "../../types/GeoData.ts";
 
-type PageProps = {
-    bOnDashboard:boolean;
-}
 
-export default function PreviewPage({bOnDashboard}: Readonly<PageProps>) {
+/**
+ * Defines the possible states for the centralized modal system.
+ * Using a Discriminated Union ensures we always have the right data for the right modal.
+ */
+type ActiveModal = 
+    | { type: 'DETAILS'; event: CapoEventType }
+    | { type: 'CREATE'; event: CapoEventType }
+    | { type: 'EDIT'; event: CapoEventType }
+    | { type: 'DELETE'; event: CapoEventType }
+    | null;
+
+type PreviewProps = {
+   countries: CountryData[],
+};
+
+export default function PreviewPage({countries}: PreviewProps) {
     const { user } = useAuth();
-    const { events, bookmarkedSet, refreshEvents, refreshBookmarks } = useEvents();
-    const [capoEvent, setCapoEvent] = useState<CapoEventType>(null);
-    const [openEdit, setOpenEdit] = useState(false);
-    const [openDelete, setOpenDelete] = useState(false);
-    const [openDetails, setOpenDetails] = useState(false);
+    const { events, refreshEvents } = useEvents();
+
+    const [activeModal, setActiveModal] = useState<ActiveModal>(null);
     const [partOfSeries, setPartOfSeries] = useState<PartOfSeriesDto>(null);
 
     useEffect(() => {
-        if (!capoEvent) {
+        if (!activeModal?.event) {
+            setPartOfSeries(null);
             return;
         }
 
-        checkIfPartOfSeries(capoEvent, setPartOfSeries)
-            .then();
+        checkIfPartOfSeries(activeModal.event, setPartOfSeries).then();
+    }, [activeModal?.event])
 
-    }, [capoEvent])
+    const bShowAddButton = Boolean(user);
 
-    function openEditModal(event: CapoEventType) {
-        setCapoEvent(event);
-        setOpenEdit(true);
-        setOpenDelete(false);
-    }
-
-    function closeEditModal() {
-        setOpenEdit(false);
-
-        if (openDetails) {
-            return;
-        }
-
-        setCapoEvent(null);
-        setPartOfSeries(null);
-    }
-
-    function openDeleteModal(event: CapoEventType) {
-        setCapoEvent(event);
-        setOpenDelete(true);
-    }
-
-    function closeDeleteModal(bCancel:boolean) {
-        setOpenDelete(false);
-
-        if (openDetails && bCancel) {
-            return;
-        }
-
-       closeDetailsPage();
-    }
-
-    function openDetailsPage(event: CapoEventType) {
-        setCapoEvent(event);
-        setOpenDetails(true);
-    }
-
-    function closeDetailsPage() {
-        setCapoEvent(null);
-        setOpenDetails(false);
-        setPartOfSeries(null);
-    }
-
-    const nav = useNavigate();
-    const showAdd = Boolean(bOnDashboard) && Boolean(user);
+    const closeModal = () => setActiveModal(null);
 
     return (
-
         <div className="page_layout">
-            {showAdd && (
+            {bShowAddButton && (
                 <button
                     type="button"
                     className="add_fab"
-                    onClick={() => nav("/add")}
+                    onClick={() => setActiveModal({ type: 'CREATE', event: null })}
                     aria-label="Add event"
                     title="Add event"
                 >
                     +
                 </button>
             )}
-                <div className="events_row">
-                    {
-                        events
-                            .map(capoEvent => (
-                                    <CapoEventPreviewCard
-                                        key={capoEvent?.id}
-                                        capoEvent={capoEvent}
-                                        bookmarkedSet={bookmarkedSet}
-                                        onHandleEdit={openEditModal}
-                                        onHandleDelete={openDeleteModal}
-                                        openDetailsPage={openDetailsPage}
-                                        onHandleGetBookmarks={refreshBookmarks}
-                                    />
-                                )
-                            )
-                    }
-                </div>
-            {(
+            <div className="events_row">
+                {events.map(capoEvent => (
+                    <EventPreviewCard
+                        key={capoEvent?.id}
+                        capoEvent={capoEvent}
+                        onHandleEdit={(e) => setActiveModal({ type: 'EDIT', event: e })}
+                        onHandleDelete={(e) => setActiveModal({ type: 'DELETE', event: e })}
+                        openDetailsPage={(e) => setActiveModal({ type: 'DETAILS', event: e })}
+                    />
+                ))}
+            </div>
+
+            {/* MODAL CONTROLLER SECTION */}
+            {activeModal && (
                 <>
-                    {capoEvent && openDetails && (
-                    <FrameModal title={""} open={openDetails} onClose={() => closeDetailsPage()}>
-                        <CapoEventDetailsCard
-                            key={"details"+capoEvent?.id}
-                            bOpen={openDetails}
-                            partOfSeries={partOfSeries}
-                            capoEvent={capoEvent}
-                            onEdit={() => openEditModal(capoEvent)}
-                            onDelete={() => openDeleteModal(capoEvent)}
-                            bookmarkedSet={bookmarkedSet}
-                            onHandleGetBookmarks={refreshBookmarks}
-                        />
-                    </FrameModal>
+                    {/* 1. DETAILS MODAL */}
+                    {activeModal.type === 'DETAILS' && activeModal.event && (
+                        <FrameModal title={""} open={true} onClose={closeModal}>
+                            <EventDetailsCard
+                                key={"details" + activeModal.event.id}
+                                bOpen={true}
+                                partOfSeries={partOfSeries}
+                                capoEvent={activeModal.event}
+                                onEdit={() => setActiveModal({ type: 'EDIT', event: activeModal.event })}
+                                onDelete={() => setActiveModal({ type: 'DELETE', event: activeModal.event })}
+                            />
+                        </FrameModal>
                     )}
-                    {user && openEdit && (
-                        <EditCapoEventModal
-                            key={"edit"+capoEvent?.id}
-                            bOpen={openEdit}
-                            event={capoEvent}
-                            setCapoEvent={setCapoEvent}
-                            partOfSeries={partOfSeries}
-                            fetchEvents={refreshEvents}
-                            onClose={closeEditModal}
+
+                    {/* 2. CREATE MODAL */}
+                    {activeModal.type === 'CREATE' && user && (
+                        <CreateEventModal
+                            key={"create"}
+                            bOpenForm={activeModal.type === 'CREATE'}
+                            onClose={closeModal}
+                            countries={countries}
                         />
                     )}
-                    {user && openDelete && partOfSeries && (
-                        <DeleteCapoEventModal
-                            key={"delete"+capoEvent?.id}
-                            bOpen={openDelete}
-                            eventId={capoEvent?.id}
+
+                    {/* 3. EDIT MODAL */}
+                    {activeModal.type === 'EDIT' && user && activeModal.event && (
+                        <EditEventModal
+                            key={"edit" + activeModal.event.id}
+                            bOpen={true}
+                            event={activeModal.event}
+                            setCapoEvent={(updated) => setActiveModal({ type: 'DETAILS', event: updated })}
                             partOfSeries={partOfSeries}
                             fetchEvents={refreshEvents}
-                            onClose={closeDeleteModal}
+                            onClose={closeModal}
+                        />
+                    )}
+
+                    {/* 4. DELETE MODAL */}
+                    {activeModal.type === 'DELETE' && user && activeModal.event && partOfSeries && (
+                        <DeleteEventModal
+                            key={"delete" + activeModal.event.id}
+                            bOpen={true}
+                            eventId={activeModal.event.id}
+                            partOfSeries={partOfSeries}
+                            fetchEvents={refreshEvents}
+                            onClose={(bCancel) => bCancel ? closeModal() : closeModal()}
                         />
                     )}
                 </>

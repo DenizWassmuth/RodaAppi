@@ -1,22 +1,21 @@
 import type {CapoEventType} from "../types/CapoEvent.ts";
 import "../styles/CapoEventPreviewCard.css"
 import "../index.css"
-import {bookmarkEvent} from "../utility/AxiosUtilities.ts";
 import {formatLocalDateTimeToDMonY, formatLocalDateTimeToHHmm} from "../utility/Helpers.ts";
 import * as React from "react";
 import {useAuth} from "../context/AuthContext.ts";
+import {useEvents} from "../context/EventContext.ts";
 
 type EventCardProps = {
     capoEvent: CapoEventType
-    bookmarkedSet: ReadonlySet<string> | null;
     onHandleEdit: (event: CapoEventType) => void;
     onHandleDelete: (event: CapoEventType) => void;
     openDetailsPage: (event:CapoEventType) => void;
-    onHandleGetBookmarks: () => void;
 }
 
-export default function CapoEventPreviewCard({capoEvent, bookmarkedSet, onHandleEdit, onHandleDelete, onHandleGetBookmarks, openDetailsPage}: Readonly<EventCardProps>) {
+export default function EventPreviewCard({capoEvent, onHandleEdit, onHandleDelete, openDetailsPage}: Readonly<EventCardProps>) {
     const { user } = useAuth();
+    const { bookmarkedSet, toggleBookmark } = useEvents();
 
     const bUserIsValid = !!user;
     const bEventIsValid = capoEvent !== undefined && capoEvent !== null;
@@ -41,13 +40,12 @@ export default function CapoEventPreviewCard({capoEvent, bookmarkedSet, onHandle
         onHandleEdit(capoEvent); // open modal from parent
     }
 
-    function handleBookmarking() {
+    async function handleBookmarking() {
         if (!capoEvent) {
             console.log("capoEvent === null or undefined, cannot handle bookmarks");
             return;
         }
-        bookmarkEvent(user?.id, capoEvent?.id, bIsBookmarkedByUser)
-            .then(() => onHandleGetBookmarks());
+        await toggleBookmark(capoEvent.id);
     }
 
     function handleOpenDetails() {

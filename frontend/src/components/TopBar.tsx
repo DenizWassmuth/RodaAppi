@@ -4,6 +4,7 @@ import type {CountryData} from "../types/GeoData.ts";
 import '../styles/TopBar.css'
 import { useState } from "react";
 import {useAuth} from "../context/AuthContext.ts";
+import "../index.css"
 
 type TopBarProps = {
     countries: CountryData[];
@@ -16,22 +17,19 @@ export default function TopBar({ countries }: Readonly<TopBarProps>) {
     const isLoggedIn = !!user;
 
     return (
-        <header className={`topbar ${filtersOpen ? "topbar--open" : ""}`}>
-            <div className="topbar__inner">
-                <div className="topbar__navrow">
+        <header className={`fixed w-full top-0 left-0 z-5 border-b-2 border-gray-500 border-solid backdrop-blur-3xl bg-linear-to-t from-amber-200 to-amber-100 dark:bg-linear-to-t dark:from-zinc-900 dark:to-zinc-800  transition-colors duration-500`}>
+            <div className="flex flex-col items-center justify-center px-4 py-2">
+                <div className="flex flex-row items-center justify-between w-full px-10">
 
                     {/* LEFT */}
-                    <div className="topbar__brand" role="banner">
+                    <div role="banner" className="font-bold text-zinc-200">
                         RodaAppi
                     </div>
-
-                    {/* CENTER (navbar + toggle) */}
-                    <div className="topbar__center">
+                    <div className="flex flex-row items-center justify-center w-full gap-x-5">
                         <Navbar />
-
                         <button
                             type="button"
-                            className="topbar__toggle"
+                            className="text-zinc-200 border-2 border-solid border-yellow-500 px-3 py-1.5 rounded-[10px]"
                             aria-expanded={filtersOpen}
                             aria-controls="topbar-filters"
                             onClick={() => setFiltersOpen((v) => !v)}
@@ -41,7 +39,7 @@ export default function TopBar({ countries }: Readonly<TopBarProps>) {
                     </div>
 
                     {/* RIGHT */}
-                    <div className="topbar__actions">
+                    <div>
                         {!isLoggedIn ? (
                             <button type="button" className="topbar__auth" onClick={login}>
                                 Login
@@ -52,10 +50,8 @@ export default function TopBar({ countries }: Readonly<TopBarProps>) {
                             </button>
                         )}
                     </div>
-
                 </div>
-
-                <div id="topbar-filters" className={`topbar__filters ${filtersOpen ? "is-open" : ""}`}>
+                <div id="topbar-filters" className={`mt-10 topbar__filters ${filtersOpen ? "is-open" : ""}`}>
                     <FilterBar
                         countries={countries}
                     />

@@ -1,6 +1,6 @@
 import axios from "axios";
 import type {CapoEventType, EditScope, EventFormValue, EventRegDto, PartOfSeriesDto} from "../../types/CapoEvent.ts";
-import CapoEventForm from "../CapoEventForm.tsx";
+import EventForm from "../EventForm.tsx";
 import FrameModal from "./FrameModal.tsx";
 import {useAuth} from "../../context/AuthContext.ts";
 
@@ -13,7 +13,7 @@ type EditModalProps = {
     onClose: () => void;
 };
 
-export default function EditCapoEventModal({bOpen, event, setCapoEvent, partOfSeries, fetchEvents, onClose}:Readonly<EditModalProps>) {
+export default function EditEventModal({bOpen, event, setCapoEvent, partOfSeries, fetchEvents, onClose}:Readonly<EditModalProps>) {
     const { user } = useAuth();
 
     if(!bOpen || !user) {
@@ -35,11 +35,16 @@ export default function EditCapoEventModal({bOpen, event, setCapoEvent, partOfSe
         };
 
         await axios.put(`/api/capoevent/update/${user.id}/${event.id}`, dto, {params: { editScope: scope },})
-            .then(response => {console.log(response.data); setCapoEvent(response.data); })
+            .then(response => {
+                setCapoEvent(response.data);
+            })
             .catch(error => {
-                console.log("could not update event: ", error);
-                console.log(error)})
-            .finally(() => {fetchEvents(); onClose()});
+                console.error("Could not update event: ", error);
+            })
+            .finally(() => {
+                fetchEvents();
+                onClose();
+            });
     }
 
     const initialValue: EventFormValue = event ? {
@@ -79,7 +84,7 @@ export default function EditCapoEventModal({bOpen, event, setCapoEvent, partOfSe
                     <div>
                         {!event && <p style={{color: "white"}}>Loading...</p>}
                         {event && (
-                            <CapoEventForm
+                            <EventForm
                                 submitText="Update"
                                 initialValue={initialValue}
                                 submit={update}

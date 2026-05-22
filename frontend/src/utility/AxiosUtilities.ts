@@ -95,7 +95,7 @@ export async function fetchCities(setCities:(cites: CityData[]) => void, country
         );
 }
 
-export async function fetchFilteredCapoEvents(filters: CapoEventFilterDto, setEvents: (capoEvents:CapoEventType[]) => void): Promise<void> {
+export async function fetchFilteredEvents(filters: CapoEventFilterDto, setEvents: (capoEvents:CapoEventType[]) => void): Promise<void> {
 
     console.log("fetching filtered events:");
 

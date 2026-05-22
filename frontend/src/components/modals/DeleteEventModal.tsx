@@ -12,7 +12,7 @@ type Props = {
     partOfSeries: PartOfSeriesDto;
 }
 
-export function DeleteCapoEventModal({bOpen, eventId, partOfSeries, onClose, fetchEvents}:Readonly<Props>){
+export function DeleteEventModal({bOpen, eventId, partOfSeries, onClose, fetchEvents}:Readonly<Props>){
     const { user } = useAuth();
     const [editScope, setEditScope] = useState<EditScope>("ONLY_THIS");
 
@@ -23,7 +23,7 @@ export function DeleteCapoEventModal({bOpen, eventId, partOfSeries, onClose, fet
     function handleDelete() {
         deleteCapoEvent(user?.id, eventId, editScope)
             .catch((error) => {
-                console.log("could not delete capoEvent through CapoEventPreviewCard: " + error.toString())
+                console.log("could not delete capoEvent through EventPreviewCard: " + error.toString())
             })
             .finally(() => {
                 fetchEvents()

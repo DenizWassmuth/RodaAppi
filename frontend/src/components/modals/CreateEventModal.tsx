@@ -1,22 +1,20 @@
 import axios from "axios";
-import CapoEventForm from "../CapoEventForm.tsx";
+import EventForm from "../EventForm.tsx";
 
 import type {EventFormValue, EventRegDto} from "../../types/CapoEvent.ts";
 import {useNavigate} from "react-router-dom";
-import FrameModal from "../modals/FrameModal.tsx";
-import {useState} from "react";
+import FrameModal from "./FrameModal.tsx";
 import type {CountryData} from "../../types/GeoData.ts";
-import {fetchCountries} from "../../utility/AxiosUtilities.ts";
 import {useAuth} from "../../context/AuthContext.ts";
 import {useEvents} from "../../context/EventContext.ts";
 
 type Props = {
-    onClosePath:string;
+    bOpenForm: boolean;
+    onClose:() => void;
     countries:CountryData[]
-    setCountries:(countries:CountryData[]) => void;
 };
 
-export default function CreateCapoEventPage({onClosePath, countries, setCountries}:Readonly<Props>) {
+export default function CreateEventModal({bOpenForm, onClose, countries}:Readonly<Props>) {
     const { user } = useAuth();
     const { refreshEvents } = useEvents();
     const empty: EventFormValue = {
@@ -39,21 +37,15 @@ export default function CreateCapoEventPage({onClosePath, countries, setCountrie
         repUntil: ""
     };
 
-    const [openFormModal, setOpenFormModal] = useState(true);
     const nav = useNavigate();
-
-    if (!openFormModal) {
-        return null;
-    }
 
     const isLoggedIn = !!user;
 
-    if(countries.length <= 0){
-        fetchCountries(setCountries)
-            .then()
-    }
-
     async function submit(value: EventFormValue) {
+        if (!isLoggedIn) {
+            throw new Error("Not logged in");
+        }
+
        if (!user?.id){
            throw new Error("Not logged in");
        }
@@ -63,16 +55,13 @@ export default function CreateCapoEventPage({onClosePath, countries, setCountrie
             ...value,
         };
 
-        setOpenFormModal(false);
-
         await axios.post("/api/capoevent", dto)
             .then(() => refreshEvents()
-                .then(() => nav("/loggedin")));
-    }
-
-    function onClose(){
-        setOpenFormModal(false);
-        nav(onClosePath)
+                .then(() => {
+                    onClose();
+                    nav("/loggedin");
+                })
+            );
     }
 
     return (
@@ -83,10 +72,10 @@ export default function CreateCapoEventPage({onClosePath, countries, setCountrie
                 </div>
             )}
 
-            {isLoggedIn && openFormModal && (
-                <FrameModal title={""} open={openFormModal} onClose={() => onClose()}>
+            {isLoggedIn && bOpenForm && (
+                <FrameModal title={""} open={bOpenForm} onClose={onClose}>
                     <div>
-                        <CapoEventForm
+                        <EventForm
                             submitText="Create"
                             initialValue={empty}
                             submit={submit}

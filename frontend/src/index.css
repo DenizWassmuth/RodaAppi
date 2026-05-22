@@ -1,8 +1,20 @@
 @import "tailwindcss";
 
-.app_content {
-  padding-top: 25px; /* adjust once you see actual bar height */
+@variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --font-outfit: "outfit", sans-serif;
+  --breakpoint-xl: 1400px;
+  --breakpoint-lg: 1150px;
+  --breakpoint-md: 767px;
+  --breakpoint-sm: 639px;
+  --breakpoint-xs: 393px;
 }
+
+@utility theme-mode {
+  @apply bg-linear-to-t from-amber-200 to-amber-100 dark:bg-linear-to-t dark:from-zinc-900 dark:to-zinc-800  transition-colors duration-500;
+}
+
 
 body {
   background-color: black;
@@ -28,7 +40,7 @@ body {
   left: 50%;
   top: 0;                 /* adjust if you want it lower */
   transform: translate(-50%, -130%); /* sits “above” without taking space */
-  z-index: 10;
+  z-index: 4;
 
   width: 44px;
   height: 44px;

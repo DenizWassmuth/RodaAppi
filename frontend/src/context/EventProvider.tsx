@@ -1,7 +1,7 @@
 import React, { useState, useMemo, useEffect, type ReactNode, useCallback } from 'react';
 import axios from 'axios';
 import type { CapoEventFilterDto, CapoEventType } from '../types/CapoEvent.ts';
-import { fetchFilteredCapoEvents } from '../utility/AxiosUtilities.ts';
+import { fetchFilteredEvents, bookmarkEvent } from '../utility/AxiosUtilities.ts';
 import { useAuth } from './AuthContext.ts';
 import { useLocation } from 'react-router-dom';
 import { EventContext } from './EventContext.ts';
@@ -14,7 +14,7 @@ const defaultFilters: CapoEventFilterDto = {
     startsAfter: undefined,
     startsBefore: undefined,
     upcomingOnly: false,
-    upcomingDays: 90,
+    upcomingDays: 365,
     recentOnly: false,
     limit: 20,
     isDashboardContent: false,
@@ -22,10 +22,6 @@ const defaultFilters: CapoEventFilterDto = {
     bookmarkedOnly: false
 };
 
-/**
- * EventProvider centralizes the fetching and filtering of Capoeira events.
- * It uses the EventContext to provide data to the rest of the app.
- */
 export const EventProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     const { user } = useAuth();
     const location = useLocation();
@@ -36,16 +32,10 @@ export const EventProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     const [bookmarks, setBookmarks] = useState<string[]>([]);
     const [loading, setLoading] = useState(false);
 
-    // Derived State: determine if we are currently on the dashboard route
     const bIsDashboard = location.pathname.startsWith("/loggedin");
 
-    // Derived State: creates a Set for O(1) bookmark lookups in cards
     const bookmarkedSet = useMemo(() => new Set(bookmarks), [bookmarks]);
 
-    /**
-     * Logic to determine the "Effective Filters" based on current page and user.
-     * It ensures the backend receives the correct IDs and flags.
-     */
     const effectiveFilters = useMemo<CapoEventFilterDto>(() => {
         if (bIsDashboard && user) {
             return { ...filters, isDashboardContent: true, creatorId: user.id };
@@ -59,57 +49,82 @@ export const EventProvider: React.FC<{ children: ReactNode }> = ({ children }) =
         return { ...filters, isDashboardContent: false, creatorId: undefined, bookmarkedOnly: false };
     }, [user, filters, bIsDashboard]);
 
-    /**
-     * Fetches events based on the current effective filters.
-     * Wrapped in useCallback to prevent unnecessary re-renders of components using this function.
-     */
+
     const refreshEvents = useCallback(async () => {
         setLoading(true);
         try {
-            await fetchFilteredCapoEvents(effectiveFilters, setEvents);
+            await fetchFilteredEvents(effectiveFilters, setEvents);
         } finally {
             setLoading(false);
         }
     }, [effectiveFilters]);
 
-    /**
-     * Fetches user bookmarks from the backend.
-     */
-    const refreshBookmarks = useCallback(() => {
+
+    const refreshBookmarks = useCallback(async () => {
         if (!user?.id) {
             setBookmarks([]);
             return;
         }
 
-        axios.get<string[]>(`/api/bookmarks/${user.id}`)
-            .then((response) => setBookmarks(response.data))
-            .catch((error) => {
-                console.error("Could not fetch bookmarks:", error);
-                setBookmarks([]);
-            });
+        try {
+            const response = await axios.get<string[]>(`/api/bookmarks/${user.id}`);
+            setBookmarks(response.data);
+        } catch (error) {
+            console.error("Could not fetch bookmarks:", error);
+            setBookmarks([]);
+        }
     }, [user?.id]);
 
-    // Re-fetch events whenever effective filters (page, search criteria) change
+    const toggleBookmark = useCallback(async (eventId: string) => {
+        if (!user?.id) return;
+
+        const isCurrentlyBookmarked = bookmarkedSet.has(eventId);
+
+        // Optimistic Update: immediately update the UI
+        setBookmarks(prev =>
+            isCurrentlyBookmarked
+                ? prev.filter(id => id !== eventId)
+                : [...prev, eventId]
+        );
+
+        try {
+            await bookmarkEvent(user.id, eventId, isCurrentlyBookmarked);
+        } catch (error) {
+            console.error("Failed to toggle bookmark:", error);
+            // Sync with backend to revert optimistic change on failure
+            await refreshBookmarks();
+            return;
+        }
+
+        await refreshBookmarks();
+
+        if (filters.bookmarkedOnly) {
+            await refreshEvents();
+        }
+    }, [user?.id, bookmarkedSet, filters.bookmarkedOnly, refreshBookmarks, refreshEvents]);
+
     useEffect(() => {
         refreshEvents();
     }, [refreshEvents]);
 
-    // Re-fetch bookmarks whenever the user switches or logs in/out
     useEffect(() => {
         refreshBookmarks();
     }, [refreshBookmarks]);
 
     return (
-        <EventContext.Provider value={{
-            events,
-            filters,
-            bookmarks,
-            bookmarkedSet,
-            loading,
-            setFilters,
-            refreshEvents,
-            refreshBookmarks
-        }}>
+        <EventContext.Provider
+            value={{
+                events,
+                filters,
+                bookmarks,
+                bookmarkedSet,
+                loading,
+                setFilters,
+                refreshEvents,
+                refreshBookmarks,
+                toggleBookmark
+            }}
+        >
             {children}
         </EventContext.Provider>
     );

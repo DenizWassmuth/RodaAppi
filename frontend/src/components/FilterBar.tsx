@@ -105,7 +105,6 @@ export default function FilterBar({ countries }: Readonly<FilterBarProps>) {
     }, [selectedCountryIso, selectedStateIso]);
 
     return (
-
         <div className="filterbar filterbar--grid">
             <div className="filterbar__side filterbar__side--left">
                 <label className="filterbar__label">

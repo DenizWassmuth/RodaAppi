@@ -1,15 +1,16 @@
 import './index.css'
 
-import {Route, Routes} from "react-router-dom";
 import {useEffect, useState} from "react";
-import ProtectedRoute from "./components/ProtectedRoute.tsx";
-import PreviewPage from "./components/pages/PreviewPage.tsx";
-import CreateCapoEventPage from "./components/pages/CreateCapoEventPage.tsx";
+
 import type {CountryData} from "./types/GeoData.ts";
 import {fetchCountries} from "./utility/AxiosUtilities.ts";
+import {Route, Routes} from "react-router-dom";
+import ProtectedRoute from "./components/ProtectedRoute.tsx";
+import PreviewPage from "./components/pages/PreviewPage.tsx";
 import TopBar from "./components/TopBar.tsx";
 import {useAuth} from "./context/AuthContext.ts";
 import {useEvents} from "./context/EventContext.ts";
+import ToggleTheme from "./components/ToggleTheme.tsx";
 
 function App() {
 
@@ -19,6 +20,11 @@ function App() {
     const [countries, setCountries] = useState<CountryData[]>([]);
 
     useEffect(() => {
+        if (countries.length > 0) {
+            console.log("countries already loaded");
+            return;
+        }
+
         fetchCountries(setCountries).then();
     }, []);
 
@@ -28,29 +34,17 @@ function App() {
 
     return (
         <>
-            <TopBar countries={countries}/>
-            <div className="app_content">
-                <Routes>
-                    <Route path={"/"} element={
-                        <PreviewPage bOnDashboard={false} />
-                    }
-                    />
-                    <Route element={<ProtectedRoute/>}>
-                        <Route
-                            path={"/loggedin"}
-                            element={<PreviewPage bOnDashboard={true} />}
-                        />
-                        <Route
-                            path={"/add"}
-                            element={<CreateCapoEventPage
-                                onClosePath={"/loggedin"}
-                                countries={countries}
-                                setCountries={setCountries}
-                            />}
-                        />
-                    </Route>
-                </Routes>
-            </div>
+            <ToggleTheme>
+                <TopBar countries={countries}/>
+                <div>
+                    <Routes>
+                        <Route path={"/"} element={<PreviewPage countries={countries}/>}/>
+                        <Route element={<ProtectedRoute/>}>
+                            <Route path={"/loggedin"} element={<PreviewPage countries={countries}/>}/>
+                        </Route>
+                    </Routes>
+                </div>
+            </ToggleTheme>
         </>
     )
 }

@@ -1,78 +1,5 @@
-.topbar {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    z-index: 1200;
-
-    background: rgba(17, 17, 17, 0.95);
-    border-bottom: 1px solid #333;
-    backdrop-filter: blur(6px);
-}
-
-.topbar__inner {
-    max-width: 1400px;
-    margin: 0 auto;
-    padding: 10px 16px;
-
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-    align-items: stretch;
-}
-
-.topbar__navrow {
-    width: 100%;
-
-    display: grid;
-    grid-template-columns: 1fr auto 1fr; /* left | center | right */
-    align-items: center;
-}
-
-/* Left */
-.topbar__brand {
-    justify-self: start; /* far left */
-    font-weight: 700;
-    color: white;
-    letter-spacing: 1px;
-    white-space: nowrap;
-}
-
-/* Center group: navbar + toggle next to each other */
-.topbar__center {
-    justify-self: center; /* true center */
-    display: flex;
-    align-items: center;
-    gap: 12px;
-}
-
-/* Right */
-.topbar__actions {
-    justify-self: end; /* far right */
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-/* App name on the far left */
-.topbar__brand {
-    font-weight: 700;
-    color: white;
-    letter-spacing: 0.5px;
-    padding-right: 8px;
-    white-space: nowrap;
-}
-
-
-/* Push actions to far right */
-.topbar__actions {     /* IMPORTANT */
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
 
 /* Buttons */
-.topbar__toggle,
 .topbar__auth {
     padding: 10px 14px;
     border-radius: 10px;
@@ -83,7 +10,6 @@
     white-space: nowrap;
 }
 
-.topbar__toggle:hover,
 .topbar__auth:hover {
     background: rgba(255,255,255,0.10);
 }
@@ -94,9 +20,6 @@
     display: none; /* hidden by default */
 }
 
-.topbar__filters.is-open {
-    display: block; /* shown when open */
-}
 
 /* When filters open, center the content like the navrow */
 .topbar__filters.is-open {
