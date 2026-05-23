@@ -63,7 +63,6 @@ export default function EventPreviewCard({capoEvent, onHandleEdit, onHandleDelet
 
     return (
         <div
-            className="event_card"
             role="button"
             tabIndex={0}
             onClick={handleOpenDetails}
@@ -74,6 +73,7 @@ export default function EventPreviewCard({capoEvent, onHandleEdit, onHandleDelet
                 }
             }}
             style={{backgroundImage: `url(${capoEvent?.thumbnail})`}}
+            className="event_card"
         >
             {bShowButtons && (
                 <button

@@ -5,30 +5,15 @@ import { fetchFilteredEvents, bookmarkEvent } from '../utility/AxiosUtilities.ts
 import { useAuth } from './AuthContext.ts';
 import { useLocation } from 'react-router-dom';
 import { EventContext } from './EventContext.ts';
-
-const defaultFilters: CapoEventFilterDto = {
-    country: undefined,
-    state: undefined,
-    city: undefined,
-    eventType: undefined,
-    startsAfter: undefined,
-    startsBefore: undefined,
-    upcomingOnly: false,
-    upcomingDays: 365,
-    recentOnly: false,
-    limit: 20,
-    isDashboardContent: false,
-    creatorId: undefined,
-    bookmarkedOnly: false
-};
+import { useFilters } from './FilterContext.ts';
 
 export const EventProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     const { user } = useAuth();
+    const { filters } = useFilters();
     const location = useLocation();
-    
-    // Core State: Current events list, filter settings, and user bookmarks
+
+    // Core State: Current events list and user bookmarks
     const [events, setEvents] = useState<CapoEventType[]>([]);
-    const [filters, setFilters] = useState<CapoEventFilterDto>(defaultFilters);
     const [bookmarks, setBookmarks] = useState<string[]>([]);
     const [loading, setLoading] = useState(false);
 
@@ -59,6 +44,9 @@ export const EventProvider: React.FC<{ children: ReactNode }> = ({ children }) =
         }
     }, [effectiveFilters]);
 
+    useEffect(() => {
+        refreshEvents();
+    }, [refreshEvents]);
 
     const refreshBookmarks = useCallback(async () => {
         if (!user?.id) {
@@ -101,11 +89,8 @@ export const EventProvider: React.FC<{ children: ReactNode }> = ({ children }) =
         if (filters.bookmarkedOnly) {
             await refreshEvents();
         }
-    }, [user?.id, bookmarkedSet, filters.bookmarkedOnly, refreshBookmarks, refreshEvents]);
 
-    useEffect(() => {
-        refreshEvents();
-    }, [refreshEvents]);
+    }, [user?.id, bookmarkedSet, filters.bookmarkedOnly, refreshBookmarks, refreshEvents]);
 
     useEffect(() => {
         refreshBookmarks();
@@ -115,11 +100,9 @@ export const EventProvider: React.FC<{ children: ReactNode }> = ({ children }) =
         <EventContext.Provider
             value={{
                 events,
-                filters,
                 bookmarks,
                 bookmarkedSet,
                 loading,
-                setFilters,
                 refreshEvents,
                 refreshBookmarks,
                 toggleBookmark

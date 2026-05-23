@@ -1,84 +1,10 @@
-.filterbar {
-    padding: 0;
-    border: none;
-    background: transparent;
-    color: white;
+@import "tailwindcss";
+
+@utility filterbar-label {
+    @apply flex min-w-40 flex-col gap-1.5;
 }
 
-.filterbar__row {
-    display: flex;
-    gap: 12px;
-    flex-wrap: wrap;
-    align-items: end;
-    margin-bottom: 10px;
+@utility filterbar-input {
+    @apply rounded-md border border-neutral-600 bg-neutral-900 p-2.5 text-white
 }
 
-.filterbar__label {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-    min-width: 160px;
-}
-
-.filterbar__input {
-    padding: 10px;
-    border-radius: 6px;
-    border: 1px solid #555;
-    background: #111;
-    color: white;
-}
-
-.filterbar__checkbox {
-    display: flex;
-    gap: 8px;
-    align-items: center;
-    padding: 6px 0;
-}
-
-.filterbar__btn {
-    padding: 10px 16px;
-    border-radius: 8px;
-    border: 1px solid #777;
-    background: #222;
-    color: white;
-    cursor: pointer;
-}
-
-.filterbar__btn:hover {
-    background: #333;
-}
-
-.filterbar--grid {
-    display: grid;
-    grid-template-columns: auto minmax(0, 1fr) auto; /* important */
-    column-gap: 12px;
-    align-items: center;
-}
-
-/* side columns are vertically centered across both rows */
-.filterbar__side {
-    display: flex;
-    align-items: center;
-}
-
-.filterbar__side--left {
-    justify-content: flex-start;
-}
-
-.filterbar__side--right {
-    justify-content: flex-end;
-}
-
-/* center holds the two rows */
-.filterbar__center {
-    display: grid;
-    gap: 10px; /* matches your row spacing */
-}
-
-/* keep your existing row styles (flex wrap etc.) */
-.filterbar__row {
-    display: flex;
-    gap: 12px;
-    flex-wrap: wrap;
-    align-items: end;
-}

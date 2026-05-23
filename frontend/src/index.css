@@ -3,7 +3,6 @@
 @variant dark (&:where(.dark, .dark *));
 
 @theme {
-  --font-outfit: "outfit", sans-serif;
   --breakpoint-xl: 1400px;
   --breakpoint-lg: 1150px;
   --breakpoint-md: 767px;
@@ -15,61 +14,30 @@
   @apply bg-linear-to-t from-amber-200 to-amber-100 dark:bg-linear-to-t dark:from-zinc-900 dark:to-zinc-800  transition-colors duration-500;
 }
 
+@utility no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+html {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+html::-webkit-scrollbar {
+  display: none;
+}
 
 body {
-  background-color: black;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 }
 
-.page_layout {
-  display: grid;
-  position: relative; /* anchor for absolute button */
-  column-gap: 40px;
-  padding: 20px;
-  margin-top: 130px;
-  max-width: 100%;
-}
-
-.page_layout__add {
-  display: flex;
-  justify-content: center;
-  margin: 12px 0 16px;
-}
-
-.add_fab {
-  position: absolute;
-  left: 50%;
-  top: 0;                 /* adjust if you want it lower */
-  transform: translate(-50%, -130%); /* sits “above” without taking space */
-  z-index: 4;
-
-  width: 44px;
-  height: 44px;
-  border-radius: 999px;
-
-  border: 1px solid rgba(255,255,255,0.25);
-  background: rgba(0,0,0,0.45);
-  color: white;
-
-  font-size: 28px;
-  line-height: 1;
-
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-
-  cursor: pointer;
-}
-
-.add_fab:hover {
-  background: rgba(255,255,255,0.10);
-}
-
-.events_row {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 20px;
-  padding-top: 24px; /* constant, so switching routes is seamless */
-
+body::-webkit-scrollbar {
+  display: none;
 }
 
 @media (max-width: 1000px) {
@@ -79,10 +47,6 @@ body {
 
   .filter-sidebar {
     position: static;
-  }
-
-  .events_row {
-    grid-template-columns: repeat(2, 1fr);
   }
 }
 

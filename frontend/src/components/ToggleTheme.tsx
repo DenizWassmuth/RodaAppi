@@ -40,12 +40,13 @@ export default function Toggle({children}: ToggleProps) {
     return (
         <main ref={mainRef}>
             {/* look at App.css for theme-mode class */}
-            <div className={"theme-mode"}>
+            <div className={"theme-mode min-h-screen"}>
                 <div
-                    className={"max-xl:w-full flex flex-col justify-center px-22.5 max-sm:pl-20 max-sm:pr-2 overflow-hidden"}>
+                    className={"max-xl:w-full flex flex-col justify-center px-10 overflow-hidden no-scrollbar"}>
                     <button
+                        title={"toggle dark mode"}
                         onClick={toggleTheme}
-                        className={"fixed right-10 top-5 text-gray-900 hover:text-gray-800 dark:text-yellow-600 dark:hover:text-yellow-500 transition-colors duration-500 z-50"}>
+                        className={"fixed right-10 top-4 text-gray-900 hover:text-gray-800 dark:text-yellow-600 dark:hover:text-yellow-500 transition-colors duration-500 z-50"}>
                         <motion.span
                             animate={{scale: darkTheme ? 1 : 0}}
                             className={"absolute block rounded-full bg-amber-100 dark:bg-zinc-800 transition-colors duration-500 p-0 text-4xl"}

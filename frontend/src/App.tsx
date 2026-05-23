@@ -9,13 +9,11 @@ import ProtectedRoute from "./components/ProtectedRoute.tsx";
 import PreviewPage from "./components/pages/PreviewPage.tsx";
 import TopBar from "./components/TopBar.tsx";
 import {useAuth} from "./context/AuthContext.ts";
-import {useEvents} from "./context/EventContext.ts";
 import ToggleTheme from "./components/ToggleTheme.tsx";
 
 function App() {
 
     const {loading: authLoading} = useAuth();
-    const {loading: eventsLoading} = useEvents();
 
     const [countries, setCountries] = useState<CountryData[]>([]);
 
@@ -28,7 +26,7 @@ function App() {
         fetchCountries(setCountries).then();
     }, []);
 
-    if (authLoading || eventsLoading) {
+    if (authLoading) {
         return <div className="loading-screen">Loading...</div>;
     }
 
@@ -36,7 +34,7 @@ function App() {
         <>
             <ToggleTheme>
                 <TopBar countries={countries}/>
-                <div>
+                <div className={"overflow-y-auto no-scrollbar scroll-p-0"}>
                     <Routes>
                         <Route path={"/"} element={<PreviewPage countries={countries}/>}/>
                         <Route element={<ProtectedRoute/>}>

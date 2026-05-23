@@ -1,6 +1,4 @@
 import EventPreviewCard from "../EventPreviewCard.tsx";
-import "../../styles/CapoEventPreviewCard.css"
-import "../../index.css"
 import {useEffect, useState} from "react";
 import EditEventModal from "../modals/EditEventModal.tsx";
 import type {CapoEventType, PartOfSeriesDto} from "../../types/CapoEvent.ts";
@@ -12,12 +10,8 @@ import {useAuth} from "../../context/AuthContext.ts";
 import {useEvents} from "../../context/EventContext.ts";
 import CreateEventModal from "../modals/CreateEventModal.tsx";
 import type {CountryData} from "../../types/GeoData.ts";
+import {AnimatePresence, motion} from "framer-motion";
 
-
-/**
- * Defines the possible states for the centralized modal system.
- * Using a Discriminated Union ensures we always have the right data for the right modal.
- */
 type ActiveModal = 
     | { type: 'DETAILS'; event: CapoEventType }
     | { type: 'CREATE'; event: CapoEventType }
@@ -31,7 +25,7 @@ type PreviewProps = {
 
 export default function PreviewPage({countries}: PreviewProps) {
     const { user } = useAuth();
-    const { events, refreshEvents } = useEvents();
+    const { events, refreshEvents, loading } = useEvents();
 
     const [activeModal, setActiveModal] = useState<ActiveModal>(null);
     const [partOfSeries, setPartOfSeries] = useState<PartOfSeriesDto>(null);
@@ -50,35 +44,47 @@ export default function PreviewPage({countries}: PreviewProps) {
     const closeModal = () => setActiveModal(null);
 
     return (
-        <div className="page_layout">
+        <div className={"relative min-h-screen max-h-full max-w-full mt-24 no-scrollbar"}>
             {bShowAddButton && (
                 <button
                     type="button"
-                    className="add_fab"
+                    title="Add Event"
                     onClick={() => setActiveModal({ type: 'CREATE', event: null })}
-                    aria-label="Add event"
-                    title="Add event"
+                    className={"absolute z-1 left-1/2 -translate-x-1/2 -translate-y-6 h-10 w-10 grid place-items-center rounded-full border border-white/25 bg-black/45 text-[28px] text-white cursor-pointer"}
                 >
-                    +
+                    <span className="-translate-y-0.5 leading-none">+</span>
                 </button>
             )}
-            <div className="events_row">
-                {events.map(capoEvent => (
-                    <EventPreviewCard
-                        key={capoEvent?.id}
-                        capoEvent={capoEvent}
-                        onHandleEdit={(e) => setActiveModal({ type: 'EDIT', event: e })}
-                        onHandleDelete={(e) => setActiveModal({ type: 'DELETE', event: e })}
-                        openDetailsPage={(e) => setActiveModal({ type: 'DETAILS', event: e })}
-                    />
-                ))}
-            </div>
+            <div className={`grid grid-cols-3 items-start auto-rows-max gap-2 pt-6 transition-opacity duration-500 ${loading ? "opacity-50 pointer-events-none" : "opacity-100"}`}>
+                <AnimatePresence mode="popLayout">
+                    {events.map(capoEvent => (
+                        <motion.div layoutId={"event-card"+capoEvent?.id}
+                            key={capoEvent?.id}
+                            layout={"position"}
+                            initial={{ opacity: 0, scale: 0.8 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            exit={{ opacity: 0, scale: 0.8 }}
+                            transition={{
+                                opacity: { duration: 0.2 },
+                                layout: { type: "spring", stiffness: 80, damping: 18 },
+                            }}
+                        >
+                            <EventPreviewCard
+                                capoEvent={capoEvent}
+                                onHandleEdit={(e) => setActiveModal({ type: 'EDIT', event: e })}
+                                onHandleDelete={(e) => setActiveModal({ type: 'DELETE', event: e })}
+                                openDetailsPage={(e) => setActiveModal({ type: 'DETAILS', event: e })}
+                            />
+                        </motion.div>
+                    ))}
+
 
             {/* MODAL CONTROLLER SECTION */}
             {activeModal && (
                 <>
                     {/* 1. DETAILS MODAL */}
-                    {activeModal.type === 'DETAILS' && activeModal.event && (
+                    <motion.div layoutId={"event-card"+activeModal.event?.id}>
+                        {activeModal.type === 'DETAILS' && activeModal.event && (
                         <FrameModal title={""} open={true} onClose={closeModal}>
                             <EventDetailsCard
                                 key={"details" + activeModal.event.id}
@@ -90,6 +96,7 @@ export default function PreviewPage({countries}: PreviewProps) {
                             />
                         </FrameModal>
                     )}
+                    </motion.div>
 
                     {/* 2. CREATE MODAL */}
                     {activeModal.type === 'CREATE' && user && (
@@ -127,6 +134,8 @@ export default function PreviewPage({countries}: PreviewProps) {
                     )}
                 </>
             )}
+                </AnimatePresence>
+            </div>
         </div>
     )
 }
