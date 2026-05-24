@@ -3,16 +3,17 @@ import {useState} from "react";
 import type {EditScope, PartOfSeriesDto} from "../../types/CapoEvent.ts";
 import {deleteCapoEvent} from "../../utility/AxiosUtilities.ts";
 import {useAuth} from "../../context/AuthContext.ts";
+import FrameModal from "./FrameModal.tsx";
 
 type Props = {
     bOpen: boolean;
     eventId: string | null | undefined;
     fetchEvents: () => Promise<void | string>
-    onClose: (bCancel:boolean) => void;
+    onClose: () => void;
     partOfSeries: PartOfSeriesDto;
 }
 
-export function DeleteEventModal({bOpen, eventId, partOfSeries, onClose, fetchEvents}:Readonly<Props>){
+export function DeleteModal({bOpen, eventId, partOfSeries, onClose, fetchEvents}:Readonly<Props>){
     const { user } = useAuth();
     const [editScope, setEditScope] = useState<EditScope>("ONLY_THIS");
 
@@ -28,22 +29,20 @@ export function DeleteEventModal({bOpen, eventId, partOfSeries, onClose, fetchEv
             .finally(() => {
                 fetchEvents()
                     .then(() => setEditScope("ONLY_THIS"))
-            .then(() => onClose(false))});
+            .then(() => onClose())});
     }
 
     return (
-        <EditScopeModal
-            bOpen={bOpen}
-            partOfSeries={partOfSeries}
-            editScope={editScope}
-            setEditScope={setEditScope}
-            onConfirm={async () => {
-                handleDelete();
-            }}
-            onConfirmTitle={"Delete"}
-            onConfirmMsg={"This cannot be undone."}
-            onCancel={() => onClose(true)}
-        />
-
+        <FrameModal title={"Delete Event"} open={bOpen} onClose={onClose}>
+            <EditScopeModal
+                bOpen={bOpen}
+                partOfSeries={partOfSeries}
+                editScope={editScope}
+                setEditScope={setEditScope}
+                onConfirm={handleDelete}
+                onConfirmTitle={"Delete"}
+                onConfirmMsg={"This cannot be undone."}
+            />
+        </FrameModal>
     )
 }

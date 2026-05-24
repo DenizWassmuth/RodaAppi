@@ -7,6 +7,7 @@ import type {
     PartOfSeriesDto,
 } from "../types/CapoEvent.ts";
 import EditScopeModal from "./modals/EditScopeModal.tsx";
+import FrameModal from "./modals/FrameModal.tsx";
 import type { CityData, CountryData, StateData } from "../types/GeoData.ts";
 import { fetchCities, fetchStates } from "../utility/AxiosUtilities.ts";
 import { addOneHourToDateTimeInput, nowAsDateTimeLocal } from "../utility/Helpers.ts";
@@ -258,16 +259,17 @@ export default function EventForm({ initialValue, submitText, submit, bEditMode,
                 </button>
             </form>
             {bEditMode && openEditScopeModal && (
-                <EditScopeModal
-                    bOpen={openEditScopeModal}
-                    onCancel={() => setOpenEditScopeModal(false)}
-                    onConfirm={() => submit(watch(), editScope)}
-                    onConfirmTitle={"Update"}
-                    onConfirmMsg={"Updating may cause overlaps with other events!!!"}
-                    partOfSeries={partOfSeries}
-                    editScope={editScope}
-                    setEditScope={setEditScope}
-                />
+                <FrameModal title={"Update Scope"} open={openEditScopeModal} onClose={() => setOpenEditScopeModal(false)}>
+                    <EditScopeModal
+                        bOpen={openEditScopeModal}
+                        onConfirm={() => submit(watch(), editScope)}
+                        onConfirmTitle={"Update"}
+                        onConfirmMsg={"Updating may cause overlaps with other events!!!"}
+                        partOfSeries={partOfSeries}
+                        editScope={editScope}
+                        setEditScope={setEditScope}
+                    />
+                </FrameModal>
             )}
         </main>
     );

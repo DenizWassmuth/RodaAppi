@@ -17,6 +17,7 @@ function App() {
 
     const [countries, setCountries] = useState<CountryData[]>([]);
 
+    // todo: move this to filter. only fetch countries if they are not already loaded
     useEffect(() => {
         if (countries.length > 0) {
             console.log("countries already loaded");

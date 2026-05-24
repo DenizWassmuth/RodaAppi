@@ -9,6 +9,7 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -36,8 +37,10 @@ public class CapoEventFilterService {
         }
 
         if (Boolean.TRUE.equals(dto.bookmarkedOnly()) && creatorIdIsValid) {
-            bookmarkRepository.findById(dto.creatorId()).ifPresent(bookmarkContainer ->
-                    query.addCriteria(Criteria.where("_id").in(bookmarkContainer.bookmarkedIds())));
+            List<String> bookmarkedIds = bookmarkRepository.findById(dto.creatorId())
+                    .map(org.example.backend.models.BookmarkContainer::bookmarkedIds)
+                    .orElse(Collections.emptyList());
+            query.addCriteria(Criteria.where("_id").in(bookmarkedIds));
         }
 
         if (hasText(dto.country())) {

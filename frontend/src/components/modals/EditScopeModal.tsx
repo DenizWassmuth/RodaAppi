@@ -2,11 +2,11 @@ import {useState} from "react";
 import "../../styles/DeleteModal.css";
 import ConfirmModal from "./ConfirmModal.tsx";
 import type {EditScope, PartOfSeriesDto} from "../../types/CapoEvent.ts";
+import {AnimatePresence} from "framer-motion";
 
 
 type EditScopeModalProps = {
     bOpen: boolean;
-    onCancel: () => void;
     onConfirm: () => void;
     onConfirmTitle:string;
     onConfirmMsg:string;
@@ -15,93 +15,90 @@ type EditScopeModalProps = {
     setEditScope: (scope: EditScope) => void;
 };
 
-export default function EditScopeModal({bOpen, onCancel, onConfirm, onConfirmTitle, onConfirmMsg, partOfSeries, editScope, setEditScope}: Readonly<EditScopeModalProps>) {
+export default function EditScopeModal({bOpen, onConfirm, onConfirmTitle, onConfirmMsg, partOfSeries, editScope, setEditScope}: Readonly<EditScopeModalProps>) {
 
     const [openConfirm, setOpenConfirm] = useState(false);
 
     if (!bOpen) return null;
 
     return (
-        <div className="modal__backdrop">
-            <div className="modal__panel">
-                <h3 className="modal__title">{onConfirmTitle}</h3>
-                <p></p>
-                <div style={{ display: "grid", gap: 8, marginBottom: 16 }}>
+        <>
+            <div style={{ display: "grid", gap: 8, marginBottom: 16 }}>
+                <label>
+                    <input
+                        type="radio"
+                        name="editScope"
+                        checked={editScope === "ONLY_THIS"}
+                        onChange={() => setEditScope("ONLY_THIS")}
+                    />
+                    {" "} this one
+                </label>
+
+                {partOfSeries?.isPartOfSeries &&
                     <label>
                         <input
                             type="radio"
                             name="editScope"
-                            checked={editScope === "ONLY_THIS"}
-                            onChange={() => setEditScope("ONLY_THIS")}
+                            checked={editScope === "ALL_IN_SERIES"}
+                            onChange={() => setEditScope("ALL_IN_SERIES")}
                         />
-                        {" "} this one
+                        {" "} all in this series
                     </label>
+                }
 
-                    {partOfSeries?.isPartOfSeries &&
-                        <label>
-                            <input
-                                type="radio"
-                                name="editScope"
-                                checked={editScope === "ALL_IN_SERIES"}
-                                onChange={() => setEditScope("ALL_IN_SERIES")}
-                            />
-                            {" "} all in this series
-                        </label>
-                    }
+                {partOfSeries?.hasBefore &&
+                    <label>
+                        <input
+                            type="radio"
+                            name="editScope"
+                            checked={editScope === "BEFORE_THIS"}
+                            onChange={() => setEditScope("BEFORE_THIS")}
+                        />
+                        {" "} this + all before (in this series)
+                    </label>
+                }
 
-                    {partOfSeries?.hasBefore &&
-                        <label>
-                            <input
-                                type="radio"
-                                name="editScope"
-                                checked={editScope === "BEFORE_THIS"}
-                                onChange={() => setEditScope("BEFORE_THIS")}
-                            />
-                            {" "} this + all before (in this series)
-                        </label>
-                    }
-
-                    {partOfSeries?.hasAfter &&
-                        <label>
-                            <input
-                                type="radio"
-                                name="editScope"
-                                checked={editScope === "AFTER_THIS"}
-                                onChange={() => setEditScope("AFTER_THIS")}
-                            />
-                            {" "} this + all after (in this series)
-                        </label>
-                    }
-                </div>
-
-                <div className="modal__actions">
-                    <button className="modal__btn" type="button" onClick={onCancel}>
-                        Cancel
-                    </button>
-
-                    <button
-                        className="modal__btn modal__btn--danger"
-                        type="button"
-                        onClick={(e) => {e.preventDefault(); setOpenConfirm(true)}}
-                    >
-                        {onConfirmTitle}
-                    </button>
-                </div>
+                {partOfSeries?.hasAfter &&
+                    <label>
+                        <input
+                            type="radio"
+                            name="editScope"
+                            checked={editScope === "AFTER_THIS"}
+                            onChange={() => setEditScope("AFTER_THIS")}
+                        />
+                        {" "} this + all after (in this series)
+                    </label>
+                }
             </div>
 
-            <ConfirmModal
-                bOpen={openConfirm}
-                title={onConfirmTitle + " event?"}
-                message={onConfirmMsg}
-                confirmText= {"Yes, " + onConfirmTitle}
-                cancelText="No"
-                onCancel={() =>
-                    setOpenConfirm(false)}
-                onConfirm={() => {
-                    setOpenConfirm(false);
-                    onConfirm();
-                }}
-            />
-        </div>
+            <div className="modal__actions">
+                <button
+                    type="button"
+                    onClick={(e) => {e.preventDefault(); setOpenConfirm(true)}}
+                    className="modal__btn modal__btn--danger"
+                >
+                    {onConfirmTitle}
+                </button>
+            </div>
+
+            <AnimatePresence>
+                {openConfirm && (
+                    <ConfirmModal
+                        key="confirm-modal"
+                        bOpen={openConfirm}
+                        title={onConfirmTitle + " event?"}
+                        message={onConfirmMsg}
+                        confirmText= {"Yes, " + onConfirmTitle}
+                        cancelText="No"
+                        onCancel={() =>
+                            setOpenConfirm(false)}
+                        onConfirm={() => {
+                            setOpenConfirm(false);
+                            onConfirm();
+                        }}
+                    />
+                )}
+            </AnimatePresence>
+        </>
     );
 }
