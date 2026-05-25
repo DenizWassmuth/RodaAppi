@@ -1,6 +1,6 @@
 import { createContext, useContext } from 'react';
 import type { CapoEventFilterDto } from '../types/CapoEvent.ts';
-import type { CityData, StateData } from "../types/GeoData.ts";
+import type { CityData, CountryData, StateData } from "../types/GeoData.ts";
 
 export interface FilterContextType {
     filters: CapoEventFilterDto;
@@ -16,6 +16,7 @@ export interface FilterContextType {
     cities: CityData[];
     setCities: React.Dispatch<React.SetStateAction<CityData[]>>;
     resetFilters: () => void;
+    updateFilter: <K extends keyof CapoEventFilterDto>(key: K, value: CapoEventFilterDto[K], countries?: CountryData[]) => void;
 }
 
 export const FilterContext = createContext<FilterContextType | undefined>(undefined);

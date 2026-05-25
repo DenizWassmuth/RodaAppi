@@ -1,8 +1,12 @@
 import type {CapoEventType, PartOfSeriesDto} from "../types/CapoEvent.ts";
 import "../styles/CapoEventDetailsCard.css"
-import {formatLocalDateTimeToDMonY, formatLocalDateTimeToHHmm, hasSameDate} from "../utility/Helpers.ts";
+import {formatLocalDateTimeToDMonY, formatLocalDateTimeToHHmm,} from "../utility/Helpers.ts";
 import {useAuth} from "../context/AuthContext.ts";
 import {useEvents} from "../context/EventContext.ts";
+import IconButton from "./buttons/IconButton.tsx";
+import {BookmarkFillIcon, BookmarkLineIcon, DeleteBinLineIcon} from "../assets/Icons.tsx";
+import EditLineIcon from "remixicon-react/EditLineIcon";
+import "tailwindcss";
 
 type EventPageProps = {
     bOpen: boolean;
@@ -18,7 +22,7 @@ export default function EventDetailsCard({bOpen, capoEvent, onEdit, onDelete}: R
 
     const isLoggedIn = !!user;
     const eventIsValid = capoEvent !== undefined && capoEvent !== null;
-    const eventIsCreatedByUser = isLoggedIn && eventIsValid && user.id === capoEvent?.creatorId;
+    const bIsCreatedByUser = isLoggedIn && eventIsValid && user.id === capoEvent?.creatorId;
 
     const bBookmarksNotNull = bookmarkedSet !== null && bookmarkedSet.size >= 0;
     const bIsBookmarkedByUser = isLoggedIn && bBookmarksNotNull && bookmarkedSet.has(capoEvent?.id ?? "")
@@ -46,39 +50,63 @@ export default function EventDetailsCard({bOpen, capoEvent, onEdit, onDelete}: R
     const startDate = formatLocalDateTimeToDMonY(capoEvent?.eventStart);
     const startTime = formatLocalDateTimeToHHmm(capoEvent?.eventStart);
 
-    const bHasSameDate = hasSameDate(startDate, endDate);
-
     if (!capoEvent) return <p style={{ color: "white" }}>Loading...</p>;
 
     return (
         <main className="details">
             <header className="details__banner">
                 <div className="details__titlebar">
-                    <h1 className="details__title">{capoEvent?.eventType}</h1>
+                    <h1 className="details__title">
+                        {capoEvent?.eventType}
+                    </h1>
                     <p className="details__postedby">
-                        posted by <span className="details__postedby-name">{capoEvent?.creatorName}</span>
+                        <span className="details__postedby-name">
+                            {"posted by " + capoEvent?.creatorName}
+                        </span>
                     </p>
-                    {isLoggedIn && (
-                        <button
-                            type="button"
-                            className="details__bookmark details__bookmark--floating"
-                            onClick={(e) => {
-                                e.preventDefault();
-                                e.stopPropagation();
-                                handleBookmarking();
-                            }}
-                            aria-label={bIsBookmarkedByUser ? "Remove bookmark" : "Add bookmark"}
-                            title={bIsBookmarkedByUser ? "Remove bookmark" : "Add bookmark"}
-                        >
-                            <span className="details__bookmark_icon">{bIsBookmarkedByUser ? "★" : "☆"}</span>
-                        </button>
-                    )}
+                    <div className={"flex flex-row items-start justify-end gap-x-2"}>
+                        {isLoggedIn && (
+                            <IconButton
+                                buttonId={"bookmarkButton"}
+                                title={bIsBookmarkedByUser ? "Remove bookmark" : "Add bookmark"}
+                                icon={bIsBookmarkedByUser ? BookmarkFillIcon : BookmarkLineIcon}
+                                onClick={(e) => {
+                                    e.preventDefault();
+                                    e.stopPropagation();
+                                    handleBookmarking();
+                                }}
+                                className={`max-sm:scale-75 inline-flex h-8 w-8 cursor-pointer items-center justify-center rounded-full border border-neutral-700/25 bg-black/80 text-amber-400`}
+                            />
+                        )}
+                        {bIsCreatedByUser && (
+                            <IconButton
+                                buttonId={"editButton"}
+                                title={"Edit"}
+                                icon={EditLineIcon}
+                                onClick={(e) => {
+                                    e.preventDefault();
+                                    e.stopPropagation();
+                                    handleEdit();
+                                }}
+                                className={`max-sm:scale-75 inline-flex h-8 w-8 cursor-pointer items-center justify-center rounded-full border border-neutral-700/25 bg-black/80 text-amber-400`}
+                            /> )}
+                        {bIsCreatedByUser && (
+                            <IconButton
+                                buttonId={"deleteButton"}
+                                title={"Delete"}
+                                icon={DeleteBinLineIcon}
+                                onClick={(e) => {
+                                    e.preventDefault();
+                                    e.stopPropagation();
+                                    handleDelete();
+                                }}
+                                className={"max-sm:scale-75 inline-flex h-8 w-8 cursor-pointer items-center justify-center rounded-full border border-neutral-700/25 bg-black/80 text-amber-400"}
+                            />
+                        )}
+                    </div>
                 </div>
                 <img className="details__banner-img" src={capoEvent?.thumbnail} alt="Thumbnail"/>
                 <div className="details__banner-overlay">
-                    <h1 className="details__banner-title">
-
-                    </h1>
                     <span className="details__value">
                         {capoEvent?.locationData.street} {capoEvent?.locationData.streetNumber}
                     </span>
@@ -94,11 +122,10 @@ export default function EventDetailsCard({bOpen, capoEvent, onEdit, onDelete}: R
                         )}
                     </p>
                     <p className="details__subtitle">
-                        {startDate + " · "} {startTime + " - "}  {!bHasSameDate &&(endDate + " · ")}  {endTime}
+                        {startDate + " · "} {startTime}  {capoEvent.eventType.match("WORKSHOP") &&(" - " + endDate + " · " + endTime)}
                     </p>
                 </div>
             </header>
-
             <section className="details__grid">
                 {capoEvent?.eventDescription && (
                     <fieldset className="details__fieldset">
@@ -110,7 +137,6 @@ export default function EventDetailsCard({bOpen, capoEvent, onEdit, onDelete}: R
                         </div>
                     </fieldset>
                 )}
-
                 {capoEvent?.locationData.specifics && (
                     <fieldset className="details__fieldset">
                         <legend className="details__legend">location specifics</legend>
@@ -120,35 +146,6 @@ export default function EventDetailsCard({bOpen, capoEvent, onEdit, onDelete}: R
                             </span>
                         </div>
                     </fieldset>
-                )}
-
-                {eventIsCreatedByUser && (
-                    <div className="details__floating-actions">
-
-                        <button
-                            className="details__btn"
-                            type="button"
-                            onClick={(e) => {
-                                e.preventDefault();
-                                handleEdit();
-                            }}
-                        >
-                            edit
-                        </button>
-
-                        <button
-                            className="details__btn details__btn--danger"
-                            type="button"
-                            disabled={!eventIsCreatedByUser}
-                            onClick={(e) => {
-                                e.preventDefault();
-                                handleDelete();
-                            }}
-                        >
-                            delete
-                        </button>
-
-                    </div>
                 )}
             </section>
         </main>

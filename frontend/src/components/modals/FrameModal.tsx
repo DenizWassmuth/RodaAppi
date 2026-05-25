@@ -36,7 +36,7 @@ export default function FrameModal({open, title, onClose, children}: Readonly<Fr
                 animate={{ scale: 1, opacity: 1 }}
                 exit={{ scale: 0, opacity: 0 }}
                 transition={{ duration: 0.2, type: "spring", stiffness: 100, damping: 15 }}
-                className="w-[min(900px,94vw)] max-h-[90vh] overflow-auto no-scrollbar bg-neutral-900 border border-amber-500 rounded-xl text-white p-3.5">
+                className="w-[min(900px,90vw)] max-h-[90vh] p-3.5 overflow-auto no-scrollbar bg-neutral-900 border border-amber-500 rounded-xl text-white ">
                 <div className="mb-2 flex items-center justify-between gap-2.5">
                     {title && <h2 className="m-0 text-[22px]">{title}</h2>}
                     <button

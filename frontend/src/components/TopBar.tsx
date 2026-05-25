@@ -4,8 +4,14 @@ import {useAuth} from "../context/AuthContext.ts";
 import "../index.css"
 import { motion, AnimatePresence } from "framer-motion";
 import {useNavigate} from "react-router-dom";
-import StdButton from "./buttons/StdButton.tsx";
 import {useFilters} from "../context/FilterContext.ts";
+import IconButton from "./buttons/IconButton.tsx";
+import {
+    FilterFillIcon,
+    FilterLineIcon,
+    UserFillIcon,
+    UserLineIcon
+} from "../assets/Icons.tsx";
 
 type TopBarProps = {
     countries: CountryData[];
@@ -23,27 +29,23 @@ export default function TopBar({ countries }: Readonly<TopBarProps>) {
     }
 
     return (
-        <header className={`fixed w-full top-0 left-0 z-5 border-b-2 border-gray-500 border-solid backdrop-blur-3xl bg-linear-to-t from-amber-200 to-amber-100 dark:bg-linear-to-t dark:from-zinc-900 dark:to-zinc-800  transition-colors duration-500`}>
-            <div className="flex flex-col items-center justify-center px-4 py-2">
-                <div className="flex flex-row items-center justify-between w-full px-10 mb-2">
+        <header className={`w-full top-0 left-0 z-5 border-b-2 border-zinc-500 border-solid backdrop-blur-md bg-zinc-900/80`}>
+            <div className="px-5 max-sm:px-2 py-2 max-sm:py-1">
+                <div className="flex flex-row items-center justify-between px-10 max-sm:px-2 mb-2 mt-2">
                     <div
-                        role="banner"
-                        className={"font-bold text-zinc-200"}
+                        role="button"
+                        title="Home"
+                        onClick={() => goTo("/")}
+                        className={"w-10 font-bold text-zinc-200 hover:cursor-pointer"}
                     >
                         RodaAppi
                     </div>
-                    <div className="flex flex-row items-center justify-center w-full gap-x-5">
+                    <div className="flex flex-row items-center justify-between gap-x-5 max-sm:gap-x-1">
                         {/*<Navbar />*/}
-                        <StdButton buttonId="tb-home-btn" name="Home" onClick={() => goTo("/")} />
-                        <StdButton buttonId="tb-dashboard-btn" name="Dashboard" onClick={() => goTo("/loggedin")} />
-                        <StdButton buttonId="tb-filters-btn" name="Filters" onClick={() => setFiltersOpen((v) => !v)} />
+                        <IconButton buttonId={"tb-filters-btn"} title={"Filters"} icon={filtersOpen ? FilterFillIcon : FilterLineIcon} onClick={() => setFiltersOpen((v) => !v)}/>
                     </div>
                     <div>
-                        {!bIsLoggedIn ? (
-                            <StdButton buttonId="tb-login-btn" name="Login" onClick={login} />
-                        ) : (
-                            <StdButton buttonId="tb-logout-btn" name="Logout" onClick={logout} />
-                        )}
+                        <IconButton buttonId="tb-login-btn" title={bIsLoggedIn ? "Logout" : "Login"} icon={bIsLoggedIn ? UserFillIcon : UserLineIcon} onClick={bIsLoggedIn ? logout : login} />
                     </div>
                 </div>
                 <AnimatePresence>
@@ -58,9 +60,9 @@ export default function TopBar({ countries }: Readonly<TopBarProps>) {
                         >
                             <motion.div
                                 id="tb-filters-content"
-                                initial={{ y: 100}}
-                                animate={{ y: 5}}
-                                exit={{ y: 100}}
+                                initial={{ y: 10, opacity: 0}}
+                                animate={{ y: 5, opacity: 1}}
+                                exit={{ y: 10, opacity: 0}}
                                 transition={{ duration: 0.5, ease: "easeInOut"}}
                                 className="flex justify-center w-full">
                                 <FilterBar

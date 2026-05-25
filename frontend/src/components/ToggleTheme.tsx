@@ -1,4 +1,4 @@
-import {moonIcon, sunIcon} from "../assets/Icons.tsx";
+import { MoonIcon, SunIcon } from "../assets/Icons.tsx";
 
 import {useEffect, useRef, useState} from "react";
 import type {ReactNode} from "react";
@@ -42,22 +42,22 @@ export default function Toggle({children}: ToggleProps) {
             {/* look at App.css for theme-mode class */}
             <div className={"theme-mode min-h-screen"}>
                 <div
-                    className={"max-xl:w-full flex flex-col justify-center px-10 overflow-hidden no-scrollbar"}>
+                    className={"max-xl:w-full flex flex-col justify-center no-scrollbar z-0"}>
                     <button
-                        title={"toggle dark mode"}
+                        title={"Toggle Theme"}
                         onClick={toggleTheme}
-                        className={"fixed right-10 top-4 text-gray-900 hover:text-gray-800 dark:text-yellow-600 dark:hover:text-yellow-500 transition-colors duration-500 z-50"}>
+                        className={"max-sm:hidden fixed block right-10 top-4 rounded-full hover:cursor-pointer dark:text-yellow-600 dark:hover:text-yellow-500 transition-colors duration-500 z-50"}>
                         <motion.span
-                            animate={{scale: darkTheme ? 1 : 0}}
-                            className={"absolute block rounded-full bg-amber-100 dark:bg-zinc-800 transition-colors duration-500 p-0 text-4xl"}
+                            animate={{scale: darkTheme ? 1 : 0, animationDuration: 0.5}}
+                            className={"absolute"}
                         >
-                            {moonIcon}
+                            <MoonIcon />
                         </motion.span>
                         <motion.span
                             animate={{scale: darkTheme ? 0 : 1, animationDuration: 0.5}}
-                            className={"absolute block rounded-full bg-amber-100 dark:bg-zinc-800 transition-colors duration-500 p-0 text-4xl"}
+                            className={"absolute"}
                         >
-                            {sunIcon}
+                            <SunIcon />
                         </motion.span>
                     </button>
                     {children}

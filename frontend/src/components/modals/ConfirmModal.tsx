@@ -6,26 +6,25 @@ type Props = {
     title: string;
     message: string;
     confirmText?: string;
-    cancelText?: string;
     onConfirm: () => void;
     onCancel: () => void;
 };
 
-export default function ConfirmModal({bOpen, title, message, confirmText, cancelText, onConfirm, onCancel}:Readonly<Props>) {
+export default function ConfirmModal({bOpen, title, message, confirmText, onConfirm, onCancel}:Readonly<Props>) {
 
     if (!bOpen) return null;
 
     return (
         <FrameModal title={title} open={bOpen} onClose={onCancel}>
-            <p className="modal__message">{message}</p>
+            <p className="mb-4 text-zinc-200">{message}</p>
 
-            <div className="modal__actions">
-                <button className="modal__btn" type="button" onClick={onCancel}>
-                    {cancelText ?? "Cancel"}
-                </button>
-
-                <button className="modal__btn modal__btn--danger" type="button" onClick={(e) => {
-                    e.preventDefault(); onConfirm()}}>
+            <div className="flex justify-center gap-2.5">
+                <button
+                    type="button"
+                    onClick={(e) => {
+                    e.preventDefault(); onConfirm()}}
+                    className="cursor-pointer p-2 text-white rounded-lg border border-neutral-500 bg-red-900 hover:bg-red-800"
+                >
                     {confirmText ?? "Confirm"}
                 </button>
             </div>

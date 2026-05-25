@@ -71,11 +71,11 @@ export default function EditScopeModal({bOpen, onConfirm, onConfirmTitle, onConf
                 }
             </div>
 
-            <div className="modal__actions">
+            <div className="flex justify-center gap-2.5">
                 <button
                     type="button"
                     onClick={(e) => {e.preventDefault(); setOpenConfirm(true)}}
-                    className="modal__btn modal__btn--danger"
+                    className="cursor-pointer p-2 text-white rounded-lg border border-neutral-500 bg-red-900 hover:bg-red-800"
                 >
                     {onConfirmTitle}
                 </button>
@@ -89,7 +89,6 @@ export default function EditScopeModal({bOpen, onConfirm, onConfirmTitle, onConf
                         title={onConfirmTitle + " event?"}
                         message={onConfirmMsg}
                         confirmText= {"Yes, " + onConfirmTitle}
-                        cancelText="No"
                         onCancel={() =>
                             setOpenConfirm(false)}
                         onConfirm={() => {

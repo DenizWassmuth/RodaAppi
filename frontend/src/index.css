@@ -11,7 +11,7 @@
 }
 
 @utility theme-mode {
-  @apply bg-linear-to-t from-amber-200 to-amber-100 dark:bg-linear-to-t dark:from-zinc-900 dark:to-zinc-800  transition-colors duration-500;
+  @apply bg-linear-to-t from-zinc-900 to-zinc-800 dark:bg-linear-to-t dark:from-zinc-950 dark:to-zinc-900  transition-colors duration-500;
 }
 
 @utility no-scrollbar {

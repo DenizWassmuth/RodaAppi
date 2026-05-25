@@ -1,9 +1,10 @@
 import {motion} from "framer-motion";
+import React from "react";
 
 type ButtonProps = {
     buttonId: string;
     name: string;
-    onClick: () => void;
+    onClick: (e: React.MouseEvent<HTMLButtonElement>) => void;
 };
 
 export default function StdButton({buttonId, name, onClick }: ButtonProps) {
@@ -17,10 +18,9 @@ export default function StdButton({buttonId, name, onClick }: ButtonProps) {
             whileTap={{ scale: 0.95 }}
             transition={{ duration: .1 }}
             onClick={(e) => {
-                e.preventDefault();
-                onClick();
+                onClick(e);
             }}
-            className={"text-zinc-200 rounded-[10px] border-2 border-solid border-yellow-500 px-2 py-1.5 hover:cursor-pointer"}
+            className={"text-zinc-200 rounded-lg border-2 border-solid border-yellow-600 px-2 py-1 hover:cursor-pointer"}
         >
             {name}
         </motion.button>

@@ -8,7 +8,6 @@ import {
     nowAsDate
 } from "../utility/Helpers.ts";
 import {fetchCities, fetchStates} from "../utility/AxiosUtilities.ts";
-import {useAuth} from "../context/AuthContext.ts";
 import {useFilters} from "../context/FilterContext.ts";
 import StdButton from "./buttons/StdButton.tsx";
 
@@ -18,62 +17,20 @@ type FilterBarProps = {
 
 export default function FilterBar({countries}: Readonly<FilterBarProps>) {
     const minStart = useMemo(() => nowAsDate(), []);
-    const {user} = useAuth();
     const {
         filters,
-        setFilters,
         selectedCountryIso,
-        setSelectedCountryIso,
         selectedStateIso,
-        setSelectedStateIso,
         states,
         setStates,
         cities,
         setCities,
-        resetFilters
+        resetFilters,
+        updateFilter
     } = useFilters();
 
-    const bIsLoggedIn = !!user;
-
     function update<K extends keyof CapoEventFilterDto>(key: K, value: CapoEventFilterDto[K]) {
-        setFilters((prev) => {
-            const next: CapoEventFilterDto = {...prev, [key]: value};
-
-            if (key === "upcomingDays" && value) {
-                next.startsAfter = undefined;
-                next.startsBefore = undefined;
-            }
-
-            if ((key === "startsAfter" || key === "startsBefore") && value) {
-                next.upcomingDays = undefined;
-            }
-
-            if (key === "country") {
-                const countryName = String(value ?? "");
-                const countryIso = countries?.find((c) => c.name === countryName)?.isoCode ?? "";
-
-                setSelectedCountryIso(countryIso);
-                setSelectedStateIso(null);
-
-                setStates([]);
-                setCities([]);
-
-                next.state = undefined;
-                next.city = undefined;
-            }
-
-            if (key === "state") {
-                const stateName = String(value ?? "");
-                const stateIso = states?.find((s) => s.name === stateName)?.isoCode ?? "";
-
-                setSelectedStateIso(stateIso);
-                setCities([]);
-
-                next.city = undefined;
-            }
-
-            return next;
-        });
+        updateFilter(key, value, countries);
     }
 
     function reset() {
@@ -91,20 +48,20 @@ export default function FilterBar({countries}: Readonly<FilterBarProps>) {
     }, [selectedCountryIso, selectedStateIso]);
 
     return (
-        <div className="grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-x-3 bg-transparent text-white">
-            <label className="flex flex-col items-center justify-start">
+        <div className="grid grid-cols-[auto_minmax(0,1fr)_auto] max-sm:flex max-sm:flex-col items-center max-sm:items-start gap-x-2 max-sm:mb-2 text-white">
+            <label className="flex flex-col items-center justify-start mb-2">
                 <select
                     value={filters.limit ?? 20}
                     onChange={(e) => update("limit", Number(e.target.value) as 10 | 20 | 30)}
-                    className="p-1 rounded-md border border-zinc-600 bg-gray-950 text-zinc-200"
+                    className="filterbar-input"
                 >
                     <option value="10">10</option>
                     <option value="20">20</option>
                     <option value="30">30</option>
                 </select>
             </label>
-            <div className="grid gap-2.5">
-                <div className="mb-2.5 flex flex-wrap items-end gap-3">
+            <div className="grid gap-2">
+                <div className="mb-2.5 flex flex-wrap max-sm:flex-col items-end max-sm:items-start gap-3">
                     <label className="flex flex-col min-w-40 gap-1.5">
                         <select
                             className="filterbar-input"
@@ -184,7 +141,7 @@ export default function FilterBar({countries}: Readonly<FilterBarProps>) {
                     </label>
                 </div>
 
-                <div className="mb-2.5 flex flex-wrap items-end gap-3">
+                <div className="mb-2.5 flex flex-wrap max-sm:flex-col items-end max-sm:items-start gap-3">
                     <label className="filterbar-label">
                         <select
                             value={filters.upcomingDays ?? ""}
@@ -210,7 +167,6 @@ export default function FilterBar({countries}: Readonly<FilterBarProps>) {
                                 update("startsAfter", e.target.value ? dateToStartOfDayLocalDateTime(e.target.value) : undefined)
                             }
                             className="filterbar-input"
-
                         />
                     </label>
 
@@ -227,7 +183,7 @@ export default function FilterBar({countries}: Readonly<FilterBarProps>) {
                         />
                     </label>
 
-                    <label className="flex items-center gap-2 py-1.5">
+                    <label className="flex items-center gap-2 py-1.5 max-sm:py-0">
                         <input
                             type="checkbox"
                             checked={Boolean(filters.recentOnly)}
@@ -235,18 +191,6 @@ export default function FilterBar({countries}: Readonly<FilterBarProps>) {
                         />
                         <span>recently added</span>
                     </label>
-
-                    {bIsLoggedIn && (
-                        <label className="flex items-center gap-2 py-1.5">
-                            <input
-                                type="checkbox"
-                                disabled={Boolean(!bIsLoggedIn)}
-                                checked={Boolean(filters.bookmarkedOnly)}
-                                onChange={(e) => update("bookmarkedOnly", e.target.checked)}
-                            />
-                            <span>bookmarked</span>
-                        </label>
-                    )}
                 </div>
             </div>
             <div className="flex items-center justify-end">

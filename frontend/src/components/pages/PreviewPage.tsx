@@ -8,8 +8,12 @@ import EventDetailsCard from "../EventDetailsCard.tsx";
 import FrameModal from "../modals/FrameModal.tsx";
 import {useAuth} from "../../context/AuthContext.ts";
 import {useEvents} from "../../context/EventContext.ts";
+import {useFilters} from "../../context/FilterContext.ts";
 import type {CountryData} from "../../types/GeoData.ts";
 import {AnimatePresence, motion} from "framer-motion";
+import IconButton from "../buttons/IconButton.tsx";
+import {AddIcon, DashboardFillIcon, DashboardLineIcon, BookmarkFillIcon, BookmarkLineIcon} from "../../assets/Icons.tsx";
+import {useNavigate} from "react-router-dom";
 
 type ActiveModal =
     | { type: 'DETAILS'; event: CapoEventType }
@@ -25,6 +29,8 @@ type PreviewProps = {
 export default function PreviewPage({countries}: PreviewProps) {
     const {user} = useAuth();
     const {events, refreshEvents, loading} = useEvents();
+    const {filters, updateFilter} = useFilters();
+    const nav = useNavigate();
 
     const [activeModal, setActiveModal] = useState<ActiveModal>(null);
     const [partOfSeries, setPartOfSeries] = useState<PartOfSeriesDto>(null);
@@ -38,24 +44,23 @@ export default function PreviewPage({countries}: PreviewProps) {
         checkIfPartOfSeries(activeModal.event, setPartOfSeries).then();
     }, [activeModal?.event])
 
-    const bShowAddButton = Boolean(user);
+    const bIsLoggedIn = Boolean(user);
+    const bIsOnDashboard = window.location.pathname === "/loggedin";
 
     const closeModal = () => setActiveModal(null);
 
     return (
-        <div className={"relative min-h-screen max-h-full max-w-full mt-24 no-scrollbar"}>
-            {bShowAddButton && (
-                <button
-                    type="button"
-                    title="Add Event"
-                    onClick={() => setActiveModal({type: 'CREATE', event: null})}
-                    className={"absolute z-1 left-1/2 -translate-x-1/2 -translate-y-6 h-10 w-10 grid place-items-center rounded-full border border-white/25 bg-black/45 text-[28px] text-white cursor-pointer"}
-                >
-                    <span className="-translate-y-0.5 leading-none">+</span>
-                </button>
+        <div className={"relative min-h-screen max-h-full max-w-full mt-10 mb-10 px-20 max-sm:px-5 no-scrollbar"}>
+            {bIsLoggedIn && (
+                <div
+                    className={"absolute scale-130 z-1 left-1/2 -translate-x-1/2 -translate-y-7 h-10 w-10 flex flex-row items-center justify-center text-white cursor-pointer"}>
+                    <IconButton buttonId={"dashboardButton"} title={"Dashboard"} icon={bIsOnDashboard ? DashboardFillIcon : DashboardLineIcon} onClick={bIsOnDashboard ? () => nav("/") : () => nav("/loggedin")}/>
+                    <IconButton buttonId={"addButton"} title={"Add Event"} icon={AddIcon} onClick={() => setActiveModal({type: 'CREATE', event: null})}/>
+                    <IconButton buttonId={"bookMarkButton"} title={"show Bookmarks"} icon={filters.bookmarkedOnly ? BookmarkFillIcon : BookmarkLineIcon} onClick={() => updateFilter("bookmarkedOnly", !filters.bookmarkedOnly)}/>
+                </div>
             )}
             <div
-                className={`grid grid-cols-3 items-start auto-rows-max gap-2 pt-6 transition-opacity duration-500 ${loading ? "opacity-50 pointer-events-none" : "opacity-100"}`}>
+                className={`grid grid-cols-3 max-sm:grid-cols-2 gap-2 pt-6 transition-opacity duration-500 ${loading ? "opacity-50 pointer-events-none" : "opacity-100"}`}>
                 <AnimatePresence mode="popLayout">
                     {events.map((capoEvent) => (
                         <motion.div
